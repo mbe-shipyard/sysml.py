@@ -6,4 +6,4 @@ A Python package for SysML (systems modeling language) - a general purpose model
 
 Notes
 --------
-This project is still in pre-alpha release. For more details, please refer to https://github.com/spacedecentral/sysmlpy/issues
+This project is still in pre-alpha. For more details, please refer to https://github.com/spacedecentral/sysmlpy/issues
