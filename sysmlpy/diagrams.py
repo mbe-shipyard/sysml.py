@@ -16,15 +16,67 @@ SysML includes 9 types of diagrams, some of which are taken from UML.
 -Parametric diagram
 """
 
+from sysmlpy.elements import *
+
 ## Structure
 class BlockDefinitionDiagram(object):
     """This class defines a block definition diagram
-    
-    A block definition diagram describes the system hierarchy and system/component classifications. 
+
+    A block definition diagram describes the system hierarchy and system/component classifications.
     """
-    
-    def __init__(self):
-        pass
+
+    def __init__(self, label=None, elements=None, relations=None):
+        self._block_id_no = 0
+        self._label = label
+        self.block = {}
+        self._relation = {}
+
+    def __repr__(self):
+        return "bdd[Package] {}".format(self.label)
+    # Block Setters
+    def new_block(self, label=None, values=None, parts=None, references=None, flowProperties=None):
+        """ Instantiates a new \xabblock\xbb element within the bdd namespace.
+        """
+        # Block Label
+        if label is None:
+            self._block_id_no += 1
+            _label = 'Block' + str(self._block_id_no)
+            self.block[_label] = Block(_label)
+        elif type(label) is str:
+            _label = label
+            self.block[_label] = Block(_label)
+        elif label is not None:
+            raise TypeError("argument is not a string!")
+        ## Value Properties
+        if type(values) is dict:
+            self.block[_label]._values = values
+        elif values is not None:
+            raise TypeError("argument is not a dictionary!")
+        ## Part Properties
+        if type(parts) is list:
+            self.block[_label]._parts = parts
+        elif parts is not None:
+            raise TypeError("argument is not a dictionary!")
+        ## Reference Properties
+        if type(references) is dict:
+            self.block[_label]._references = references
+        elif references is not None:
+            raise TypeError("argument is not a dictionary!")
+        ## Flow Properties
+        if type(flowProperties) is dict:
+            self.block[_label]._flowProperties = flowProperties
+        elif flowProperties is not None:
+            raise TypeError("argument is not a dictionary!")
+        ## Operations
+        self.operations = []
+        ## Constraints
+        self.constaints = []
+    def add_blocks(self, *blocks):
+        """ Adds existing \xabblock\xbb element within the bdd namespace.
+        """
+        for block in blocks:
+            if type(block) is Block:
+                self.block[block.label] = block
 
 class InternalBlockDiagram(object):
     """This class defines an internal block diagram
