@@ -8,22 +8,24 @@ Model Elements are the building blocks that make up the 9 SysML diagrams
 
 import traceback
 
+# developer notes: to use hidden vs unhidden attributes
+
 class Block(object):
-    """This class defines a \xabblock\xbb stereotype for use in a BDD 
+    """This class defines a \xabblock\xbb stereotype for use in a BDD
     (block definition diagram) or ibd (internal block diagram)
-    
+
     Parameters
     ----------
     label : string, default None
-        
+
     values : dict, default None
-        
+
     parts : list, default None
-        
+
     references : list, default None
-        
+
     flowProperties : dict, default None
-        
+
 
     Examples
     --------
@@ -40,7 +42,8 @@ class Block(object):
 
     stereotype = "\xabblock\xbb"
     _id_no = 0
-    
+    #tk: need to fix id_no state; store all existing id_no's in a list?
+
     def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None):
         # Label
         if label is None:
@@ -60,14 +63,14 @@ class Block(object):
         ## Part Property
         if parts is None:
             self._parts = []
-        elif type(parts) is list:
+        elif type(parts) is list: #tk: change to accept block or list of blocks
             self._parts = parts
         else:
             raise TypeError("argument is not a list!")
         ## Reference Property
         if references is None:
             self._references = []
-        elif type(references) is list:
+        elif type(references) is list: #tk: change to accept block or list of blocks
             self._references = references
         else:
             raise TypeError("argument is not a list!")
@@ -87,7 +90,7 @@ class Block(object):
     ## Setters
     def add_parts(self, *partv):
         """add one or more Blocks to parts
-        
+
         """
         for part in partv:
             if type(part) is Block:
@@ -96,7 +99,7 @@ class Block(object):
                 raise TypeError("argument is not a 'Block'!")
     def add_references(self, *referencev):
         """add one or more Blocks to references
-        
+
         """
         for reference in referencev:
             if type(reference) is Block:
@@ -105,7 +108,7 @@ class Block(object):
                 raise TypeError("argument is not a 'Block'!")
     def add_values(self, values):
         """add values dictionary to values
-        
+
         """
         if type(values) is dict:
             for key in values:
@@ -117,7 +120,7 @@ class Block(object):
             raise TypeError("argument is not a dictionary!")
     def add_flowProperties(self, flowProperties):
         """add flowProperties dictionary to flowProperties
-        
+
         """
         if type(flowProperties) is dict:
             for flowPort in flowProperties:
@@ -144,33 +147,65 @@ class Block(object):
 class Requirement:
     """This class defines a requirement for use in a requirements diagram"""
 
-    _id_no = 0   # requirement id no.
+    stereotype = "\xabrequirement\xbb"
+    _id_no = 0
+    #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name='', txt='', id_no=None, trace=[], refine=[], verify=[]):
+    def __init__(self, label=None, txt=None, id_no=None, satisfy=None, verify=None, refine=None):
+        # ID no.
         if id_no is None:
             Requirement._id_no += 1
-            id_no = Requirement._id_no
-        self.name = name
-        self.id = 'ID'+str(_id_no).zfill(3)
-        self.txt = txt
-        self.trace = trace     # list of model elements which satisfies requirement
-        self.refine = refine    # list of model elements which refines requirement
-        self.verify = verify    # list of model elements which verifies requirement
+            self._id_no = 'ID'+str(Requirement._id_no).zfill(3)
+        elif type(id_no) is in [int,float]:
+            self._id_no = 'ID'+str(id_no).zfill(3)
+        else:
+            raise TypeError("argument is not int or float!")
+        # Label
+        if label is None:
+            self._label = 'Requirement' + str(self._id_no)
+        elif type(label) is str:
+            self.label = label
+        else:
+            raise TypeError("argument is not a string!")
+        # Text
+        if txt is None:
+            self.txt = ''
+        elif type(label) is str:
+            self.txt = txt
+        else:
+            raise TypeError("argument is not a string!")
+        # Satisfy
+        if satisfy is None:
+            self._satisfy = []
+        elif type(satisfy) is []: #tk: change to accept block or list of blocks
+            self._satisfy = satisfy
+        # Verify
+        if verify is None:
+            self._verify = []
+        elif type(verify) is []: #tk: change to accept block or list of blocks
+            self._verify = verify
+        # Refine
+        if refine is None:
+            self.refine = []
+        elif type(refine) is []: #tk: change to accept block or list of blocks
+            self._refine = refine
+        # Trace
+        if trace is None:
+            self.trace = []
+        elif type(trace) is []: #tk: change to accept block or list of blocks
+            self._trace = trace
     def __repr__(self):
         return "\xabrequirement\xbb {self.name}"
-    ## requirement relations
-    def addrelation(self, source, relationtype='dependency'):
-        if relationtype is 'satisfy':
-            self.trace.append(source)
-            print(source, "satisfies", self)
-        elif relationtype is 'refine':
-            self.refine.append(source)
-            print(source, "refines", self)
-        elif relationtype is 'verify':
-            self.verify.append(source)
-            print(source, "verifies", self)
-        else:
-            print("Source and target nodes must be of valid types")
+    ## Set requirement relations
+    def satisfiedBy(self, *sourcev):
+        for source in sourcev:
+            self._satisfy.append(source)
+    def refinedBy(self, *sourcev):
+        for source in sourcev:
+            self._refine.append(source)
+    def verifiedBy(self, *sourcev):
+        for source in sourcev:
+            self._verify.append(source)
 
 class InternalBlock:
     """This class defines an internal block diagram"""
