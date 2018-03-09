@@ -156,7 +156,7 @@ class Requirement:
         if id_no is None:
             Requirement._id_no += 1
             self._id_no = 'ID'+str(Requirement._id_no).zfill(3)
-        elif type(id_no) is in [int,float]:
+        elif type(id_no) in [int,float]:
             self._id_no = 'ID'+str(id_no).zfill(3)
         else:
             raise TypeError("argument is not int or float!")
