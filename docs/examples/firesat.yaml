@@ -154,7 +154,7 @@ relationships: # model relationships are treated as a list edges
             - *mission_constraints_package
     -
         stereotype: import
-        source: *functional_requirements
+        source: *functional_requirements_package
         target:
             - *performance_requirement1
             - *performance_requirement2
