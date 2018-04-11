@@ -24,37 +24,37 @@ elements: # model elements are treated as a list of nodes
         label: Functional Requirements # functional requirements define how well the system must perform to meet its objectives
     - &performance_requirement1
         stereotype: requirement # Functional requirement of the FireSat mission
-        label: Performance Requirement 1
+        label: Performance 1
         attributes:
             id_no: 1.1
             text: 4 temperature levels
     - &performance_requirement2 # Performance requirement is anchored, such that it can be referenced later
         stereotype: requirement # Functional requirement of the FireSat mission
-        label: Performance Requirement 2
+        label: Performance 2
         attributes:
             id_no: 1.2
             text: 30 m resolution
     - &performance_requirement3
         stereotype: requirement # Functional requirement of the FireSat mission
-        label: Performance Requirement 3
+        label: Performance 3
         attributes:
             id_no: 1.3
             text: 500 m location accuracy
     - &coverage_requirement
         stereotype: requirement # Functional requirement of the FireSat mission
-        label: Coverage Requirement # Impacting factors include orbit, number of satellites, scheduling
+        label: Coverage # Impacting factors include orbit, number of satellites, scheduling
         attributes:
             id_no: 2
             text: Daily coverage of 750 million acres within continental U.S.
     - &responsiveness_requirement
         stereotype: requirement # Functional requirement of the FireSat mission
-        label: Responsiveness Requirement # Impacting factors include communications architecture, processing delays, operations
+        label: Responsiveness # Impacting factors include communications architecture, processing delays, operations
         attributes:
             id_no: 2
             text: Send registered mission data within 30 min to up to 50 users
     - &secondary_mission_requirement
         stereotype: requirement
-        label: Secondary Mission Requirement
+        label: Secondary Mission
         attributes:
             id_no: 3
             text: 4 temperature levels for pest management # In FireSat example, this would include additional measurement channels for forest management data (e.g. pest control)
@@ -108,13 +108,13 @@ elements: # model elements are treated as a list of nodes
             text: < $20M/yr + R&D
     - &schedule_constraint1
         stereotype: constraint
-        label: Schedule # Impacting factors include technical readiness, programme size
+        label: Schedule 1 # Impacting factors include technical readiness, programme size
         attributes:
             id_no: 2.1
             text: Initial operating capability within 5 yrs
     - &schedule_constraint2
         stereotype: constraint
-        label: Schedule # Impacting factors include technical readiness, programme size
+        label: Schedule 2 # Impacting factors include technical readiness, programme size
         attributes:
             id_no: 2.2
             text: Final operating capability within 6 years
@@ -126,19 +126,19 @@ elements: # model elements are treated as a list of nodes
             text: NASA mission
     - &environment_constraint
         stereotype: constraint
-        label: Regulations # Impacting factors include orbit & lifetime
+        label: Environment # Impacting factors include orbit & lifetime
         attributes:
             id_no: 3
             text: Natural
     - &development_constraint1
         stereotype: constraint
-        label: Development constraint # Impacting factors include Sponsoring organisation
+        label: Development 1 # Impacting factors include Sponsoring organisation
         attributes:
             id_no: 4.1
             text: Launch on STS or expendable
     - &development_constraint2
         stereotype: constraint
-        label: Development # Impacting factors include Sponsoring organisation
+        label: Development 2 # Impacting factors include Sponsoring organisation
         attributes:
             id_no: 4.2
             text: No unique operations people at data distribution nodes
