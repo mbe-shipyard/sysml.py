@@ -87,6 +87,20 @@ class Block(object):
         self.constaints = []
     def __repr__(self):
         return "\xabblock\xbb '{}'".format(self.label)
+    ## Getters
+    @property
+    def parts(self):
+        return self._parts
+    @property
+    def values(self):
+        return self._values
+    @property
+    def references(self):
+        return self._references
+    @property
+    def flowProperties(self):
+        return self._flowProperties
+
     ## Setters
     def add_parts(self, *partv):
         """add one or more Blocks to parts
@@ -130,19 +144,6 @@ class Block(object):
                     raise TypeError("key is not a string!")
         else:
             raise TypeError("argument is not a dictionary!")
-    ## Getters
-    @property
-    def parts(self):
-        return self._parts
-    @property
-    def values(self):
-        return self._values
-    @property
-    def references(self):
-        return self._references
-    @property
-    def flowProperties(self):
-        return self._flowProperties
 
 class Requirement:
     """This class defines a requirement for use in a requirements diagram"""
@@ -155,9 +156,9 @@ class Requirement:
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
-            self._id_no = 'ID'+str(Requirement._id_no).zfill(3)
+            self._id_no = 'ID' + str(Requirement._id_no).zfill(3)
         elif type(id_no) in [int,float]:
-            self._id_no = 'ID'+str(id_no).zfill(3)
+            self._id_no = 'ID' + str(id_no).zfill(3)
         else:
             raise TypeError("argument is not int or float!")
         # Label

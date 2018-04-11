@@ -71,7 +71,7 @@ class BlockDefinitionDiagram(object):
         self.operations = []
         ## Constraints
         self.constaints = []
-    def add_blocks(self, *blocks):
+    def add_block(self, *blocks):
         """ Adds existing \xabblock\xbb element within the bdd namespace.
         """
         for block in blocks:
@@ -80,10 +80,10 @@ class BlockDefinitionDiagram(object):
 
 class InternalBlockDiagram(object):
     """This class defines an internal block diagram
-    
+
     The internal block diagram describes the internal structure of a system in terms of its parts, ports, and connectors.
     """
-    
+
     def __init__(self):
         pass
 
@@ -152,4 +152,3 @@ class ParametricDiagram(object):
 
     def __init__(self):
         pass
-

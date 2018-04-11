@@ -1,0 +1,185 @@
+# This YAML file contains a SysML model sample template of the hypothetical FireSat mission.
+
+# The intent of this template is to provide a lightweight human-readable data
+# serialization format for describing a SysML model.
+# The SysML model consists of model elements and relationshipts, wherein model elements
+# are treated as a list of nodes and model relations are treated as a list of edges.
+
+# YAML can be validated using https://codebeautify.org/yaml-validator
+# (WIP): A schema will be used to validate whether a YAML file is also a valid SysML model
+# (WIP): a complementary python api will be provided for generating the 9 SysML diagrams from this template.
+
+# Notes: labels and id_no's must be unique per stereotype
+
+SysMLTemplateVersion: "0.0.1" # last modified 2018-04-10
+
+Description: A SysML model sample template for the hypothetical FireSat mission
+
+elements: # model elements are treated as a list of nodes
+    - &mission_requirements_package
+        stereotype: package #  FireSat mission requirements are contained within a package
+        label: FireSat Mission Requirements
+    - &functional_requirements_package
+        stereotype: package
+        label: Functional Requirements # functional requirements define how well the system must perform to meet its objectives
+    - &performance_requirement1
+        stereotype: requirement # Functional requirement of the FireSat mission
+        label: Performance Requirement 1
+        attributes:
+            id_no: 1.1
+            text: 4 temperature levels
+    - &performance_requirement2 # Performance requirement is anchored, such that it can be referenced later
+        stereotype: requirement # Functional requirement of the FireSat mission
+        label: Performance Requirement 2
+        attributes:
+            id_no: 1.2
+            text: 30 m resolution
+    - &performance_requirement3
+        stereotype: requirement # Functional requirement of the FireSat mission
+        label: Performance Requirement 3
+        attributes:
+            id_no: 1.3
+            text: 500 m location accuracy
+    - &coverage_requirement
+        stereotype: requirement # Functional requirement of the FireSat mission
+        label: Coverage Requirement # Impacting factors include orbit, number of satellites, scheduling
+        attributes:
+            id_no: 2
+            text: Daily coverage of 750 million acres within continental U.S.
+    - &responsiveness_requirement
+        stereotype: requirement # Functional requirement of the FireSat mission
+        label: Responsiveness Requirement # Impacting factors include communications architecture, processing delays, operations
+        attributes:
+            id_no: 2
+            text: Send registered mission data within 30 min to up to 50 users
+    - &secondary_mission_requirement
+        stereotype: requirement
+        label: Secondary Mission Requirement
+        attributes:
+            id_no: 3
+            text: 4 temperature levels for pest management # In FireSat example, this would include additional measurement channels for forest management data (e.g. pest control)
+    - &operational_requirements_package
+        stereotype: package
+        label: Operational Requirements
+    - &duration_requirement
+        stereotype: requirement
+        label: Duration
+        attributes:
+            id_no: 4
+            text: Mission operational fat least 10 years # factors impacting this requirement include nature of the mission (experimental or operational), level of redundancy, orbit (e.g., altitude)
+    - &availability_requirement1
+        stereotype: requirement
+        label: Availability 1
+        attributes:
+            id_no: 5.1
+            text: 98% excluding weather # Impacting factors include level of redundancy
+    - &availability_requirement2
+        stereotype: requirement
+        label: Availability 2
+        attributes:
+            id_no: 5.2
+            text: 3-day maximum outage # Impacting factors include level of redundancy
+    - &data_distribution_requirement1
+        stereotype: requirement
+        label: Data distribution
+        attributes:
+            id_no: 6.1
+            text: Up to 500 fire-monitoring offices # Impacting factors include communications architecture
+    - &data_distribution_requirement2
+        stereotype: requirement
+        label: Data distribution
+        attributes:
+            id_no: 6.2
+            text: +2000 rangers worldwide (max. of 100 simultaneous users) # Impacting factors include communications architecture
+    - &data_content_form_format_requirement
+        stereotype: requirement
+        label: Data content form format # Impacting factors include user needs, level and place of processing, payload
+        attributes:
+            id_no: 7
+            text: Location and extent of fire on any of 12 map bases, average tempurature for each 30 m^2 grid
+    - &mission_constraints_package
+        stereotype: package
+        label: Mission Constraints
+    - &cost_constraint
+        stereotype: constraint
+        label: Cost # Impacting factors include manned flight, numbers of spacecraft size and complexity, orbit
+        attributes:
+            id_no: 1
+            text: < $20M/yr + R&D
+    - &schedule_constraint1
+        stereotype: constraint
+        label: Schedule # Impacting factors include technical readiness, programme size
+        attributes:
+            id_no: 2.1
+            text: Initial operating capability within 5 yrs
+    - &schedule_constraint2
+        stereotype: constraint
+        label: Schedule # Impacting factors include technical readiness, programme size
+        attributes:
+            id_no: 2.2
+            text: Final operating capability within 6 years
+    - &regulations_constraint
+        stereotype: constraint
+        label: Regulations # Impacting factors include law and policy
+        attributes:
+            id_no: 3
+            text: NASA mission
+    - &environment_constraint
+        stereotype: constraint
+        label: Regulations # Impacting factors include orbit & lifetime
+        attributes:
+            id_no: 3
+            text: Natural
+    - &development_constraint1
+        stereotype: constraint
+        label: Development constraint # Impacting factors include Sponsoring organisation
+        attributes:
+            id_no: 4.1
+            text: Launch on STS or expendable
+    - &development_constraint2
+        stereotype: constraint
+        label: Development # Impacting factors include Sponsoring organisation
+        attributes:
+            id_no: 4.2
+            text: No unique operations people at data distribution nodes
+
+relationships: # model relationships are treated as a list edges
+# note that the anchors created in `elements` are being used to reference list items treated as source and target nodes
+    -
+        stereotype: import
+        source: *mission_requirements_package
+        target:
+            - *functional_requirements_package
+            - *operational_requirements_package
+            - *mission_constraints_package
+    -
+        stereotype: import
+        source: *functional_requirements
+        target:
+            - *performance_requirement1
+            - *performance_requirement2
+            - *performance_requirement3
+            - *coverage_requirement
+            - *responsiveness_requirement
+            - *secondary_mission_requirement
+    -
+        stereotype: import
+        source: *operational_requirements_package
+        target:
+            - *duration_requirement
+            - *availability_requirement1
+            - *availability_requirement2
+            - *data_distribution_requirement1
+            - *data_distribution_requirement2
+            - *data_content_form_format_requirement
+    -
+        stereotype: import
+        source: *mission_constraints_package
+        target:
+            - *cost_constraint
+            - *schedule_constraint1
+            - *schedule_constraint2
+            - *regulations_constraint
+            - *environment_constraint
+            - *development_constraint1
+            - *development_constraint2

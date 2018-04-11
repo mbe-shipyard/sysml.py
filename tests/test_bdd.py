@@ -1,29 +1,33 @@
 import sysmlpy as sysml
 import pytest
 
+'''
 def test_new_block():
     bdd = sysml.BlockDefinitionDiagram('USS Enterprise BDD')
     bdd.new_block('USS Enterprise')
     assert repr(bdd.block['USS Enterprise']) == "\xabblock\xbb 'USS Enterprise'"
+'''
 
-def test_add_block():
-    bdd = sysml.BlockDefinitionDiagram('Enterprise BDD')
+@pytest.fixture
+def bdd():
+    bdd = sysml.BlockDefinitionDiagram('USS Enterprise BDD')
+    bdd.new_block('USS Enterprise')
+    return bdd
+
+def test_add_block(bdd):
     saucersection = sysml.Block('Primary hull')
-    bdd.add_blocks(saucersection)
+    bdd.add_block(saucersection)
+    assert repr(bdd.block['USS Enterprise']) == "\xabblock\xbb 'USS Enterprise'"
     assert repr(bdd.block['Primary hull']) == "\xabblock\xbb 'Primary hull'"
 
-def test_block_parts():
-    bdd = sysml.BlockDefinitionDiagram('Enterprise BDD')
-    bdd.new_block('USS Enterprise')
+def test_block_parts(bdd):
     saucersection = sysml.Block('Primary hull')
-    bdd.add_blocks(saucersection)
+    bdd.add_block(saucersection)
     bdd.new_block('Secondary hull')
     bdd.block['USS Enterprise'].add_parts(bdd.block['Primary hull'],bdd.block['Secondary hull'])
     assert repr(bdd.block['USS Enterprise'].parts) == "[\xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
 
-def test_block_values():
-    bdd = sysml.BlockDefinitionDiagram('Enterprise BDD')
-    bdd.new_block('USS Enterprise')
+def test_block_values(bdd):
     valueProperty = {'class':'Constitution','P/N':'NCC-1701'}
     bdd.block['USS Enterprise'].add_values(valueProperty)
     assert bdd.block['USS Enterprise'].values == {'P/N': 'NCC-1701', 'class': 'Constitution'}
@@ -53,5 +57,3 @@ def test_block_flowProperties():
                     )
     bdd.block['warp core'].add_flowProperties({'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
     assert bdd.block['warp core'].flowProperties == {'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}}
-
-
