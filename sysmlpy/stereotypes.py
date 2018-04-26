@@ -1,16 +1,28 @@
 """
-Model Elements
+The `Model` class consists of stereotypes which classify as either elements or relationships
 
 ---------
 
-Model Elements are the building blocks that make up the 9 SysML diagrams
+Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
 
 import traceback
 
 # developer notes: to use hidden vs unhidden attributes
 
-class Block(object):
+class Model(object):
+    """This class defines a SysML model for subsuming stereotypes which classify as either model elements or relationships.
+    """
+
+    def __init__(self, label=None, elements={}, relationships={}):
+        self.label = label
+        #elements
+        self.block = block
+
+    @block.setter
+    def block
+
+class _Block(object):
     """This class defines a \xabblock\xbb stereotype for use in a BDD
     (block definition diagram) or ibd (internal block diagram)
 
@@ -145,7 +157,7 @@ class Block(object):
         else:
             raise TypeError("argument is not a dictionary!")
 
-class Requirement:
+class _Requirement:
     """This class defines a requirement for use in a requirements diagram"""
 
     stereotype = "\xabrequirement\xbb"
