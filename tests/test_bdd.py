@@ -1,59 +1,51 @@
-import sysmlpy as sysml
+import sysmlpy
 import pytest
 
-'''
-def test_new_block():
-    bdd = sysml.BlockDefinitionDiagram('USS Enterprise BDD')
-    bdd.new_block('USS Enterprise')
-    assert repr(bdd.block['USS Enterprise']) == "\xabblock\xbb 'USS Enterprise'"
-'''
-
 @pytest.fixture
-def bdd():
-    bdd = sysml.BlockDefinitionDiagram('USS Enterprise BDD')
-    bdd.new_block('USS Enterprise')
-    return bdd
+def model():
+    model = sysmlpy.model()
+    return model
 
-def test_add_block(bdd):
-    saucersection = sysml.Block('Primary hull')
-    bdd.add_block(saucersection)
-    assert repr(bdd.block['USS Enterprise']) == "\xabblock\xbb 'USS Enterprise'"
-    assert repr(bdd.block['Primary hull']) == "\xabblock\xbb 'Primary hull'"
+def test_add_block(model):
+    model.add_block('USS Enterprise')
+    model.add_block('Primary hull')
+    saucersection = model.block['Primary hull']
+    assert repr(model.block['USS Enterprise']) == "\xabblock\xbb 'USS Enterprise'"
+    assert repr(model.block['Primary hull']) == "\xabblock\xbb 'Primary hull'"
 
-def test_block_parts(bdd):
-    saucersection = sysml.Block('Primary hull')
-    bdd.add_block(saucersection)
-    bdd.new_block('Secondary hull')
-    bdd.block['USS Enterprise'].add_parts(bdd.block['Primary hull'],bdd.block['Secondary hull'])
-    assert repr(bdd.block['USS Enterprise'].parts) == "[\xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
+def test_block_parts(model):
+    model.add_block(saucersection)
+    model.add_relationship(source=model.block['USS Enterprise'], target=[saucersection, model.block['Secondary hull']], stereotype='composition')
+    model.block['USS Enterprise'].add_relationship(source=model.block['Primary hull'], target=model.block['Secondary hull'])
+    assert repr(model.block['USS Enterprise'].parts) == "[\xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
 
-def test_block_values(bdd):
+def test_block_values(model):
     valueProperty = {'class':'Constitution','P/N':'NCC-1701'}
-    bdd.block['USS Enterprise'].add_values(valueProperty)
-    assert bdd.block['USS Enterprise'].values == {'P/N': 'NCC-1701', 'class': 'Constitution'}
+    model.block['USS Enterprise'].add_values(valueProperty)
+    assert model.block['USS Enterprise'].values == {'P/N': 'NCC-1701', 'class': 'Constitution'}
 
 def test_block_references():
-    bdd = sysml.BlockDefinitionDiagram('warp drive BDD')
-    bdd.new_block('antimatter')
-    bdd.new_block('antimatter injector')
-    bdd.new_block('dilithium crystal chamber')
-    bdd.new_block(label='warp core', parts=[bdd.block['antimatter injector'], bdd.block['dilithium crystal chamber']]
+    model = sysml.BlockDefinitionDiagram('warp drive model')
+    model.new_block('antimatter')
+    model.new_block('antimatter injector')
+    model.new_block('dilithium crystal chamber')
+    model.new_block(label='warp core', parts=[model.block['antimatter injector'], model.block['dilithium crystal chamber']]
                     #,
                     #flowProperties={'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}},
-                    #references=bdd.block['antimatter']
+                    #references=model.block['antimatter']
                     )
-    bdd.block['warp core'].add_references(bdd.block['antimatter'])
-    assert repr(bdd.block['warp core'].references) == "[\xabblock\xbb 'antimatter']"
+    model.block['warp core'].add_references(model.block['antimatter'])
+    assert repr(model.block['warp core'].references) == "[\xabblock\xbb 'antimatter']"
 
 def test_block_flowProperties():
-    bdd = sysml.BlockDefinitionDiagram('warp drive BDD')
-    bdd.new_block('antimatter')
-    bdd.new_block('antimatter injector')
-    bdd.new_block('dilithium crystal chamber')
-    bdd.new_block(label='warp core', parts=[bdd.block['antimatter injector'], bdd.block['dilithium crystal chamber']]
+    model = sysml.BlockDefinitionDiagram('warp drive model')
+    model.new_block('antimatter')
+    model.new_block('antimatter injector')
+    model.new_block('dilithium crystal chamber')
+    model.new_block(label='warp core', parts=[model.block['antimatter injector'], model.block['dilithium crystal chamber']]
                     #,
                     #flowProperties={'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}},
-                    #references=bdd.block['antimatter']
+                    #references=model.block['antimatter']
                     )
-    bdd.block['warp core'].add_flowProperties({'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
-    assert bdd.block['warp core'].flowProperties == {'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}}
+    model.block['warp core'].add_flowProperties({'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
+    assert model.block['warp core'].flowProperties == {'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}}
