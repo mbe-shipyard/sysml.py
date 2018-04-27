@@ -6,12 +6,14 @@
 # are treated as a list of nodes and model relations are treated as a list of edges.
 
 # YAML can be validated using https://codebeautify.org/yaml-validator
+# More info on yaml syntax and usage can be found here:
+# https://learnxinyminutes.com/docs/yaml/
 # (WIP): A schema will be used to validate whether a YAML file is also a valid SysML model
 # (WIP): a complementary python api will be provided for generating the 9 SysML diagrams from this template.
 
 # Notes: labels and id_no's must be unique per stereotype
 
-SysMLTemplateVersion: "0.0.2" # last modified 2018-04-10
+SysMLTemplateVersion: "0.0.3" # last modified 2018-04-26
 
 Description: A SysML model sample template for the hypothetical FireSat mission
 
@@ -41,30 +43,30 @@ elements: # model elements are treated as a dictionary of nodes
     requirement-6: # Functional requirement of the FireSat mission
         label: Responsiveness # Impacting factors include communications architecture, processing delays, operations
         text: Send registered mission data within 30 min to up to 50 users
-    requirement-4:
+    requirement-7:
         label: Secondary Mission
         text: 4 temperature levels for pest management # In FireSat example, this would include additional measurement channels for forest management data (e.g. pest control)
     package-2:
         label: Operational
-    requirement-4:
+    requirement-8:
         label: Duration
         text: Mission operational fat least 10 years # factors impacting this requirement include nature of the mission (experimental or operational), level of redundancy, orbit (e.g., altitude)
-    requirement-5:
+    requirement-9:
         label: Availability
         text: 98% excluding weather # Impacting factors include level of redundancy
-    requirement-6:
+    requirement-10:
         label: Availability
         text: 3-day maximum outage # Impacting factors include level of redundancy
-    requirement-7:
+    requirement-11:
         label: Data distribution
         text: Up to 500 fire-monitoring offices # Impacting factors include communications architecture
-    requirement-8:
+    requirement-12:
         label: Data distribution
         text: +2000 rangers worldwide (max. of 100 simultaneous users) # Impacting factors include communications architecture
-    requirement-9:
+    requirement-13:
         label: Data content form format # Impacting factors include user needs, level and place of processing, payload
         text: Location and extent of fire on any of 12 map bases, average tempurature for each 30 m^2 grid
-    requirement-10:
+    requirement-13:
         label: Mission constraint-s
     constraint-1:
         label: Cost # Impacting factors include manned flight, numbers of spacecraft size and complexity, orbit
@@ -90,29 +92,25 @@ elements: # model elements are treated as a dictionary of nodes
 
 relationships: # model relationships are treated as a list edges
 # note that the anchors created in `elements` are being used to reference list items treated as source and target nodes
-    -
-        stereotype: import
+    import-1:
         source: package-1
         target:
             - package-2
             - package-2
             - requirement-10
-    -
-        stereotype: import
+    import-2:
         source: package-2
         target:
             - requirement-1
             - requirement-5
             - requirement-6
-    -
-        stereotype: deriveReqt
+    deriveReqt-1:
         source: requirement-1
         target:
             - requirement-2
             - requirement-3
             - requirement-4
-    -
-        stereotype: import
+    import-3:
         source: package-2
         target:
             - requirement-4
@@ -121,8 +119,7 @@ relationships: # model relationships are treated as a list edges
             - requirement-7
             - requirement-8
             - requirement-9
-    -
-        stereotype: import
+    import-4:
         source: requirement-10
         target:
             - constraint-1

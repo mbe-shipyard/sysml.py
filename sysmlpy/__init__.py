@@ -1,2 +1,1 @@
-from sysmlpy.diagrams import *
-from sysmlpy.elements import *
+from sysmlpy.stereotypes import *

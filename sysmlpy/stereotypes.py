@@ -19,8 +19,8 @@ class Model(object):
         #elements
         self.block = block
 
-    @block.setter
-    def block
+    #@block.setter
+    #def block
 
 class _Block(object):
     """This class defines a \xabblock\xbb stereotype for use in a BDD
