@@ -157,8 +157,8 @@ class _Block(object):
         else:
             raise TypeError("argument is not a dictionary!")
 
-class _Requirement:
-    """This class defines a requirement for use in a requirements diagram"""
+class _Requirement(object):
+    """This class defines a \xabrequirement\xbb stereotype for use in a requirements diagram"""
 
     stereotype = "\xabrequirement\xbb"
     _id_no = 0
@@ -220,8 +220,20 @@ class _Requirement:
         for source in sourcev:
             self._verify.append(source)
 
-class InternalBlock:
-    """This class defines an internal block diagram"""
+class _State(object):
+    """This class defines a \xabstate\xbb stereotype for use in a state machine"""
+
+    def __init__(self):
+        pass
+
+class _Constraint(object):
+    """This class defines a \xabconstraint\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
+
+    def __init__(self):
+        pass
+
+class _Package(object):
+    """This class defines a \xabpackage\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
 
     def __init__(self):
         pass
