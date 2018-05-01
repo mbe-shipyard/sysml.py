@@ -10,19 +10,7 @@ import traceback
 
 # developer notes: to use hidden vs unhidden attributes
 
-class Model(object):
-    """This class defines a SysML model for subsuming stereotypes which classify as either model elements or relationships.
-    """
-
-    def __init__(self, label=None, elements={}, relationships={}):
-        self.label = label
-        #elements
-        self.block = block
-
-    #@block.setter
-    #def block
-
-class _Block(object):
+class Block(object):
     """This class defines a \xabblock\xbb stereotype for use in a BDD
     (block definition diagram) or ibd (internal block diagram)
 
@@ -157,7 +145,7 @@ class _Block(object):
         else:
             raise TypeError("argument is not a dictionary!")
 
-class _Requirement(object):
+class Requirement(object):
     """This class defines a \xabrequirement\xbb stereotype for use in a requirements diagram"""
 
     stereotype = "\xabrequirement\xbb"
@@ -220,19 +208,19 @@ class _Requirement(object):
         for source in sourcev:
             self._verify.append(source)
 
-class _State(object):
+class State(object):
     """This class defines a \xabstate\xbb stereotype for use in a state machine"""
 
     def __init__(self):
         pass
 
-class _Constraint(object):
+class Constraint(object):
     """This class defines a \xabconstraint\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
 
     def __init__(self):
         pass
 
-class _Package(object):
+class Package(object):
     """This class defines a \xabpackage\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
 
     def __init__(self):
