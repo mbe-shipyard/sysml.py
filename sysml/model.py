@@ -5,7 +5,7 @@ The `Model` class consists of stereotypes which classify as either elements or r
 
 Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
-from sysmlpy.stereotypes import *
+from sysml.stereotypes import *
 import traceback
 
 # developer notes: to use hidden vs unhidden attributes

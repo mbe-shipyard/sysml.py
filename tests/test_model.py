@@ -1,17 +1,17 @@
-import sysmlpy
+import sysml
 import pytest
 
 @pytest.fixture
 def model():
     "Create a SysML model instance"
-    model = sysmlpy.Model('USS Enterprise')
+    model = sysml.Model('USS Enterprise')
     return model
 
 def test_elements(model):
     "Get model elements as a list of valid stereotypes"
-    enterprise = sysmlpy.Block('NCC-1701')
-    saucersection = sysmlpy.Block('Primary hull')
-    model.elements = [enterprise, saucersection, sysmlpy.Block('Secondary hull')]
+    enterprise = sysml.Block('NCC-1701')
+    saucersection = sysml.Block('Primary hull')
+    model.elements = [enterprise, saucersection, sysml.Block('Secondary hull')]
     assert repr(enterprise) == "\xabblock\xbb 'NCC-1701'"
     assert repr(saucersection) == "\xabblock\xbb 'Primary hull'"
     assert repr(model.elements) == "[\xabblock\xbb 'NCC-1701', \xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
@@ -38,7 +38,7 @@ def test_block_values(model):
     assert model.block['USS Enterprise'].values == {'P/N': 'NCC-1701', 'class': 'Constitution'}
 
 def test_block_references():
-    model = sysmlpy.BlockDefinitionDiagram('warp drive model')
+    model = sysml.BlockDefinitionDiagram('warp drive model')
     model.new_block('antimatter')
     model.new_block('antimatter injector')
     model.new_block('dilithium crystal chamber')
@@ -51,7 +51,7 @@ def test_block_references():
     assert repr(model.block['warp core'].references) == "[\xabblock\xbb 'antimatter']"
 
 def test_block_flowProperties():
-    model = sysmlpy.BlockDefinitionDiagram('warp drive model')
+    model = sysml.BlockDefinitionDiagram('warp drive model')
     model.new_block('antimatter')
     model.new_block('antimatter injector')
     model.new_block('dilithium crystal chamber')

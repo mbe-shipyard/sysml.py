@@ -1,4 +1,4 @@
-import sysmlpy
+import sysml
 import pytest
 
 @pytest.fixture

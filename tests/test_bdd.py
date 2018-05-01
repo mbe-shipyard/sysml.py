@@ -1,10 +1,10 @@
-import sysmlpy
+import sysml
 import pytest
 
 @pytest.fixture
 def model():
     "Create a SysML model instance"
-    model = sysmlpy.Model('USS Enterprise')
+    model = sysml.Model('USS Enterprise')
     return model
 
 @pytest.fixture
@@ -42,7 +42,7 @@ def test_block_values(model):
     assert model.block['USS Enterprise'].values == {'P/N': 'NCC-1701', 'class': 'Constitution'}
 
 def test_block_references():
-    model = sysmlpy.BlockDefinitionDiagram('warp drive model')
+    model = sysml.BlockDefinitionDiagram('warp drive model')
     model.new_block('antimatter')
     model.new_block('antimatter injector')
     model.new_block('dilithium crystal chamber')
@@ -55,7 +55,7 @@ def test_block_references():
     assert repr(model.block['warp core'].references) == "[\xabblock\xbb 'antimatter']"
 
 def test_block_flowProperties():
-    model = sysmlpy.BlockDefinitionDiagram('warp drive model')
+    model = sysml.BlockDefinitionDiagram('warp drive model')
     model.new_block('antimatter')
     model.new_block('antimatter injector')
     model.new_block('dilithium crystal chamber')
