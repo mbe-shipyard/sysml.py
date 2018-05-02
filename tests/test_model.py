@@ -23,9 +23,13 @@ def test_set_and_get_item(model):
     model["block-1"] = enterprise
     model["block-2"] = saucersection
     model["block-3"] = sysml.Block('Secondary hull')
+    print(sysml.Model._validStereotypes.keys())
     assert repr(model["block-1"]) == "\xabblock\xbb 'NCC-1701'"
     assert repr(model["block-2"]) == "\xabblock\xbb 'Primary hull'"
     assert repr(model["block-3"]) == "\xabblock\xbb 'Secondary hull'"
+    with pytest.raises(ValueError) as e_info:
+        model["blob-1"] = sysml.Block('Alien Blob')
+    # assert repr(e_info) == "blob-1 is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'block-42' "
 
 # @pytest.fixture
 # def add_blocks(model):

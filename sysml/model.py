@@ -6,6 +6,7 @@ The `Model` class is used to instantiate a central namespace for a SysML model b
 Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
 from sysml.stereotypes import *
+import re
 
 # developer notes: to use hidden vs unhidden attributes
 
@@ -25,15 +26,14 @@ class Model(object):
         # All model elements and model relationships are stored as key-value pairs, where keys are generated upon assimilation
         self._collective = {}
 
-    def __setitem__(self, idKey, item):
-        "Adds or rewrites stereotype-valid model element or relationship into model"
-        try:
-            stereotype, id_no = idKey.split('-')
-            if stereotype in Model._validStereotypes.keys() and isinstance(int(id_no),int):
-                stereotypeInstance = Model._validStereotypes[stereotype](label=item.label)
-                self._collective[idKey] = stereotypeInstance
-        except:
-            raise TypeError(idKey + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'block-42' ")
+    def __setitem__(self, idKey, item, overwrite=True):
+        "Adds stereotype-valid model element or relationship into model"
+        stereotype, id_no = idKey.split('-')
+        if stereotype in Model._validStereotypes.keys() and isinstance(int(id_no),int):
+            stereotypeInstance = Model._validStereotypes[stereotype](label=item.label)
+            self._collective[idKey] = stereotypeInstance
+        else:
+            raise ValueError(idKey + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'block-42' ")
 
     def __getitem__(self, idKey):
         "Returns data for key-specified model element or relationship"
@@ -52,7 +52,7 @@ class Model(object):
         """
         for element in elements:
             if type(element) not in Model._validStereotypes.values():
-                raise TypeError(element + "is not a valid stereotype.")
+                raise TypeError(element + " is not a valid stereotype.")
         self._elements = elements
 
     @property
