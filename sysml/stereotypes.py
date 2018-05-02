@@ -6,8 +6,6 @@ The `Model` class consists of stereotypes which classify as either elements or r
 Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
 
-import traceback
-
 # developer notes: to use hidden vs unhidden attributes
 
 class Block(object):
@@ -41,22 +39,19 @@ class Block(object):
     """
 
     stereotype = "\xabblock\xbb"
-    _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
     def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None):
         # Label
         if label is None:
-            Block._id_no += 1
             self.label = 'Block' + str(Block._id_no)
         elif type(label) is str:
             self.label = label
         else:
             raise TypeError("argument is not a string!")
+        """
         ## Value Property
-        if values is None:
-            self._values = {}
-        elif type(values) is dict:
+        if type(values) is dict:
             self._values = values
         else:
             raise TypeError("argument is not a dictionary!")
@@ -85,6 +80,7 @@ class Block(object):
         self.operations = []
         ## Constraints
         self.constaints = []
+        """
     def __repr__(self):
         return "\xabblock\xbb '{}'".format(self.label)
     ## Getters
@@ -101,49 +97,53 @@ class Block(object):
     def flowProperties(self):
         return self._flowProperties
 
-    ## Setters
-    def add_parts(self, *partv):
-        """add one or more Blocks to parts
-
-        """
-        for part in partv:
-            if type(part) is Block:
-                self._parts.append(part)
-            else:
-                raise TypeError("argument is not a 'Block'!")
-    def add_references(self, *referencev):
-        """add one or more Blocks to references
-
-        """
-        for reference in referencev:
-            if type(reference) is Block:
-                self._references.append(reference)
-            else:
-                raise TypeError("argument is not a 'Block'!")
-    def add_values(self, values):
-        """add values dictionary to values
-
-        """
-        if type(values) is dict:
-            for key in values:
-                if type(key) is str:
-                    self.values[key] = values[key]
-                else:
-                    raise TypeError("key is not a string!")
-        else:
-            raise TypeError("argument is not a dictionary!")
-    def add_flowProperties(self, flowProperties):
-        """add flowProperties dictionary to flowProperties
-
-        """
-        if type(flowProperties) is dict:
-            for flowPort in flowProperties:
-                if type(flowPort) is str:
-                    self._flowProperties[flowPort] = flowProperties[flowPort]
-                else:
-                    raise TypeError("key is not a string!")
-        else:
-            raise TypeError("argument is not a dictionary!")
+    # ## Setters
+    # @parts.setter
+    # def parts(self, *partv):
+    #     """add one or more Blocks to parts
+    #
+    #     """
+    #     for part in partv:
+    #         if type(part) is Block:
+    #             self._parts.append(part)
+    #         else:
+    #             raise TypeError("argument is not a 'Block'!")
+    # @references.setter
+    # def references(self, *referencev):
+    #     """add one or more Blocks to references
+    #
+    #     """
+    #     for reference in referencev:
+    #         if type(reference) is Block:
+    #             self._references.append(reference)
+    #         else:
+    #             raise TypeError("argument is not a 'Block'!")
+    # @values.setter
+    # def values(self, values):
+    #     """add values dictionary to values
+    #
+    #     """
+    #     if type(values) is dict:
+    #         for key in values:
+    #             if type(key) is str:
+    #                 self.values[key] = values[key]
+    #             else:
+    #                 raise TypeError("key is not a string!")
+    #     else:
+    #         raise TypeError("argument is not a dictionary!")
+    # @flowProperties.setter
+    # def flowProperties(self, flowProperties):
+    #     """add flowProperties dictionary to flowProperties
+    #
+    #     """
+    #     if type(flowProperties) is dict:
+    #         for flowPort in flowProperties:
+    #             if type(flowPort) is str:
+    #                 self._flowProperties[flowPort] = flowProperties[flowPort]
+    #             else:
+    #                 raise TypeError("key is not a string!")
+    #     else:
+    #         raise TypeError("argument is not a dictionary!")
 
 class Requirement(object):
     """This class defines a \xabrequirement\xbb stereotype for use in a requirements diagram"""

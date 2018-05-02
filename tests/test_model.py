@@ -8,7 +8,7 @@ def model():
     return model
 
 def test_elements(model):
-    "Get model elements as a list of valid stereotypes"
+    "Set and get model elements as a list of valid stereotypes"
     enterprise = sysml.Block('NCC-1701')
     saucersection = sysml.Block('Primary hull')
     model.elements = [enterprise, saucersection, sysml.Block('Secondary hull')]
@@ -16,17 +16,34 @@ def test_elements(model):
     assert repr(saucersection) == "\xabblock\xbb 'Primary hull'"
     assert repr(model.elements) == "[\xabblock\xbb 'NCC-1701', \xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
 
-"""
-def get_modelID(get_elements):
-    "Get model element ID names"
-    assert repr(model._ids) == "\xabblock\xbb 'NCC-1701'"
-"""
+def test_set_and_get_item(model):
+    "Model elements should be assigned a unique id, and accessible as key-value pair, upon assimilation"
+    enterprise = sysml.Block('NCC-1701')
+    saucersection = sysml.Block('Primary hull')
+    model["block-1"] = enterprise
+    model["block-2"] = saucersection
+    model["block-3"] = sysml.Block('Secondary hull')
+    assert repr(model["block-1"]) == "\xabblock\xbb 'NCC-1701'"
+    assert repr(model["block-2"]) == "\xabblock\xbb 'Primary hull'"
+    assert repr(model["block-3"]) == "\xabblock\xbb 'Secondary hull'"
 
-@pytest.fixture
-def create_relationships(add_blocks):
-    "Define relationships between model elements as a list of edges"
-    model.add_relationship(source = model.block['NCC-1701'], target = [saucersection, model.block['Secondary hull']], stereotype='composition')
-    return model
+# @pytest.fixture
+# def add_blocks(model):
+#     "add block(s) to model using built-in 'add_block()' method"
+#     enterprise = sysml.Block('NCC-1701')
+#     saucersection = sysml.Block('Primary hull')
+#     model.add_block(enterprise)
+#     model.add_block(saucersection, sysml.Block('Secondary hull'))
+#     return model
+#
+# def test_add_blocks(add_blocks):
+#     assert repr(model.elements) == "[\xabblock\xbb 'NCC-1701', \xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
+#
+# @pytest.fixture
+# def create_relationships(add_blocks):
+#     "Define relationships between model elements as a list of edges"
+#     model.add_relationship(source = model.block['NCC-1701'], target = [saucersection, model.block['Secondary hull']], stereotype='composition')
+#     return model
 
 """
 def test_block_parts(add_block_relationships):
