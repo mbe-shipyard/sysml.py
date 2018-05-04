@@ -1,15 +1,17 @@
 """
-The `Model` class consists of stereotypes which classify as either elements or relationships
+The `stereotypes` module contains all model elements that are valid for use by the `model` class
 
 ---------
 
 Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
 
+import uuid
+
 # developer notes: to use hidden vs unhidden attributes
 
 class Block(object):
-    """This class defines a \xabblock\xbb stereotype for use in a BDD
+    """This class defines a \xabblock\xbb stereotype for use in a bdd
     (block definition diagram) or ibd (internal block diagram)
 
     Parameters
@@ -29,26 +31,27 @@ class Block(object):
     --------
     >>> warpcore = Block(label='warp core',
     ...                 parts=[antimatterinjector, Dilithiumcrystalchamber],
-    ...                 flowProperties={'in':{'inflow':'antimatter'},
-                                        'out':{'outflow':'power'}})
-    ...         references=[antimatter])
+    ...                 flow={'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
+    ...                 references=[antimatter])
     >>> warpdrive = Block(label='warp drive',
-    ...             values={'class':7},
-    ...             parts=[antimattercontainment, warpcore, plasmainducer],
+    ...                 values={'class-7'},
+    ...                 parts=[antimattercontainment, warpcore, plasmainducer],
 
     """
 
+    _id_no = 0
     stereotype = "\xabblock\xbb"
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
     def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None):
         # Label
         if label is None:
-            self.label = 'Block' + str(Block._id_no)
-        elif type(label) is str:
-            self.label = label
+            Block._id_no += 1
+            self._label = 'Block' + str(Block._id_no)
+        elif type(label) is not str:
+            raise TypeError(label + " must be a string")
         else:
-            raise TypeError("argument is not a string!")
+            self._label = label
         """
         ## Value Property
         if type(values) is dict:
@@ -70,7 +73,7 @@ class Block(object):
         else:
             raise TypeError("argument is not a list!")
         ## Flow Property
-        if flowProperties is None:
+        if flows is None:
             self._flowProperties = {}
         elif type(flowProperties) is dict:
             self._flowProperties = flowProperties
@@ -82,22 +85,56 @@ class Block(object):
         self.constaints = []
         """
     def __repr__(self):
-        return "\xabblock\xbb '{}'".format(self.label)
+        return "\xabblock\xbb '{}'".format(self._label)
+
     ## Getters
+    @property
+    def label(self):
+        "Returns block label"
+        return self._label
+
+    @property
+    def uuid(self):
+        "Returns block uuid"
+        return self._uuid
+
     @property
     def parts(self):
         return self._parts
+
     @property
     def values(self):
         return self._values
+
     @property
     def references(self):
         return self._references
+
     @property
-    def flowProperties(self):
+    def flows(self):
         return self._flowProperties
 
-    # ## Setters
+    ## Setters
+    @label.setter
+    def label(self, label):
+        "Sets block label"
+        if type(label) is not str:
+            raise TypeError(label + " must be a string")
+        else:
+            self._label = label
+
+    @uuid.setter
+    def uuid(self, UUID):
+        "Sets block uuid"
+        if type(UUID) is not str:
+            raise TypeError(label + " must be a string")
+        else:
+            try:
+                uuid.UUID(UUID, version=1)
+                self._uuid = UUID
+            except:
+                raise ValueError(UUID + " must be a valid uuid of type, string")
+
     # @parts.setter
     # def parts(self, *partv):
     #     """add one or more Blocks to parts

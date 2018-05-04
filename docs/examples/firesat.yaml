@@ -90,7 +90,7 @@ elements: # model elements are treated as a dictionary of nodes
         label: Development 2 # Impacting factors include Sponsoring organisation
         text: No unique operations people at data distribution nodes
 
-relationships: # model relationships are treated as a list edges
+relationships: # model relationships are treated as a dictionary of edges
 # note that the anchors created in `elements` are being used to reference list items treated as source and target nodes
     import-1:
         source: package-1

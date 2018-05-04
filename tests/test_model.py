@@ -30,7 +30,7 @@ def test_key_assigned_model_elements(set_key_assigned_model_elements):
     with pytest.raises(ValueError):
         model["blob-1"] = sysml.Block('Jalad')
 
-def test_has_valid_uuid(set_key_assigned_model_elements):
+def test_element_has_valid_uuid(set_key_assigned_model_elements):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = set_key_assigned_model_elements
     assert uuid.UUID(model["block-1"].uuid, version=1)
