@@ -1,47 +1,90 @@
 import sysml
 import pytest
+import uuid
 
+# Notes: block elements with starting property attributes should be broken down into granular blocks and assigned id's & relationships upon assimilation into model.
 @pytest.fixture
 def model():
     "Create a SysML model instance"
     model = sysml.Model('USS Enterprise')
     return model
 
-def test_set_and_get_item(model):
-    "Set and get model elements or relationships using valid key"
+@pytest.fixture
+def set_key_assigned_model_elements(model):
+    "Set model elements using valid key"
     enterprise = sysml.Block('NCC-1701')
     saucersection = sysml.Block('Primary hull')
     model["block-1"] = enterprise
     model["block-2"] = saucersection
     model["block-3"] = sysml.Block('Secondary hull')
+    return model
+
+def test_key_assigned_model_elements(set_key_assigned_model_elements):
+    "Set and get model elements or relationships using valid key"
+    model = set_key_assigned_model_elements
     assert repr(model["block-1"]) == "\xabblock\xbb 'NCC-1701'"
     assert repr(model["block-2"]) == "\xabblock\xbb 'Primary hull'"
     assert repr(model["block-3"]) == "\xabblock\xbb 'Secondary hull'"
-    with pytest.raises(TypeError) as e_info:
-        model["block-1"] = {"block-1": str('Alien Blob')}
-    with pytest.raises(ValueError) as e_info:
-        model["blob-1"] = sysml.Block('Alien Blob')
-    # assert repr(e_info) == "blob-1 is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'block-42' "
+    with pytest.raises(TypeError):
+        model["block-1"] = "Darmok"
+    with pytest.raises(ValueError):
+        model["blob-1"] = sysml.Block('Jalad')
 
-def test_elements(model):
+def test_has_valid_uuid(set_key_assigned_model_elements):
+    "Model elements should be assigned a uuid upon assimilation into model"
+    model = set_key_assigned_model_elements
+    assert uuid.UUID(model["block-1"].uuid, version=1)
+
+def test_attribute_assigned_model_elements(set_key_assigned_model_elements):
     "Set and get model elements using valid key"
-    enterprise = sysml.Block('NCC-1701')
-    saucersection = sysml.Block('Primary hull')
-    model.elements = {"block-1":enterprise, 'block-2':saucersection, 'block-3':sysml.Block('Secondary hull')}
-    assert repr(enterprise) == "\xabblock\xbb 'NCC-1701'"
-    assert repr(saucersection) == "\xabblock\xbb 'Primary hull'"
-    assert repr(model.elements['block-1']) == "\xabblock\xbb 'NCC-1701'"
-    assert repr(model.elements['block-2']) == "\xabblock\xbb 'Primary hull'"
-    assert repr(model.elements['block-3']) == "\xabblock\xbb 'Secondary hull'"
-    with pytest.raises(TypeError) as e_info:
-        model.elements = {"block-1": str('Alien Blob')}
-    with pytest.raises(ValueError) as e_info:
-        model.elements = {"blob-1": sysml.Block('Alien Blob')}
+    warpcore = sysml.Block('warp core')
+    model.elements = {"block-1":warpcore}
+    # model.elements = {'block-1': 42}
+    assert repr(model.elements['block-1']) == "\xabblock\xbb 'warp core'"
+    with pytest.raises(KeyError):
+        repr(model.elements['block-2'])
+    # with pytest.raises(TypeError):
+    #     model.elements = {'block-1': 42}
+    # with pytest.raises(ValueError):
+    #     model.elements = {'blob-1': sysml.Block('Jalad')}
 
-# def test_relationships(model):
-#     "Define relationships between model elements as source-target pairs"
-#     model.add_relationship(source = model.block['NCC-1701'], target = [saucersection, model.block['Secondary hull']], stereotype='composition')
-#     return model
+@pytest.fixture
+def set_key_assigned_model_relationships(set_key_assigned_model_elements):
+    "Set model relationships using valid key"
+    model = set_key_assigned_model_elements
+    model["partProperty-1"] = {"source":"block-1", "target":["block-2", "block-3"]}
+    return model
+
+def test_key_assigned_model_relationships(set_key_assigned_model_elements):
+    "Get model relationships using valid key"
+    model = set_key_assigned_model_elements
+    partProperty1 = model["partProperty-1"]
+    assert partProperty1["source"] == "block-1"
+    assert partProperty1["target"][0] == "block-2"
+    assert partProperty1["target"][1] == "block-3"
+    # with pytest.raises(TypeError):
+    #     model.relationships = {"partProperty-1": str('Darmok')}
+    # with pytest.raises(ValueError):
+    #     model.relationships = {"blob-1": sysml.Block('Jalad')}
+
+@pytest.fixture
+def set_attribute_assigned_relationships(set_key_assigned_model_elements):
+    "Define relationships between model elements as a dictionary of source-target pairs"
+    model = set_key_assigned_model_elements
+    model.relationships = {"partProperty-1": {"source":"block-1", "target":["block-2", "block-3"]}}
+    return model
+
+def test_attribute_assigned_relationships(set_attribute_assigned_relationships):
+    "Model relationships should return id Keys of model elements as a dictionary of source-target pairs, but should internally use uuid's"
+    model = set_relationships
+    partProperty1 = model["partProperty-1"]
+    assert partProperty1["source"] == "block-1"
+    assert partProperty1["target"][0] == "block-2"
+    assert partProperty1["target"][1] == "block-3"
+    with pytest.raises(TypeError):
+        model.relationships = {"partProperty-1": str('Darmok')}
+    with pytest.raises(ValueError):
+        model.relationships = {"blob-1": sysml.Block('Jalad')}
 
 # @pytest.fixture
 # def add_blocks(model):
