@@ -48,6 +48,12 @@ def test_attribute_assigned_model_elements(set_key_assigned_model_elements):
     # with pytest.raises(ValueError):
     #     model.elements = {'blob-1': sysml.Block('Jalad')}
 
+def test_generateKey_elements(set_key_assigned_model_elements):
+    model = set_key_assigned_model_elements
+    assert model._generateKey(model["block-1"], 9999) == 'block-4'
+    with pytest.raises(TypeError):
+        model._generateKey("block-1", 9999)
+
 @pytest.fixture
 def set_key_assigned_model_relationships(set_key_assigned_model_elements):
     "Set model relationships using valid key"

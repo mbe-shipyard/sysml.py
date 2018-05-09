@@ -59,12 +59,12 @@ class Model(object):
         # All model relationships stored as a dictionary of key-value pairs
         self._relationships = relationships
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key, stereotype):
         "Sets/overwrites stereotype-valid model element or relationship into model"
         if self._isValidElementKey(key):
-            self._setElement(key, item)
+            self._setElement(key, stereotype)
         elif self._isValidRelationshipKey(key):
-            self._setRelationship(key, item)
+            self._setRelationship(key, stereotype)
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
 
@@ -97,7 +97,7 @@ class Model(object):
             raise TypeError(repr(elements) + " must be a dictionary.")
         else:
             for key in elements.keys():
-                self._setElements(key,elements[key])
+                self._setElements(key, elements[key])
 
     @relationships.setter
     def relationships(self, relationships):
@@ -112,15 +112,25 @@ class Model(object):
                 raise TypeError(relationships[key] + " is not a valid stereotype.")
         self._relationships = relationships
 
-    def _setElement(self, key, element):
-        # if not self._isValidElementKey(key):
-        #     raise ValueError(key + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'block-42' ")
-        if not self._isValidElement(element):
-            raise TypeError(repr(element) + " is not a valid stereotype.")
+    def _setElement(self, key, stereotype):
+        if key is None:
+            key = _generateKey(stereotype)
+        if not self._isValidElement(stereotype):
+            raise TypeError(repr(stereotype) + " is not a valid stereotype.")
         else:
-            self._elements[key] = element
-
+            self._elements[key] = stereotype
             self._elements[key].uuid = str(uuid.uuid1())
+
+    def _generateKey(self, stereotype, maxId_no):
+        if self._isValidElement(stereotype):
+            for validElement in self._validElements.keys():
+                if isinstance(stereotype, self._validElements[validElement]):
+                    for id_no in range(1, maxId_no):
+                        newKey = validElement + "-" + str(id_no)
+                        if newKey not in self._elements.keys():
+                            return newKey
+        else:
+            raise TypeError(stereotype + " is not a valid stereotype.")
 
     def _setRelationship(self, key, edge):
         # if not self._isValidRelationshipKey(key):
@@ -138,22 +148,22 @@ class Model(object):
 
     @classmethod
     def _isValidElementKey(cls, key):
-        stereotypeName, id_no = key.split('-')
-        return stereotypeName in cls._validElements.keys() and isinstance(int(id_no),int)
+        elementName, id_no = key.split('-')
+        return elementName in cls._validElements.keys() and isinstance(int(id_no),int)
 
     @classmethod
-    def _isValidElement(cls, item):
-        return type(item) in cls._validElements.values()
+    def _isValidElement(cls, stereotype):
+        return type(stereotype) in cls._validElements.values()
 
     @classmethod
     def _isValidRelationshipKey(cls, key):
-        stereotypeName, id_no = key.split('-')
-        return stereotypeName in cls._validRelationships.keys() and isinstance(int(id_no),int)
+        relationship, id_no = key.split('-')
+        return relationship in cls._validRelationships.keys() and isinstance(int(id_no),int)
 
     @classmethod
-    def _isValidSource(cls, relationshipKey, source):
-        return source in cls._validRelationships[relationshipKey]['source']
+    def _isValidSource(cls, relationship, source):
+        return source in cls._validRelationships[relationship]['source']
 
     @classmethod
-    def _isValidTarget(cls, relationshipKey, target):
-        return target in cls._validRelationships[relationshipKey]['target']
+    def _isValidTarget(cls, relationship, target):
+        return target in cls._validRelationships[relationship]['target']
