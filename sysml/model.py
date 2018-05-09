@@ -77,6 +77,12 @@ class Model(object):
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
 
+    def add_elements(self, *stereotypev):
+        "Sets/overwrites stereotype-valid model element or relationship into model"
+        for stereotype in stereotypev:
+            key = self._generateKey(stereotype, 9999)
+            self._setElement(key, stereotype)
+
     @property
     def elements(self):
         "Returns dictionary of model elements"

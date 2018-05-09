@@ -54,6 +54,15 @@ def test_generateKey_elements(set_key_assigned_model_elements):
     with pytest.raises(TypeError):
         model._generateKey("block-1", 9999)
 
+def test_add_elements(model):
+    "add block(s) to model using built-in 'add_block()' method"
+    enterprise = sysml.Block('NCC-1701')
+    saucersection = sysml.Block('Primary hull')
+    model.add_elements(enterprise, saucersection, sysml.Block('Secondary hull'))
+    assert repr(model["block-1"]) == "\xabblock\xbb 'NCC-1701'"
+    assert repr(model["block-2"]) == "\xabblock\xbb 'Primary hull'"
+    assert repr(model["block-3"]) == "\xabblock\xbb 'Secondary hull'"
+
 @pytest.fixture
 def set_key_assigned_model_relationships(set_key_assigned_model_elements):
     "Set model relationships using valid key"
@@ -91,18 +100,6 @@ def test_attribute_assigned_relationships(set_attribute_assigned_relationships):
         model.relationships = {"partProperty-1": str('Darmok')}
     with pytest.raises(ValueError):
         model.relationships = {"blob-1": sysml.Block('Jalad')}
-
-# @pytest.fixture
-# def add_blocks(model):
-#     "add block(s) to model using built-in 'add_block()' method"
-#     enterprise = sysml.Block('NCC-1701')
-#     saucersection = sysml.Block('Primary hull')
-#     model.add_block(enterprise)
-#     model.add_block(saucersection, sysml.Block('Secondary hull'))
-#     return model
-#
-# def test_add_blocks(add_blocks):
-#     assert repr(model.elements) == "[\xabblock\xbb 'NCC-1701', \xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
 
 """
 def test_block_parts(add_block_relationships):
