@@ -36,10 +36,11 @@ def test_element_has_valid_uuid(set_key_assigned_model_elements):
     assert uuid.UUID(model["block-1"].uuid, version=1)
 
 def test_attribute_assigned_model_elements(set_key_assigned_model_elements):
-    "Set and get model elements using valid key"
+    "Defines/overwrites and gets model elements using attribute assignments"
     warpcore = sysml.Block('warp core')
     model.elements = {"block-1":warpcore}
     # model.elements = {'block-1': 42}
+    assert repr(model.elements) == "{'block-1': \xabblock\xbb 'warp core'}"
     assert repr(model.elements['block-1']) == "\xabblock\xbb 'warp core'"
     with pytest.raises(KeyError):
         repr(model.elements['block-2'])
@@ -67,16 +68,20 @@ def test_add_elements(model):
 def set_key_assigned_model_relationships(set_key_assigned_model_elements):
     "Set model relationships using valid key"
     model = set_key_assigned_model_elements
-    model["partProperty-1"] = {"source":"block-1", "target":["block-2", "block-3"]}
+    model["partProperty-1"] = {"source":"block-1", "target":"block-2", "relationshipType":"partProperty"}
+    model["partProperty-2"] = {"source":"block-1", "target": "block-3", "relationshipType":"partProperty"}
     return model
 
-def test_key_assigned_model_relationships(set_key_assigned_model_elements):
+def test_key_assigned_model_relationships(set_key_assigned_model_relationships):
     "Get model relationships using valid key"
-    model = set_key_assigned_model_elements
+    model = set_key_assigned_model_relationships
+    assert model.relationships == {"partProperty-1": {"source":"block-1", "target":"block-2", "relationshipType":"partProperty"}, "partProperty-2": {"source":"block-1", "target":"block-3", "relationshipType":"partProperty"}}
     partProperty1 = model["partProperty-1"]
     assert partProperty1["source"] == "block-1"
-    assert partProperty1["target"][0] == "block-2"
-    assert partProperty1["target"][1] == "block-3"
+    assert partProperty1["target"] == "block-2"
+    partProperty2 = model["partProperty-2"]
+    assert partProperty2["source"] == "block-1"
+    assert partProperty2["target"] == "block-3"
     # with pytest.raises(TypeError):
     #     model.relationships = {"partProperty-1": str('Darmok')}
     # with pytest.raises(ValueError):
@@ -84,18 +89,15 @@ def test_key_assigned_model_relationships(set_key_assigned_model_elements):
 
 @pytest.fixture
 def set_attribute_assigned_relationships(set_key_assigned_model_elements):
-    "Define relationships between model elements as a dictionary of source-target pairs"
+    "Define/overwrites relationships between model elements as a dictionary of source-target pairs"
     model = set_key_assigned_model_elements
-    model.relationships = {"partProperty-1": {"source":"block-1", "target":["block-2", "block-3"]}}
+    model.relationships = {'partProperty-1': {'source':'block-1', 'target':'block-2', 'relationshipType':'partProperty'}, 'partProperty-2': {'source':'block-1', 'target':'block-3', 'relationshipType':'partProperty'}}
     return model
 
 def test_attribute_assigned_relationships(set_attribute_assigned_relationships):
     "Model relationships should return id Keys of model elements as a dictionary of source-target pairs, but should internally use uuid's"
-    model = set_relationships
-    partProperty1 = model["partProperty-1"]
-    assert partProperty1["source"] == "block-1"
-    assert partProperty1["target"][0] == "block-2"
-    assert partProperty1["target"][1] == "block-3"
+    model = set_attribute_assigned_relationships
+    assert model.relationships == {'partProperty-1': {'source':'block-1', 'target':'block-2', 'relationshipType':'partProperty'}, 'partProperty-2': {'source':'block-1', 'target':'block-3', 'relationshipType':'partProperty'}}
     with pytest.raises(TypeError):
         model.relationships = {"partProperty-1": str('Darmok')}
     with pytest.raises(ValueError):
