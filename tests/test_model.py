@@ -51,9 +51,9 @@ def test_attribute_assigned_model_elements(set_key_assigned_model_elements):
 
 def test_generateKey_elements(set_key_assigned_model_elements):
     model = set_key_assigned_model_elements
-    assert model._generateKey(model["block-1"], 9999) == 'block-4'
+    assert model._generateKey(model["block-1"], len(model._elements)+1) == 'block-4'
     with pytest.raises(TypeError):
-        model._generateKey("block-1", 9999)
+        model._generateKey("block-1", len(model._relationships)+1)
 
 def test_add_elements(model):
     "add block(s) to model using built-in 'add_block()' method"
@@ -105,9 +105,9 @@ def test_attribute_assigned_relationships(set_attribute_assigned_relationships):
 
 def test_generateKey_relationships(set_key_assigned_model_relationships):
     model = set_key_assigned_model_relationships
-    assert model._generateKey(model["partProperty-1"], 9999) == 'partProperty-3'
+    assert model._generateKey(model["partProperty-1"], len(model._relationships)+1) == 'partProperty-3'
     with pytest.raises(TypeError):
-        model._generateKey("partProperty-1", 9999)
+        model._generateKey("partProperty-1", len(model._relationships)+1)
 
 """
 def test_block_parts(add_block_relationships):

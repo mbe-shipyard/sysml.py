@@ -124,9 +124,16 @@ class Model(object):
         if self._isValidElement(stereotype):
             for validElement in self._validElements.keys():
                 if isinstance(stereotype, self._validElements[validElement]):
-                    for id_no in range(1, maxId_no):
+                    for id_no in range(1, maxId_no+1):
                         newKey = validElement + "-" + str(id_no)
                         if newKey not in self._elements.keys():
+                            return newKey
+        elif self._isValidRelationship(stereotype):
+            for validRelationship in self._validRelationships.keys():
+                if stereotype["relationshipType"] is validRelationship:
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validRelationship + "-" + str(id_no)
+                        if newKey not in self._relationships.keys():
                             return newKey
         else:
             raise TypeError(stereotype + " is not a valid stereotype.")
