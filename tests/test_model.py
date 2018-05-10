@@ -103,6 +103,12 @@ def test_attribute_assigned_relationships(set_attribute_assigned_relationships):
     with pytest.raises(ValueError):
         model.relationships = {"blob-1": sysml.Block('Jalad')}
 
+def test_generateKey_relationships(set_key_assigned_model_relationships):
+    model = set_key_assigned_model_relationships
+    assert model._generateKey(model["partProperty-1"], 9999) == 'partProperty-3'
+    with pytest.raises(TypeError):
+        model._generateKey("partProperty-1", 9999)
+
 """
 def test_block_parts(add_block_relationships):
     assert repr(model.block['NCC-1701'].parts) == "[\xabblock\xbb 'Primary hull', \xabblock\xbb 'Secondary hull']"
