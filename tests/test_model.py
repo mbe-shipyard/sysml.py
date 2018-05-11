@@ -56,7 +56,8 @@ def test_generateKey_elements(set_key_assigned_model_elements):
         model._generateKey("block-1", len(model._relationships)+1)
 
 def test_add_elements(model):
-    "add block(s) to model using built-in 'add_block()' method"
+    """Add element(s) to model using built-in 'add_elements()' method
+    Note: model keys are internally generated"""
     enterprise = sysml.Block('NCC-1701')
     saucersection = sysml.Block('Primary hull')
     model.add_elements(enterprise, saucersection, sysml.Block('Secondary hull'))
@@ -108,6 +109,19 @@ def test_generateKey_relationships(set_key_assigned_model_relationships):
     assert model._generateKey(model["partProperty-1"], len(model._relationships)+1) == 'partProperty-3'
     with pytest.raises(TypeError):
         model._generateKey("partProperty-1", len(model._relationships)+1)
+
+def test_add_relationships(set_key_assigned_model_elements):
+    """Add relationships to model using built-in 'add_relationships()' method.
+    Note: model keys are internally generated"""
+    model = set_key_assigned_model_elements
+    model.add_relationships({"source":"block-1", "target":"block-2", "relationshipType":"partProperty"}, {"source":"block-1", "target": "block-3", "relationshipType":"partProperty"})
+    # assert model.relationships == {"partProperty-1": {"source":"block-1", "target":"block-2", "relationshipType":"partProperty"}, "partProperty-2": {"source":"block-1", "target":"block-3", "relationshipType":"partProperty"}}
+    partProperty1 = model["partProperty-1"]
+    assert partProperty1["source"] == "block-1"
+    assert partProperty1["target"] == "block-2"
+    partProperty2 = model["partProperty-2"]
+    assert partProperty2["source"] == "block-1"
+    assert partProperty2["target"] == "block-3"
 
 """
 def test_block_parts(add_block_relationships):
