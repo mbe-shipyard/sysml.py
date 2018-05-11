@@ -125,6 +125,73 @@ class Model(object):
             else:
                 self._setRelationship(key, relationships[key])
 
+    ## Structure
+    def bdd(self, elementKey):
+        """Generates a BlockDefinitionDiagram for a valid model element key
+
+        A block definition diagram describes the system hierarchy and system/component classifications.
+        """
+        pass
+
+    def ibd(self, elementKey):
+        """Generates an internal block diagram for a valid model element key
+
+        The internal block diagram describes the internal structure of a system in terms of its parts, ports, and connectors.
+        """
+        pass
+
+    def PackageDiagram(self, elementKey):
+        """Generates a package diagram for a valid model element key
+
+        The package diagram is used to organize the model.
+        """
+        pass
+
+    ## Behavior
+    def sd(self, elementKey):
+        """Generates a sequence diagram for a valid model element key
+
+        A sequence diagram represents the interaction between collaborating parts of a system.
+        """
+        pass
+
+    def stm(self, elementKey):
+        """Generates a state machine diagram for a valid model element key
+
+        The state machine diagram describes the state transitions and actions that a system or its parts perform in response to events.
+         """
+        pass
+
+    def act(self, elementKey):
+        """Generates an activity diagram for a valid model element key
+
+        The activity diagram represents the flow of data and control between activities.
+        """
+        pass
+
+    def uc(self, elementKey):
+        """Generates a use case diagram for a valid model element key
+
+        A use-case diagram provides a high-level description of functionality that is achieved through interaction among systems or system parts.
+        """
+        pass
+
+    ## Requirements
+    def req(self, elementKey):
+        """Generates a requirement diagram for a valid model element key
+
+        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
+        """
+        pass
+
+    ## Parametrics
+    def par(self, elementKey):
+        """Generates a parametric diagram for a valid model element key
+
+        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
+        """
+        pass
+
     def _generateKey(self, stereotype, maxId_no):
         if self._isValidElement(stereotype):
             for validElement in self._validElements.keys():
