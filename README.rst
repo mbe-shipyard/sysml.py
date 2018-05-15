@@ -2,19 +2,19 @@
  SysML.py
 ============================
 
-A Python package for the Systems Modeling Language (SysML) - a general purpose modeling language that supports analysis, design, and verification of complex systems.
+A Python package for the Systems Modeling Language (SysML) - a general-purpose modeling language for systems engineering applications.
 
 The design intent of this project is to provide an object-oriented programming (OOP) paradigm for model-based systems engineering.
 
 Package Overview
 ----------------
-This python package primarily consists of 3 core modules:
+This python package consists of 3 modules:
 
-- ``stereotypes.py`` contains the "grammar" of SysML by providing class objects for the core SysML "stereotypes" (e.g., «block», «requirement», «constraint», «refine», «satisfy», etc.).
+- The ``system.py`` module contains the ``Model()`` class for creating *system model objects* to serve as a central repository for model elements (or relationships between elements), and provides instance methods for generating the 9 `SysML diagrams <http://sysmlforum.com/includes/what-are-sysml-diagram-types.html>`_.
 
-- ``model.py`` contains the "Model" class for subsuming stereotypes into model elements or model relationships, and provides instance methods for generating the 9 `SysML diagrams <http://sysmlforum.com/includes/what-are-sysml-diagram-types.html>`_.
+- The ``elements.py`` module contains the *grammar* of SysML by providing classes for creating *model element objects* (e.g., package, block, constraintBlock, requirement, etc.). These objects are meant to be used internally by system model objects.
 
-- ``parser.py`` contains a parser for importing SysML models from, or exporting to, a YAML file.
+- The ``parser.py`` module contains a parser for importing SysML models from, or exporting to, a YAML file.
 
 Developer Notes
 ---------------
