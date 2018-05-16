@@ -20,6 +20,11 @@ def test_add_package(add_package):
     model = add_package
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
 
+def test_package_has_valid_uuid(add_package):
+    "Model elements should be assigned a uuid upon assimilation into model"
+    model = add_package
+    assert uuid.UUID(model['Structure'].uuid, version=1)
+
 @pytest.fixture
 def add_block_to_package(add_package):
     """ add block elements as parts to parent blocks using `add_block` the method"""
@@ -32,6 +37,11 @@ def test_add_block_to_package(add_block_to_package):
     model = add_block_to_package
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb 'Constitution-class starship'"
 
+def test_block_has_valid_uuid(add_block_to_package):
+    "Model elements should be assigned a uuid upon assimilation into model"
+    model = add_block_to_package
+    assert uuid.UUID(model['Structure']['Constitution-class starship'].uuid, version=1)
+
 @pytest.fixture
 def add_parts_to_block(add_block_to_package):
     model = add_block_to_package
@@ -39,12 +49,17 @@ def add_parts_to_block(add_block_to_package):
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
     return model
 
-# @pytest.mark.skip('WIP')
 def test_add_parts_to_block(add_parts_to_block):
     "Parts added to a block element are callable by index via the 'parts' attribute"
     model = add_parts_to_block
     assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb 'Primary Hull'"
     assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb 'Engineering Hull'"
+
+def test_block_part_has_valid_uuid(add_parts_to_block):
+    "Model elements should be assigned a uuid upon assimilation into model"
+    model = add_parts_to_block
+    assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid, version=1)
+    assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
 
 @pytest.mark.skip('WIP')
 def test_bdd(add_parts_to_block):
@@ -61,11 +76,16 @@ def add_requirements(model):
     model['Requirements'].add_requirement('Functional-1', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     return model
 
-# @pytest.mark.skip('WIP')
 def test_add_requirements(add_requirements):
     model = add_requirements
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb 'Top-level'"
     assert repr(model['Requirements']['Functional-1']) == "\xabrequirement\xbb 'Functional-1'"
+
+def test_requirement_valid_uuid(add_requirements):
+    "Model elements should be assigned a uuid upon assimilation into model"
+    model = add_requirements
+    assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
+    assert uuid.UUID(model['Requirements']['Functional-1'].uuid, version=1)
 
 @pytest.fixture
 def add_relation_between_requirements(add_requirements):

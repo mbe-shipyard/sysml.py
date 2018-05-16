@@ -130,15 +130,12 @@ class Block(object):
 
     @uuid.setter
     def uuid(self, UUID):
-        "Sets block uuid"
-        if type(UUID) is not str:
-            raise TypeError(label + " must be a string")
-        else:
-            try:
-                uuid.UUID(UUID, version=1)
-                self._uuid = UUID
-            except:
-                raise ValueError(UUID + " must be a valid uuid of type, string")
+        "Sets uuid"
+        try:
+            uuid.UUID(UUID, version=1)
+            self._uuid = UUID
+        except:
+            raise ValueError(UUID + " must be a valid uuid of type, string")
 
     def add_part(self, label):
         """Creates a block element in block"""
@@ -305,6 +302,11 @@ class Requirement(object):
     def stereotype(cls):
         return cls._stereotype
 
+    @property
+    def uuid(self):
+        "Returns block uuid"
+        return self._uuid
+
     ## Set requirement relations
     # def satisfiedBy(self, *sourcev):
     #     for source in sourcev:
@@ -315,6 +317,15 @@ class Requirement(object):
     # def verifiedBy(self, *sourcev):
     #     for source in sourcev:
     #         self._verify.append(source)
+
+    @uuid.setter
+    def uuid(self, UUID):
+        "Sets uuid"
+        try:
+            uuid.UUID(UUID, version=1)
+            self._uuid = UUID
+        except:
+            raise ValueError(UUID + " must be a valid uuid of type, string")
 
     def req(self):
         """Generates a requirement diagram
@@ -393,6 +404,20 @@ class Package(object):
     @property
     def stereotype(cls):
         return cls._stereotype
+
+    @property
+    def uuid(self):
+        "Returns block uuid"
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, UUID):
+        "Sets uuid"
+        try:
+            uuid.UUID(UUID, version=1)
+            self._uuid = UUID
+        except:
+            raise ValueError(UUID + " must be a valid uuid of type, string")
 
     def add_block(self, label):
         """Creates a block element in package"""
