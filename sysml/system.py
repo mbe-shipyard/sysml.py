@@ -1,5 +1,5 @@
 """
-The `Model` class is used to instantiate a central namespace for a SysML model by subsuming stereotypes into mode elements or model relationships.
+The `Model` class is used to instantiate a central namespace for a SysML model by subsuming elements into mode elements or model relationships.
 
 ---------
 
@@ -11,10 +11,10 @@ import uuid
 # developer notes: to use hidden vs unhidden attributes
 
 class Model(object):
-    """This class defines a SysML model for subsuming stereotypes into model elements or relationships.
+    """This class defines a SysML model for subsuming elements into model elements or relationships.
     """
 
-    # Dictionary of valid model elements. key: stereotype [string], value: stereotype [class]
+    # Dictionary of valid model elements. key: element [string], value: element [class]
     _validElements = {
         "block":Block,
         "requirement":Requirement,
@@ -22,7 +22,7 @@ class Model(object):
         "package":Package
     }
 
-    # Dictionary of valid model relationships. key: stereotype [string], value: valid stereotype nodes [list of classes]
+    # Dictionary of valid model relationships. key: element [string], value: valid element nodes [list of classes]
     _validRelationships = {
         "containment":{
             "source":[Block],
@@ -56,14 +56,14 @@ class Model(object):
         # All model elements stored as a dictionary of key-value pairs
         self._elements = elements
 
-    def __setitem__(self, key, stereotype):
-        "Sets/overwrites stereotype-valid model element or relationship into model"
+    def __setitem__(self, key, element):
+        "Sets/overwrites element-valid model element or relationship into model"
         if self._isValidElementKey(key):
-            self._setElement(key, stereotype)
+            self._setElement(key, element)
         elif self._isValidRelationshipKey(key):
-            self._setRelationship(key, stereotype)
+            self._setRelationship(key, element)
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
@@ -72,7 +72,7 @@ class Model(object):
         elif key in self._relationships.keys():
             return self._relationships[key]
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
     @property
     def elements(self):
@@ -88,7 +88,7 @@ class Model(object):
     def elements(self, elements):
         """Sets/rewrites model elements for entire model by passing model elements as key-value pairs.
 
-        Note: model elements must be valid stereotypes.
+        Note: model elements must be valid elements.
         """
         if type(elements) is not dict:
             raise TypeError(repr(elements) + " must be a dictionary.")
@@ -100,32 +100,35 @@ class Model(object):
     def relationships(self, relationships):
         """Sets relationships to user-defined dictionary.
 
-        Note: model relationships must be valid stereotypes.
+        Note: model relationships must be valid elements.
         """
         if type(relationships) is not dict:
             raise TypeError(repr(relationships) + " must be a dictionary.")
         for key in relationships.keys():
-            stereotypeName, id_no = key.split('-')
+            elementName, id_no = key.split('-')
             if not self._isValidRelationshipKey(key):
-                raise ValueError(key + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
+                raise ValueError(key + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
             else:
                 self._setRelationship(key, relationships[key])
 
-    def add_elements(self, *stereotypev):
-        "Sets/overwrites stereotype-valid model element or relationship into model"
-        for stereotype in stereotypev:
-            key = self._generateKey(stereotype, len(self._elements)+1)
-            self._setElement(key, stereotype)
+    def add_elements(self, *elementv):
+        "Sets/overwrites element-valid model element or relationship into model"
+        for element in elementv:
+            key = self._generateKey(element, len(self._elements)+1)
+            self._setElement(key, element)
 
     def add_relationships(self, *relationshipv):
-        "Sets/overwrites stereotype-valid model element or relationship into model"
+        "Sets/overwrites element-valid model element or relationship into model"
         for relationship in relationshipv:
             key = self._generateKey(relationship, len(self._relationships)+1)
             self._setRelationship(key, relationship)
 
     def add_package(self, label=None):
         """Creates a package element in model"""
-        self._setElement(label, Package(label))
+        if type(label) is str:
+            self._setElement(label, Package(label))
+        else:
+            raise TypeError(label + " must be a string")
 
     ## Structural Diagrams
     def bdd(self):
@@ -158,31 +161,31 @@ class Model(object):
         """
         pass
 
-    def _generateKey(self, stereotype, maxId_no):
-        if self._isValidElement(stereotype):
+    def _generateKey(self, element, maxId_no):
+        if self._isValidElement(element):
             for validElement in self._validElements.keys():
-                if isinstance(stereotype, self._validElements[validElement]):
+                if isinstance(element, self._validElements[validElement]):
                     for id_no in range(1, maxId_no+1):
                         newKey = validElement + "-" + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
-        elif self._isValidRelationship(stereotype):
+        elif self._isValidRelationship(element):
             for validRelationship in self._validRelationships.keys():
-                if stereotype["relationshipType"] is validRelationship:
+                if element["relationshipType"] is validRelationship:
                     for id_no in range(1, maxId_no+1):
                         newKey = validRelationship + "-" + str(id_no)
                         if newKey not in self._relationships.keys():
                             return newKey
         else:
-            raise TypeError(stereotype + " is not a valid stereotype.")
+            raise TypeError(element + " is not a valid element.")
 
-    def _setElement(self, key, stereotype):
+    def _setElement(self, key, element):
         if key is None:
-            key = _generateKey(stereotype)
-        if not self._isValidElement(stereotype):
-            raise TypeError(repr(stereotype) + " is not a valid stereotype.")
+            key = _generateKey(element)
+        if not self._isValidElement(element):
+            raise TypeError(repr(element) + " is not a valid model element.")
         else:
-            self._elements[key] = stereotype
+            self._elements[key] = element
             self._elements[key].uuid = str(uuid.uuid1())
 
     def _setRelationship(self, key, relationship):
@@ -191,7 +194,7 @@ class Model(object):
         if relationship["target"] not in self._elements.keys():
             raise TypeError(relationship["target"] + " does not exist in model.")
         if not self._isValidRelationship(relationship):
-            raise TypeError(relationship["source"] + " and " + relationships["target"] + " are not a valid source-target pair for " + stereotypeName)
+            raise TypeError(relationship["source"] + " and " + relationships["target"] + " are not a valid source-target pair for " + elementName)
         else:
             self._relationships[key] = relationship
             # if not hasattr(self._relationships[key], 'uuid'):
@@ -209,8 +212,8 @@ class Model(object):
         return elementName in cls._validElements.keys() and isinstance(int(id_no),int)
 
     @classmethod
-    def _isValidElement(cls, stereotype):
-        return type(stereotype) in cls._validElements.values()
+    def _isValidElement(cls, element):
+        return type(element) in cls._validElements.values()
 
     @classmethod
     def _isValidRelationshipKey(cls, key):

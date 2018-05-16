@@ -16,7 +16,6 @@ def add_package(model):
     model.add_package('Structure')
     return model
 
-#@pytest.mark.skip('WIP')
 def test_add_package(add_package):
     model = add_package
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
@@ -24,12 +23,13 @@ def test_add_package(add_package):
 @pytest.fixture
 def add_block_to_package(add_package):
     """ add block elements as parts to parent blocks using `add_block` the method"""
+    model = add_package
     model['Structure'].add_block('Constitution-class starship')
     return model
 
-@pytest.mark.skip('WIP')
 def test_add_block_to_package(add_block_to_package):
     """ add block elements as parts to parent blocks using `add_block` the method"""
+    model = add_block_to_package
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb 'Constitution-class starship'"
 
 @pytest.fixture

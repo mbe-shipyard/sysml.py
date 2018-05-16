@@ -38,6 +38,7 @@ class Block(object):
 
     """
 
+    _stereotype = "block"
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
@@ -90,6 +91,10 @@ class Block(object):
     def label(self):
         "Returns block label"
         return self._label
+
+    @property
+    def stereotype(cls):
+        return cls._stereotype
 
     @property
     def uuid(self):
@@ -206,7 +211,7 @@ class Block(object):
 class Requirement(object):
     """This class defines a requirement"""
 
-    stereotype = "\xabrequirement\xbb"
+    _stereotype = "requirement"
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
@@ -223,7 +228,7 @@ class Requirement(object):
         if label is None:
             self._label = 'Requirement' + str(self._id_no)
         elif type(label) is str:
-            self.label = label
+            self._label = label
         else:
             raise TypeError("argument is not a string!")
         # Text
@@ -255,16 +260,21 @@ class Requirement(object):
             self._trace = trace
     def __repr__(self):
         return "\xabrequirement\xbb {self.name}"
+
+    @property
+    def stereotype(cls):
+        return cls._stereotype
+
     ## Set requirement relations
-    def satisfiedBy(self, *sourcev):
-        for source in sourcev:
-            self._satisfy.append(source)
-    def refinedBy(self, *sourcev):
-        for source in sourcev:
-            self._refine.append(source)
-    def verifiedBy(self, *sourcev):
-        for source in sourcev:
-            self._verify.append(source)
+    # def satisfiedBy(self, *sourcev):
+    #     for source in sourcev:
+    #         self._satisfy.append(source)
+    # def refinedBy(self, *sourcev):
+    #     for source in sourcev:
+    #         self._refine.append(source)
+    # def verifiedBy(self, *sourcev):
+    #     for source in sourcev:
+    #         self._verify.append(source)
 
     def req(self):
         """Generates a requirement diagram
@@ -273,15 +283,83 @@ class Requirement(object):
         """
         pass
 
+class ConstraintBlock(object):
+    """This class defines a constraint"""
+
+    def __init__(self):
+        pass
+
+    ## Structural Diagrams
+    def bdd(self):
+        """Generates a BlockDefinitionDiagram
+
+        A block definition diagram describes the system hierarchy and system/component classifications.
+        """
+        pass
+
+    ## Parametric Diagrams
+    def par(self):
+        """Generates a parametric diagram
+
+        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
+        """
+        pass
 
 class Package(object):
     """This class defines a package"""
-    stereotype = "package"
 
-    def __init__(self, label=None):
+    _validElements = {
+        "block":Block,
+        "requirement":Requirement,
+        "constraint":ConstraintBlock,
+    }
+
+    _stereotype = "package"
+
+    def __init__(self, label=None, elements={}):
         self._label = label
+        self._elements = elements
+
+    def __setitem__(self, key, element):
+        "Sets/overwrites element-valid model element or relationship into model"
+        if self._isValidElement(element):
+            self._setElement(key, element)
+        # elif self._isValidRelationshipKey(key):
+        #     self._setRelationship(key, element)
+        else:
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
+
+    def __getitem__(self, key):
+        "Returns data for key-specified model element or relationship"
+        if key in self._elements.keys():
+            return self._elements[key]
+        # elif key in self._relationships.keys():
+        #     return self._relationships[key]
+        else:
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
+
     def __repr__(self):
-        return "\xab" + self.stereotype + "\xbb '{}'".format(self._label)
+        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
+
+    @property
+    def label(self):
+        "Returns block label"
+        return self._label
+
+    @property
+    def elements(self):
+        return self._elements
+
+    @property
+    def stereotype(cls):
+        return cls._stereotype
+
+    def add_block(self, label):
+        """Creates a block element in package"""
+        if type(label) is str:
+            self._setElement(label, Block(label))
+        else:
+            raise TypeError(label + " must be a string")
 
     ## Structural Diagrams
     def bdd(self):
@@ -313,6 +391,18 @@ class Package(object):
         The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
         """
         pass
+
+    def _setElement(self, key, element):
+        # if key is None:
+        #     key = _generateKey(element)
+        # if not self._isValidElement(element):
+        #     raise TypeError(repr(element) + " is not a valid model element.")
+        # else:
+            self._elements[key] = element
+            # self._elements[key].uuid = str(uuid.uuid1())
+
+    # def _isValidElement(self, element):
+    #     return type(element) in self._validElements.values()
 
 class StateMachine(object):
     """This class defines a state"""
@@ -352,27 +442,5 @@ class Interaction(object):
         """Generates a sequence diagram
 
         A sequence diagram represents the interaction between collaborating parts of a system.
-        """
-        pass
-
-class ConstraintBlock(object):
-    """This class defines a constraint"""
-
-    def __init__(self):
-        pass
-
-    ## Structural Diagrams
-    def bdd(self):
-        """Generates a BlockDefinitionDiagram
-
-        A block definition diagram describes the system hierarchy and system/component classifications.
-        """
-        pass
-
-    ## Parametric Diagrams
-    def par(self):
-        """Generates a parametric diagram
-
-        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
         """
         pass
