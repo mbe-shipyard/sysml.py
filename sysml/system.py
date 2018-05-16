@@ -117,11 +117,11 @@ class Model(object):
             key = self._generateKey(element, len(self._elements)+1)
             self._setElement(key, element)
 
-    def add_relationships(self, *relationshipv):
-        "Sets/overwrites element-valid model element or relationship into model"
-        for relationship in relationshipv:
-            key = self._generateKey(relationship, len(self._relationships)+1)
-            self._setRelationship(key, relationship)
+    # def add_relationships(self, *relationshipv):
+    #     "Sets/overwrites element-valid model element or relationship into model"
+    #     for relationship in relationshipv:
+    #         key = self._generateKey(relationship, len(self._relationships)+1)
+    #         self._setRelationship(key, relationship)
 
     def add_package(self, label=None):
         """Creates a package element in model"""

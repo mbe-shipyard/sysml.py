@@ -61,7 +61,7 @@ def add_requirements(model):
     model['Requirements'].add_requirement('Functional-1', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     return model
 
-@pytest.mark.skip('WIP')
+# @pytest.mark.skip('WIP')
 def test_add_requirements(add_requirements):
     model = add_requirements
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb 'Top-level'"

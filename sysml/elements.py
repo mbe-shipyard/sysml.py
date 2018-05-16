@@ -86,7 +86,7 @@ class Block(object):
         self.constaints = []
         """
     def __repr__(self):
-        return "\xabblock\xbb '{}'".format(self._label)
+        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
 
     ## Getters
     @property
@@ -255,7 +255,7 @@ class Requirement(object):
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, label=None, txt=None, id_no=None, satisfy=None, verify=None, refine=None):
+    def __init__(self, label=None, txt=None, id_no=None):
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
@@ -278,28 +278,28 @@ class Requirement(object):
             self.txt = txt
         else:
             raise TypeError("argument is not a string!")
-        # Satisfy
-        if satisfy is None:
-            self._satisfy = []
-        elif type(satisfy) is []: #tk: change to accept block or list of blocks
-            self._satisfy = satisfy
-        # Verify
-        if verify is None:
-            self._verify = []
-        elif type(verify) is []: #tk: change to accept block or list of blocks
-            self._verify = verify
-        # Refine
-        if refine is None:
-            self.refine = []
-        elif type(refine) is []: #tk: change to accept block or list of blocks
-            self._refine = refine
-        # Trace
-        if trace is None:
-            self.trace = []
-        elif type(trace) is []: #tk: change to accept block or list of blocks
-            self._trace = trace
+        # # Satisfy
+        # if satisfy is None:
+        #     self._satisfy = []
+        # elif type(satisfy) is []: #tk: change to accept block or list of blocks
+        #     self._satisfy = satisfy
+        # # Verify
+        # if verify is None:
+        #     self._verify = []
+        # elif type(verify) is []: #tk: change to accept block or list of blocks
+        #     self._verify = verify
+        # # Refine
+        # if refine is None:
+        #     self.refine = []
+        # elif type(refine) is []: #tk: change to accept block or list of blocks
+        #     self._refine = refine
+        # # Trace
+        # if trace is None:
+        #     self.trace = []
+        # elif type(trace) is []: #tk: change to accept block or list of blocks
+        #     self._trace = trace
     def __repr__(self):
-        return "\xabrequirement\xbb {self.name}"
+        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
 
     @property
     def stereotype(cls):
@@ -398,6 +398,13 @@ class Package(object):
         """Creates a block element in package"""
         if type(label) is str:
             self._setElement(label, Block(label))
+        else:
+            raise TypeError(label + " must be a string")
+
+    def add_requirement(self, label, txt):
+        """Creates a requirement element in package"""
+        if type(label) is str:
+            self._setElement(label, Requirement(label, txt))
         else:
             raise TypeError(label + " must be a string")
 
