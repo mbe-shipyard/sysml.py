@@ -34,15 +34,17 @@ def test_add_block_to_package(add_block_to_package):
 
 @pytest.fixture
 def add_parts_to_block(add_block_to_package):
+    model = add_block_to_package
     model['Structure']['Constitution-class starship'].add_part('Primary Hull')
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
     return model
 
-@pytest.mark.skip('WIP')
+# @pytest.mark.skip('WIP')
 def test_add_parts_to_block(add_parts_to_block):
     "Parts added to a block element are callable by index via the 'parts' attribute"
-    assert repr(model['Structure']['Constitution-class starship'].parts[0]) == "\xabblock\xbb 'Primary Hull'"
-    assert repr(model['Structure']['Constitution-class starship'].parts[1]) == "\xabblock\xbb 'Engineering Hull'"
+    model = add_parts_to_block
+    assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb 'Primary Hull'"
+    assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb 'Engineering Hull'"
 
 @pytest.mark.skip('WIP')
 def test_bdd(add_parts_to_block):

@@ -42,7 +42,7 @@ class Block(object):
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None, stereotype=['block']):
+    def __init__(self, label=None, values=None, parts={}, references=None, flowProperties=None, stereotype=['block']):
         # Label
         if label is None:
             Block._id_no += 1
@@ -51,19 +51,21 @@ class Block(object):
             raise TypeError(label + " must be a string")
         else:
             self._label = label
+        ## Part Property
+        if type(parts) is not dict:
+            raise TypeError(parts + " must be a dict")
+        elif parts is dict:
+            for part in parts:
+                if not isinstance(part, Block): #tk: change to accept block or list of blocks
+                    raise TypeError(part + " must be a Block")
+        else:
+            self._parts = parts
         """
         ## Value Property
         if type(values) is dict:
             self._values = values
         else:
             raise TypeError("argument is not a dictionary!")
-        ## Part Property
-        if parts is None:
-            self._parts = []
-        elif type(parts) is list: #tk: change to accept block or list of blocks
-            self._parts = parts
-        else:
-            raise TypeError("argument is not a list!")
         ## Reference Property
         if references is None:
             self._references = []
@@ -138,6 +140,13 @@ class Block(object):
             except:
                 raise ValueError(UUID + " must be a valid uuid of type, string")
 
+    def add_part(self, label):
+        """Creates a block element in block"""
+        if type(label) is str:
+            self._setElement(label, Block(label))
+        else:
+            raise TypeError(label + " must be a string")
+
     ## Structural Diagrams
     def bdd(self):
         """Generates a BlockDefinitionDiagram
@@ -160,6 +169,37 @@ class Block(object):
         The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
         """
         pass
+
+    def _generateKey(self, element, maxId_no):
+        if self._isValidElement(element):
+            for validElement in self._validElements.keys():
+                if isinstance(element, self._validElements[validElement]):
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validElement + "-" + str(id_no)
+                        if newKey not in self._parts.keys():
+                            return newKey
+        elif self._isValidRelationship(element):
+            for validRelationship in self._validRelationships.keys():
+                if element["relationshipType"] is validRelationship:
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validRelationship + "-" + str(id_no)
+                        if newKey not in self._relationships.keys():
+                            return newKey
+        else:
+            raise TypeError(element + " is not a valid element.")
+
+    def _setElement(self, key, element):
+        if key is None:
+            key = self._generateKey(element)
+        if not self._isValidElement(element):
+            raise TypeError(repr(element) + " is not a valid model element.")
+        else:
+            self._parts[key] = element
+            self._parts[key].uuid = str(uuid.uuid1())
+
+    @classmethod
+    def _isValidElement(cls, element):
+        return isinstance(element, Block)
 
     # @parts.setter
     # def parts(self, *partv):
@@ -393,16 +433,16 @@ class Package(object):
         pass
 
     def _setElement(self, key, element):
-        # if key is None:
-        #     key = _generateKey(element)
-        # if not self._isValidElement(element):
-        #     raise TypeError(repr(element) + " is not a valid model element.")
-        # else:
+        if key is None:
+            key = self._generateKey(element)
+        if not self._isValidElement(element):
+            raise TypeError(repr(element) + " is not a valid model element.")
+        else:
             self._elements[key] = element
-            # self._elements[key].uuid = str(uuid.uuid1())
+            self._elements[key].uuid = str(uuid.uuid1())
 
-    # def _isValidElement(self, element):
-    #     return type(element) in self._validElements.values()
+    def _isValidElement(self, element):
+        return type(element) in self._validElements.values()
 
 class StateMachine(object):
     """This class defines a state"""

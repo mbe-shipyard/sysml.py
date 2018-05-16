@@ -181,7 +181,7 @@ class Model(object):
 
     def _setElement(self, key, element):
         if key is None:
-            key = _generateKey(element)
+            key = self._generateKey(element)
         if not self._isValidElement(element):
             raise TypeError(repr(element) + " is not a valid model element.")
         else:
