@@ -5,7 +5,7 @@ The `Model` class is used to instantiate a central namespace for a SysML model b
 
 Model elements and relationships are the building blocks that make up the 9 SysML diagrams
 """
-from sysml.stereotypes import *
+from sysml.elements import *
 import uuid
 
 # developer notes: to use hidden vs unhidden attributes
@@ -55,8 +55,6 @@ class Model(object):
         self._label = label
         # All model elements stored as a dictionary of key-value pairs
         self._elements = elements
-        # All model relationships stored as a dictionary of key-value pairs
-        self._relationships = relationships
 
     def __setitem__(self, key, stereotype):
         "Sets/overwrites stereotype-valid model element or relationship into model"
@@ -124,6 +122,10 @@ class Model(object):
                 raise ValueError(key + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
             else:
                 self._setRelationship(key, relationships[key])
+
+    def add_package(self, label=None):
+        """Creates a package element in model"""
+        self._setElement(label, Package(label))
 
     ## Structure
     def bdd(self, elementKey):

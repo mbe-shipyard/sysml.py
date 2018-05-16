@@ -3,7 +3,7 @@ The `stereotypes` module contains all model elements that are valid for use by t
 
 ---------
 
-Model elements and relationships are the building blocks that make up the 9 SysML diagrams
+Model elements are the building blocks that make up the 9 SysML diagrams
 """
 
 import uuid
@@ -11,8 +11,7 @@ import uuid
 # developer notes: to use hidden vs unhidden attributes
 
 class Block(object):
-    """This class defines a \xabblock\xbb stereotype for use in a bdd
-    (block definition diagram) or ibd (internal block diagram)
+    """This class defines a \xabblock\xbb
 
     Parameters
     ----------
@@ -40,10 +39,9 @@ class Block(object):
     """
 
     _id_no = 0
-    stereotype = "\xabblock\xbb"
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None):
+    def __init__(self, label=None, values=None, parts=None, references=None, flowProperties=None, stereotype=['block']):
         # Label
         if label is None:
             Block._id_no += 1
@@ -183,7 +181,7 @@ class Block(object):
     #         raise TypeError("argument is not a dictionary!")
 
 class Requirement(object):
-    """This class defines a \xabrequirement\xbb stereotype for use in a requirements diagram"""
+    """This class defines a \xabrequirement\xbb"""
 
     stereotype = "\xabrequirement\xbb"
     _id_no = 0
@@ -245,20 +243,24 @@ class Requirement(object):
         for source in sourcev:
             self._verify.append(source)
 
+class Package(object):
+    """This class defines a \xabpackage\xbb"""
+    stereotype = "package"
+
+    def __init__(self, label=None):
+        self._label = label
+    def __repr__(self):
+        return "\xab" + self.stereotype + "\xbb '{}'".format(self._label)
+
+
 class State(object):
-    """This class defines a \xabstate\xbb stereotype for use in a state machine"""
+    """This class defines a \xabstate\xbb"""
 
     def __init__(self):
         pass
 
 class Constraint(object):
     """This class defines a \xabconstraint\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
-
-    def __init__(self):
-        pass
-
-class Package(object):
-    """This class defines a \xabpackage\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
 
     def __init__(self):
         pass

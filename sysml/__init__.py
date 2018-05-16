@@ -1,2 +1,2 @@
-from sysml.stereotypes import *
-from sysml.model import *
+from sysml.elements import *
+from sysml.system import *

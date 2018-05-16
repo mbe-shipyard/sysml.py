@@ -16,7 +16,7 @@ def add_package(model):
     model.add_package('Structure')
     return model
 
-@pytest.mark.skip('WIP')
+#@pytest.mark.skip('WIP')
 def test_add_package(add_package):
     model = add_package
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
