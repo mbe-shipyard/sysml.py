@@ -11,7 +11,7 @@ import uuid
 # developer notes: to use hidden vs unhidden attributes
 
 class Block(object):
-    """This class defines a \xabblock\xbb
+    """This class defines a block
 
     Parameters
     ----------
@@ -133,6 +133,29 @@ class Block(object):
             except:
                 raise ValueError(UUID + " must be a valid uuid of type, string")
 
+    ## Structural Diagrams
+    def bdd(self):
+        """Generates a BlockDefinitionDiagram
+
+        A block definition diagram describes the system hierarchy and system/component classifications.
+        """
+        pass
+
+    def ibd(self):
+        """Generates an internal block diagram
+
+        The internal block diagram describes the internal structure of a system in terms of its parts, ports, and connectors.
+        """
+        pass
+
+    ## Parametric Diagrams
+    def par(self):
+        """Generates a parametric diagram
+
+        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
+        """
+        pass
+
     # @parts.setter
     # def parts(self, *partv):
     #     """add one or more Blocks to parts
@@ -181,7 +204,7 @@ class Block(object):
     #         raise TypeError("argument is not a dictionary!")
 
 class Requirement(object):
-    """This class defines a \xabrequirement\xbb"""
+    """This class defines a requirement"""
 
     stereotype = "\xabrequirement\xbb"
     _id_no = 0
@@ -243,8 +266,16 @@ class Requirement(object):
         for source in sourcev:
             self._verify.append(source)
 
+    def req(self):
+        """Generates a requirement diagram
+
+        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
+        """
+        pass
+
+
 class Package(object):
-    """This class defines a \xabpackage\xbb"""
+    """This class defines a package"""
     stereotype = "package"
 
     def __init__(self, label=None):
@@ -252,15 +283,96 @@ class Package(object):
     def __repr__(self):
         return "\xab" + self.stereotype + "\xbb '{}'".format(self._label)
 
+    ## Structural Diagrams
+    def bdd(self):
+        """Generates a BlockDefinitionDiagram
 
-class State(object):
-    """This class defines a \xabstate\xbb"""
+        A block definition diagram describes the system hierarchy and system/component classifications.
+        """
+        pass
+
+    def pkg(self):
+        """Generates a package diagram
+
+        The package diagram is used to organize the model.
+        """
+        pass
+
+    ## Behavior
+    def uc(self):
+        """Generates a use case diagram
+
+        A use-case diagram provides a high-level description of functionality that is achieved through interaction among systems or system parts.
+        """
+        pass
+
+    ## Requirement Diagram
+    def req(self):
+        """Generates a requirement diagram
+
+        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
+        """
+        pass
+
+class StateMachine(object):
+    """This class defines a state"""
 
     def __init__(self):
         pass
 
-class Constraint(object):
-    """This class defines a \xabconstraint\xbb stereotype for use in a block definition, requirement, and parametric diagram"""
+    def stm(self):
+        """Generates a state machine diagram for a valid model element key
+
+        The state machine diagram describes the state transitions and actions that a system or its parts perform in response to events.
+         """
+        pass
+
+class Activity(object):
+    """This class defines a activity"""
 
     def __init__(self):
+        pass
+
+    ## Behavioral Diagrams
+    def act(self):
+        """Generates an activity diagram for a valid model element key
+
+        The activity diagram represents the flow of data and control between activities.
+        """
+        pass
+
+class Interaction(object):
+    """This class defines an interaction"""
+
+    def __init__(self):
+        pass
+
+    ## Behavioral Diagrams
+    def sd(self):
+        """Generates a sequence diagram
+
+        A sequence diagram represents the interaction between collaborating parts of a system.
+        """
+        pass
+
+class ConstraintBlock(object):
+    """This class defines a constraint"""
+
+    def __init__(self):
+        pass
+
+    ## Structural Diagrams
+    def bdd(self):
+        """Generates a BlockDefinitionDiagram
+
+        A block definition diagram describes the system hierarchy and system/component classifications.
+        """
+        pass
+
+    ## Parametric Diagrams
+    def par(self):
+        """Generates a parametric diagram
+
+        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
+        """
         pass

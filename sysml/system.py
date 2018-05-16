@@ -18,7 +18,7 @@ class Model(object):
     _validElements = {
         "block":Block,
         "requirement":Requirement,
-        "constraint":Constraint,
+        "constraint":ConstraintBlock,
         "package":Package
     }
 
@@ -74,18 +74,6 @@ class Model(object):
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated stereotype and integer, e.g., 'partProperty-42' ")
 
-    def add_elements(self, *stereotypev):
-        "Sets/overwrites stereotype-valid model element or relationship into model"
-        for stereotype in stereotypev:
-            key = self._generateKey(stereotype, len(self._elements)+1)
-            self._setElement(key, stereotype)
-
-    def add_relationships(self, *relationshipv):
-        "Sets/overwrites stereotype-valid model element or relationship into model"
-        for relationship in relationshipv:
-            key = self._generateKey(relationship, len(self._relationships)+1)
-            self._setRelationship(key, relationship)
-
     @property
     def elements(self):
         "Returns dictionary of model elements"
@@ -123,74 +111,50 @@ class Model(object):
             else:
                 self._setRelationship(key, relationships[key])
 
+    def add_elements(self, *stereotypev):
+        "Sets/overwrites stereotype-valid model element or relationship into model"
+        for stereotype in stereotypev:
+            key = self._generateKey(stereotype, len(self._elements)+1)
+            self._setElement(key, stereotype)
+
+    def add_relationships(self, *relationshipv):
+        "Sets/overwrites stereotype-valid model element or relationship into model"
+        for relationship in relationshipv:
+            key = self._generateKey(relationship, len(self._relationships)+1)
+            self._setRelationship(key, relationship)
+
     def add_package(self, label=None):
         """Creates a package element in model"""
         self._setElement(label, Package(label))
 
-    ## Structure
-    def bdd(self, elementKey):
-        """Generates a BlockDefinitionDiagram for a valid model element key
+    ## Structural Diagrams
+    def bdd(self):
+        """Generates a BlockDefinitionDiagram
 
         A block definition diagram describes the system hierarchy and system/component classifications.
         """
         pass
 
-    def ibd(self, elementKey):
-        """Generates an internal block diagram for a valid model element key
-
-        The internal block diagram describes the internal structure of a system in terms of its parts, ports, and connectors.
-        """
-        pass
-
-    def PackageDiagram(self, elementKey):
-        """Generates a package diagram for a valid model element key
+    def pkg(self):
+        """Generates a package diagram
 
         The package diagram is used to organize the model.
         """
         pass
 
-    ## Behavior
-    def sd(self, elementKey):
-        """Generates a sequence diagram for a valid model element key
-
-        A sequence diagram represents the interaction between collaborating parts of a system.
-        """
-        pass
-
-    def stm(self, elementKey):
-        """Generates a state machine diagram for a valid model element key
-
-        The state machine diagram describes the state transitions and actions that a system or its parts perform in response to events.
-         """
-        pass
-
-    def act(self, elementKey):
-        """Generates an activity diagram for a valid model element key
-
-        The activity diagram represents the flow of data and control between activities.
-        """
-        pass
-
-    def uc(self, elementKey):
-        """Generates a use case diagram for a valid model element key
+    ## Behavioral Diagrams
+    def uc(self):
+        """Generates a use case diagram
 
         A use-case diagram provides a high-level description of functionality that is achieved through interaction among systems or system parts.
         """
         pass
 
-    ## Requirements
-    def req(self, elementKey):
-        """Generates a requirement diagram for a valid model element key
+    ## Requirement Diagrams
+    def req(self):
+        """Generates a requirement diagram
 
         The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
-        """
-        pass
-
-    ## Parametrics
-    def par(self, elementKey):
-        """Generates a parametric diagram for a valid model element key
-
-        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
         """
         pass
 
