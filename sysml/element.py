@@ -419,6 +419,13 @@ class Package(object):
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
 
+    def add_relation(self, source, target, relationType):
+        """Creates a requirement element in package"""
+        if self._isValidRelation({'source': source, 'target': target, 'relationType': relationType}):
+            self._setRelation(source, target, relationType)
+        else:
+            raise TypeError(label + " must be a string")
+
     def add_block(self, label):
         """Creates a block element in package"""
         if type(label) is str:
@@ -464,6 +471,24 @@ class Package(object):
         """
         pass
 
+    def _generateKey(self, element, maxId_no):
+        if self._isValidElement(element):
+            for validElement in self._validElements.keys():
+                if isinstance(element, self._validElements[validElement]):
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validElement + "-" + str(id_no)
+                        if newKey not in self._elements.keys():
+                            return newKey
+        elif self._isValidRelation(element):
+            for validRelation in self._validRelations.keys():
+                if element["relationType"] is validRelation:
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validRelation + "-" + str(id_no)
+                        if newKey not in self._relations.keys():
+                            return newKey
+        else:
+            raise TypeError(element + " is not a valid element.")
+
     def _setElement(self, key, element):
         if key is None:
             key = self._generateKey(element)
@@ -475,6 +500,12 @@ class Package(object):
 
     def _isValidElement(self, element):
         return type(element) in self._validElements.values()
+
+    def _setRelation(self, key, relation):
+        self._elements[key] = relation
+
+    def _isValidRelation(self, source, target, relationType):
+        return type(source) in self._validRelations[relationType]['source'] and type(target) in self._validRelations[relationType]['target']
 
 class StateMachine(object):
     """This class defines a state"""

@@ -1,17 +1,17 @@
 """
-The `Model` class is used to instantiate a central namespace for a SysML model by subsuming elements into mode elements or model relationships.
+The `Model` class is used to instantiate a central namespace for a SysML model by subsuming elements into mode elements or model relations.
 
 ---------
 
-Model elements and relationships are the building blocks that make up the 9 SysML diagrams
+Model elements and relations are the building blocks that make up the 9 SysML diagrams
 """
-from sysml.elements import *
+from sysml.element import *
 import uuid
 
 # developer notes: to use hidden vs unhidden attributes
 
 class Model(object):
-    """This class defines a SysML model for subsuming elements into model elements or relationships.
+    """This class defines a SysML model for subsuming elements into model elements or relations.
     """
 
     # Dictionary of valid model elements. key: element [string], value: element [class]
@@ -22,8 +22,8 @@ class Model(object):
         "package":Package
     }
 
-    # Dictionary of valid model relationships. key: element [string], value: valid element nodes [list of classes]
-    _validRelationships = {
+    # Dictionary of valid model relations. key: element [string], value: valid element nodes [list of classes]
+    _validRelations = {
         "containment":{
             "source":[Block],
             "target":[Block]},
@@ -50,27 +50,27 @@ class Model(object):
             "target":[Block]}
     }
 
-    def __init__(self, label=None, elements={}, relationships={}):
+    def __init__(self, label=None, elements={}, relations={}):
         # Model label
         self._label = label
         # All model elements stored as a dictionary of key-value pairs
         self._elements = elements
 
     def __setitem__(self, key, element):
-        "Sets/overwrites element-valid model element or relationship into model"
+        "Sets/overwrites element-valid model element or relation into model"
         if self._isValidElementKey(key):
             self._setElement(key, element)
-        elif self._isValidRelationshipKey(key):
-            self._setRelationship(key, element)
+        elif self._isValidRelationKey(key):
+            self._setRelation(key, element)
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
     def __getitem__(self, key):
-        "Returns data for key-specified model element or relationship"
+        "Returns data for key-specified model element or relation"
         if key in self._elements.keys():
             return self._elements[key]
-        elif key in self._relationships.keys():
-            return self._relationships[key]
+        elif key in self._relations.keys():
+            return self._relations[key]
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
@@ -80,9 +80,9 @@ class Model(object):
         return self._elements
 
     @property
-    def relationships(self):
-        "Returns dictionary of relationships"
-        return self._relationships
+    def relations(self):
+        "Returns dictionary of relations"
+        return self._relations
 
     @elements.setter
     def elements(self, elements):
@@ -96,32 +96,32 @@ class Model(object):
             for key in elements.keys():
                 self._setElements(key, elements[key])
 
-    @relationships.setter
-    def relationships(self, relationships):
-        """Sets relationships to user-defined dictionary.
+    @relations.setter
+    def relations(self, relations):
+        """Sets relations to user-defined dictionary.
 
-        Note: model relationships must be valid elements.
+        Note: model relations must be valid elements.
         """
-        if type(relationships) is not dict:
-            raise TypeError(repr(relationships) + " must be a dictionary.")
-        for key in relationships.keys():
+        if type(relations) is not dict:
+            raise TypeError(repr(relations) + " must be a dictionary.")
+        for key in relations.keys():
             elementName, id_no = key.split('-')
-            if not self._isValidRelationshipKey(key):
+            if not self._isValidRelationKey(key):
                 raise ValueError(key + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
             else:
-                self._setRelationship(key, relationships[key])
+                self._setRelation(key, relations[key])
 
     def add_elements(self, *elementv):
-        "Sets/overwrites element-valid model element or relationship into model"
+        "Sets/overwrites element-valid model element or relation into model"
         for element in elementv:
             key = self._generateKey(element, len(self._elements)+1)
             self._setElement(key, element)
 
-    # def add_relationships(self, *relationshipv):
-    #     "Sets/overwrites element-valid model element or relationship into model"
-    #     for relationship in relationshipv:
-    #         key = self._generateKey(relationship, len(self._relationships)+1)
-    #         self._setRelationship(key, relationship)
+    # def add_relations(self, *relationv):
+    #     "Sets/overwrites element-valid model element or relation into model"
+    #     for relation in relationv:
+    #         key = self._generateKey(relation, len(self._relations)+1)
+    #         self._setRelation(key, relation)
 
     def add_package(self, label=None):
         """Creates a package element in model"""
@@ -157,7 +157,7 @@ class Model(object):
     def req(self):
         """Generates a requirement diagram
 
-        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
+        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relations allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
         """
         pass
 
@@ -169,12 +169,12 @@ class Model(object):
                         newKey = validElement + "-" + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
-        elif self._isValidRelationship(element):
-            for validRelationship in self._validRelationships.keys():
-                if element["relationshipType"] is validRelationship:
+        elif self._isValidRelation(element):
+            for validRelation in self._validRelations.keys():
+                if element["relationType"] is validRelation:
                     for id_no in range(1, maxId_no+1):
-                        newKey = validRelationship + "-" + str(id_no)
-                        if newKey not in self._relationships.keys():
+                        newKey = validRelation + "-" + str(id_no)
+                        if newKey not in self._relations.keys():
                             return newKey
         else:
             raise TypeError(element + " is not a valid element.")
@@ -188,23 +188,23 @@ class Model(object):
             self._elements[key] = element
             self._elements[key].uuid = str(uuid.uuid1())
 
-    def _setRelationship(self, key, relationship):
-        if relationship["source"] not in self._elements.keys():
-            raise TypeError(relationships[key]["source"] + " does not exist in model.")
-        if relationship["target"] not in self._elements.keys():
-            raise TypeError(relationship["target"] + " does not exist in model.")
-        if not self._isValidRelationship(relationship):
-            raise TypeError(relationship["source"] + " and " + relationships["target"] + " are not a valid source-target pair for " + elementName)
+    def _setRelation(self, key, relation):
+        if relation["source"] not in self._elements.keys():
+            raise TypeError(relations[key]["source"] + " does not exist in model.")
+        if relation["target"] not in self._elements.keys():
+            raise TypeError(relation["target"] + " does not exist in model.")
+        if not self._isValidRelation(relation):
+            raise TypeError(relation["source"] + " and " + relations["target"] + " are not a valid source-target pair for " + elementName)
         else:
-            self._relationships[key] = relationship
-            # if not hasattr(self._relationships[key], 'uuid'):
-            #     self._relationships[key].uuid = str(uuid.uuid1())
+            self._relations[key] = relation
+            # if not hasattr(self._relations[key], 'uuid'):
+            #     self._relations[key].uuid = str(uuid.uuid1())
 
-    def _isValidRelationship(self, relationship):
-        source = self._elements[relationship["source"]]
-        target = self._elements[relationship["target"]]
-        relationshipType = relationship["relationshipType"]
-        return type(source) in self._validRelationships[relationshipType]['source'] and type(target) in self._validRelationships[relationshipType]['target']
+    def _isValidRelation(self, relation):
+        source = self._elements[relation["source"]]
+        target = self._elements[relation["target"]]
+        relationType = relation["relationType"]
+        return type(source) in self._validRelations[relationType]['source'] and type(target) in self._validRelations[relationType]['target']
 
     @classmethod
     def _isValidElementKey(cls, key):
@@ -216,14 +216,14 @@ class Model(object):
         return type(element) in cls._validElements.values()
 
     @classmethod
-    def _isValidRelationshipKey(cls, key):
-        relationship, id_no = key.split('-')
-        return relationship in cls._validRelationships.keys() and isinstance(int(id_no),int)
+    def _isValidRelationKey(cls, key):
+        relation, id_no = key.split('-')
+        return relation in cls._validRelations.keys() and isinstance(int(id_no),int)
 
     # @classmethod
-    # def _isValidSource(cls, relationship, source):
-    #     return source in cls._validRelationships[relationship]['source']
+    # def _isValidSource(cls, relation, source):
+    #     return source in cls._validRelations[relation]['source']
     #
     # @classmethod
-    # def _isValidTarget(cls, relationship, target):
-    #     return target in cls._validRelationships[relationship]['target']
+    # def _isValidTarget(cls, relation, target):
+    #     return target in cls._validRelations[relation]['target']

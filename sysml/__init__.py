@@ -1,2 +1,2 @@
-from sysml.elements import *
+from sysml.element import *
 from sysml.system import *

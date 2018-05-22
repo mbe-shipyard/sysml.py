@@ -12,7 +12,7 @@ This python package consists of 3 modules:
 
 - The ``system.py`` module contains the ``Model()`` class for creating *system model objects* to serve as a central repository for model elements (or relationships between elements), and provides instance methods for generating the 9 `SysML diagrams <http://sysmlforum.com/includes/what-are-sysml-diagram-types.html>`_.
 
-- The ``elements.py`` module contains the *grammar* of SysML by providing classes for creating *model element objects* (e.g., package, block, constraintBlock, requirement, etc.). These objects are meant to be used internally by system model objects.
+- The ``element.py`` module contains the *grammar* of SysML by providing classes for creating *model element objects* (e.g., package, block, constraintBlock, requirement, etc.). These objects are meant to be used internally by system model objects.
 
 - The ``parser.py`` module contains a parser for importing SysML models from, or exporting to, a YAML file.
 
