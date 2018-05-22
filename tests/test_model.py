@@ -96,6 +96,6 @@ def add_relation_between_requirements(add_requirements):
 @pytest.mark.skip('WIP')
 def test_add_relation_between_requirements(add_relation_between_requirements):
     model = add_relation_between_requirements
-    assert repr(model['Requirements'].relations[0]['source']) == "\xabrequirement\xbb 'Functional-1'"
-    assert repr(model['Requirements'].relations[0]['target']) == "\xabrequirement\xbb 'Top-level'"
-    assert repr(model['Requirements'].relations[0]['type']) == "\xabrequirement\xbb 'Top-level'"
+    assert repr(model['Requirements'].relations['deriveReqt']['source']) == "\xabrequirement\xbb 'Functional-1'"
+    assert repr(model['Requirements'].relations['deriveReqt']['target']) == "\xabrequirement\xbb 'Top-level'"
+    assert repr(model['Requirements'].relations['deriveReqt']['type']) == "\xabrequirement\xbb 'Top-level'"
