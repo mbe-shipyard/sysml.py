@@ -19,7 +19,7 @@ class Block(object):
 
     values : dict, default None
 
-    parts : list, default None
+    parts : dict, default None
 
     references : list, default None
 
@@ -38,14 +38,14 @@ class Block(object):
 
     """
 
-    _stereotype = "block"
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
     def __init__(self, label=None, values=None, parts={}, references=None, flowProperties=None, stereotype=['block']):
+        self._stereotypes = ["block"]
         # Label
         if label is None:
-            Block._id_no += 1
+            cls._id_no += 1
             self._label = 'Block' + str(Block._id_no)
         elif type(label) is not str:
             raise TypeError(label + " must be a string")
@@ -86,7 +86,10 @@ class Block(object):
         self.constaints = []
         """
     def __repr__(self):
-        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "'{}'".format(self._label)
 
     ## Getters
     @property
@@ -248,11 +251,11 @@ class Block(object):
 class Requirement(object):
     """This class defines a requirement"""
 
-    _stereotype = "requirement"
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
     def __init__(self, label=None, txt=None, id_no=None):
+        self._stereotypes = ["requirement"]
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
@@ -296,7 +299,10 @@ class Requirement(object):
         # elif type(trace) is []: #tk: change to accept block or list of blocks
         #     self._trace = trace
     def __repr__(self):
-        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "'{}'".format(self._label)
 
     @property
     def stereotype(cls):
@@ -365,9 +371,9 @@ class Package(object):
         "constraint":ConstraintBlock,
     }
 
-    _stereotype = "package"
 
     def __init__(self, label=None, elements={}):
+        self._stereotypes = ["package"]
         self._label = label
         self._elements = elements
 
@@ -390,7 +396,10 @@ class Package(object):
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
     def __repr__(self):
-        return "\xab" + self._stereotype + "\xbb '{}'".format(self._label)
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "'{}'".format(self._label)
 
     @property
     def label(self):
@@ -479,15 +488,15 @@ class Package(object):
                         newKey = validElement + "-" + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
-        elif self._isValidRelation(element):
-            for validRelation in self._validRelations.keys():
-                if element["relationType"] is validRelation:
-                    for id_no in range(1, maxId_no+1):
-                        newKey = validRelation + "-" + str(id_no)
-                        if newKey not in self._relations.keys():
-                            return newKey
+        # elif self._isValidRelation(element):
+        #     for validRelation in self._validRelations.keys():
+        #         if element["relationType"] is validRelation:
+        #             for id_no in range(1, maxId_no+1):
+        #                 newKey = validRelation + "-" + str(id_no)
+        #                 if newKey not in self._relations.keys():
+        #                     return newKey
         else:
-            raise TypeError(element + " is not a valid element.")
+            raise TypeError(element + " is not a valid model element.")
 
     def _setElement(self, key, element):
         if key is None:
