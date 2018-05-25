@@ -69,8 +69,8 @@ class Model(object):
         "Returns data for key-specified model element or relation"
         if key in self._elements.keys():
             return self._elements[key]
-        elif key in self._relations.keys():
-            return self._relations[key]
+        # elif key in self._relations.keys():
+        #     return self._relations[key]
         else:
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 

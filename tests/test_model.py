@@ -16,10 +16,12 @@ def add_package(model):
     model.add_package('Structure')
     return model
 
+# @pytest.mark.skip('WIP')
 def test_add_package(add_package):
     model = add_package
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
 
+# @pytest.mark.skip('WIP')
 def test_package_has_valid_uuid(add_package):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = add_package
@@ -32,11 +34,13 @@ def add_block_to_package(add_package):
     model['Structure'].add_block('Constitution-class starship')
     return model
 
+# @pytest.mark.skip('WIP')
 def test_add_block_to_package(add_block_to_package):
     """ add block elements as parts to parent blocks using `add_block` the method"""
     model = add_block_to_package
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb 'Constitution-class starship'"
 
+# @pytest.mark.skip('WIP')
 def test_block_has_valid_uuid(add_block_to_package):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = add_block_to_package
@@ -49,12 +53,14 @@ def add_parts_to_block(add_block_to_package):
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
     return model
 
+# @pytest.mark.skip('WIP')
 def test_add_parts_to_block(add_parts_to_block):
     "Parts added to a block element are callable by index via the 'parts' attribute"
     model = add_parts_to_block
     assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb 'Primary Hull'"
     assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb 'Engineering Hull'"
 
+# @pytest.mark.skip('WIP')
 def test_block_part_has_valid_uuid(add_parts_to_block):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = add_parts_to_block
@@ -76,11 +82,13 @@ def add_requirements(model):
     model['Requirements'].add_requirement('Functional-1', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     return model
 
+# @pytest.mark.skip('WIP')
 def test_add_requirements(add_requirements):
     model = add_requirements
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb 'Top-level'"
     assert repr(model['Requirements']['Functional-1']) == "\xabrequirement\xbb 'Functional-1'"
 
+# @pytest.mark.skip('WIP')
 def test_requirement_valid_uuid(add_requirements):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = add_requirements
@@ -88,14 +96,14 @@ def test_requirement_valid_uuid(add_requirements):
     assert uuid.UUID(model['Requirements']['Functional-1'].uuid, version=1)
 
 @pytest.fixture
-def add_relation_between_requirements(add_requirements):
+def add_relation_between_reqts(add_requirements):
     "adds relation to 'Requirements' package consisting of source-target pair and relationship type as arguments."
     model = add_requirements
-    model['Requirements'].add_relation(model['Requirements']['Functional 1'], model['Requirements']['Top-level'], 'deriveReqt')
+    model['Requirements'].add_relation(model['Requirements']['Top-level'], model['Requirements']['Functional-1'], 'deriveReqt')
+    return model
 
-@pytest.mark.skip('WIP')
-def test_add_relation_between_requirements(add_relation_between_requirements):
-    model = add_relation_between_requirements
-    assert repr(model['Requirements'].relations['deriveReqt']['source']) == "\xabrequirement\xbb 'Functional-1'"
-    assert repr(model['Requirements'].relations['deriveReqt']['target']) == "\xabrequirement\xbb 'Top-level'"
-    assert repr(model['Requirements'].relations['deriveReqt']['type']) == "\xabrequirement\xbb 'Top-level'"
+# @pytest.mark.skip('WIP')
+def test_add_relation_between_reqts(add_relation_between_reqts):
+    model = add_relation_between_reqts
+    assert repr(model['Requirements']['deriveReqt-1']['source']) == "\xabrequirement\xbb 'Top-level'"
+    assert repr(model['Requirements']['deriveReqt-1']['target']) == "\xabrequirement\xbb 'Functional-1'"

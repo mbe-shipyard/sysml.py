@@ -368,9 +368,14 @@ class Package(object):
     _validElements = {
         "block":Block,
         "requirement":Requirement,
-        "constraint":ConstraintBlock,
+        "constraint":ConstraintBlock
     }
 
+    _validRelations = {
+        "deriveReqt":{
+            "source":[Requirement],
+            "target":[Requirement]}
+    }
 
     def __init__(self, label=None, elements={}):
         self._stereotypes = ["package"]
@@ -430,8 +435,10 @@ class Package(object):
 
     def add_relation(self, source, target, relationType):
         """Creates a requirement element in package"""
-        if self._isValidRelation({'source': source, 'target': target, 'relationType': relationType}):
-            self._setRelation(source, target, relationType)
+        relation = {'source':source, 'target':target, 'relationType':relationType}
+        if self._isValidRelation(relation):
+            key = self._generateKey(relation, 9999)
+            self._setRelation(key, relation)
         else:
             raise TypeError(label + " must be a string")
 
@@ -488,13 +495,13 @@ class Package(object):
                         newKey = validElement + "-" + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
-        # elif self._isValidRelation(element):
-        #     for validRelation in self._validRelations.keys():
-        #         if element["relationType"] is validRelation:
-        #             for id_no in range(1, maxId_no+1):
-        #                 newKey = validRelation + "-" + str(id_no)
-        #                 if newKey not in self._relations.keys():
-        #                     return newKey
+        elif self._isValidRelation(element):
+            for validRelation in self._validRelations.keys():
+                if element["relationType"] is validRelation:
+                    for id_no in range(1, maxId_no+1):
+                        newKey = validRelation + "-" + str(id_no)
+                        if newKey not in self._elements.keys():
+                            return newKey
         else:
             raise TypeError(element + " is not a valid model element.")
 
@@ -513,7 +520,8 @@ class Package(object):
     def _setRelation(self, key, relation):
         self._elements[key] = relation
 
-    def _isValidRelation(self, source, target, relationType):
+    def _isValidRelation(self, relation):
+        source, target, relationType = relation['source'], relation['target'], relation['relationType']
         return type(source) in self._validRelations[relationType]['source'] and type(target) in self._validRelations[relationType]['target']
 
 class StateMachine(object):
