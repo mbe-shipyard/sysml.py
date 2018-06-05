@@ -53,8 +53,15 @@ class Model(object):
     def __init__(self, label=None, elements={}, relations={}):
         # Model label
         self._label = label
+        self._stereotypes = ["model"]
         # All model elements stored as a dictionary of key-value pairs
         self._elements = elements
+
+    def __repr__(self):
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "'{}'".format(self._label)
 
     def __setitem__(self, key, element):
         "Sets/overwrites element-valid model element or relation into model"
@@ -75,6 +82,11 @@ class Model(object):
             raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
 
     @property
+    def label(self):
+        "Returns model label"
+        return self._label
+
+    @property
     def elements(self):
         "Returns dictionary of model elements"
         return self._elements
@@ -84,6 +96,10 @@ class Model(object):
         "Returns dictionary of relations"
         return self._relations
 
+    @label.setter
+    def label(self, label):
+        "Set model label"
+        self._label = label
     @elements.setter
     def elements(self, elements):
         """Sets/rewrites model elements for entire model by passing model elements as key-value pairs.
