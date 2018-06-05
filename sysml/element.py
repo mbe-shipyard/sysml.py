@@ -41,7 +41,7 @@ class Block(object):
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, label=None, values=None, parts={}, references=None, flowProperties=None, stereotype=['block']):
+    def __init__(self, label=None, values=None, parts={}, constraints={}, references=None, flowProperties=None, stereotype=['block']):
         self._stereotypes = ["block"]
         # Label
         if label is None:
@@ -60,6 +60,15 @@ class Block(object):
                     raise TypeError(part + " must be a Block")
         else:
             self._parts = parts
+        ## Constraint Property
+        if type(constraints) is not dict:
+            raise TypeError(parts + " must be a dict")
+        elif constraints is dict:
+            for constraint in constraints:
+                if not isinstance(part, Constraint): #tk: change to accept block or list of blocks
+                    raise TypeError(constraint + " must be a Constraint")
+        else:
+            self._constraints = constraints
         """
         ## Value Property
         if type(values) is dict:
@@ -417,7 +426,7 @@ class Package(object):
 
     @property
     def stereotype(cls):
-        return cls._stereotype
+        return self._stereotype
 
     @property
     def uuid(self):
