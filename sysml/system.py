@@ -50,11 +50,23 @@ class Model(object):
             "target":[Block]}
     }
 
+    _id_no = 0
+
     def __init__(self, label=None, elements={}, relations={}):
-        # Model label
-        self._label = label
-        self._stereotypes = ["model"]
-        # All model elements stored as a dictionary of key-value pairs
+
+        """Stereotype"""
+        self._stereotypes = set({"model"})
+
+        """Label"""
+        if label is None:
+            cls._id_no += 1
+            self._label = 'Model' + str(Model._id_no)
+        elif type(label) is not str:
+            raise TypeError(label + " must be a string")
+        else:
+            self._label = label
+
+        """Elements"""
         self._elements = elements
 
     def __repr__(self):

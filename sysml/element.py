@@ -41,9 +41,19 @@ class Block(object):
     _id_no = 0
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, label=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotype=['block']):
-        self._stereotypes = ["block"]
-        # Label
+    def __init__(self, label=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
+        """Note: Block() class is intended for internal use by Model() class"""
+
+        """Stereotype"""
+        if type(stereotypes) is not set:
+            raise TypeError(repr(stereotypes) + " must be a set")
+        else:
+            for i in stereotypes:
+                if type(i) is not str:
+                    raise TypeError(i + " must be a string")
+            self._stereotypes = set({"block"}).union(stereotypes)
+
+        """Label"""
         if label is None:
             cls._id_no += 1
             self._label = 'Block' + str(Block._id_no)
@@ -51,29 +61,40 @@ class Block(object):
             raise TypeError(label + " must be a string")
         else:
             self._label = label
-        ## Part Property
+
+        """Part Property"""
         if type(parts) is not dict:
-            raise TypeError(parts + " must be a dict")
-        elif parts is dict:
-            for part in parts:
-                if not isinstance(part, Block): #tk: change to accept block or list of blocks
-                    raise TypeError(part + " must be a Block")
+            raise TypeError(repr(parts) + " must be a dict")
         else:
+            for key in parts:
+                if type(key) is not str:
+                    raise TypeError(key + " must be a string")
+                elif not isinstance(parts[key], Block): #tk: change to accept block or list of blocks
+                    raise TypeError(part[key] + " must be a Block")
             self._parts = parts
-        ## Value Property
+
+        """Value Property"""
         if type(values) is not dict:
-            raise TypeError(values + " must be a dict")
+            raise TypeError(repr(values) + " must be a dict")
         else:
+            for key in values:
+                if type(key) is not str:
+                    raise TypeError(key + " must be a string")
+                elif type(values[key]) is not int or type(values[key]) is not float or not hasattr(values[key],'units'):
+                    raise TypeError(values[key] + " must be an int, float, or have attribute 'unit'")
             self._values = values
-        ## Constraint Property
+
+        """Constraint Property"""
         if type(constraints) is not dict:
-            raise TypeError(parts + " must be a dict")
-        elif constraints is dict:
-            for constraint in constraints:
-                if not isinstance(part, Constraint): #tk: change to accept block or list of blocks
-                    raise TypeError(constraint + " must be a Constraint")
+            raise TypeError(repr(constraints) + " must be a dict")
         else:
+            for key in constraints:
+                if type(key) is not str:
+                    raise TypeError(key + " must be a string")
+                if not isinstance(constraints[key], ConstraintBlock):
+                    raise TypeError(constraints[key] + " must be a ConstraintBlock")
             self._constraints = constraints
+
         """
         ## Reference Property
         if references is None:

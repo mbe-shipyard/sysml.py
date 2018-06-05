@@ -2,6 +2,7 @@ import sysml
 import pytest
 import uuid
 
+"""Structure"""
 # Notes: block elements with starting property attributes should be broken down into granular blocks and assigned id's & relationships upon assimilation into model.
 @pytest.fixture
 def model():
@@ -89,6 +90,7 @@ def test_create_model_instance(create_instance):
     assert repr(model) == "\xabmodel\xbb 'Constitution-Class Starship'"
     assert repr(ncc1701) == "\xabmodel\xbb 'NCC-1701'"
 
+"""Requirements"""
 @pytest.fixture
 def add_requirements(model):
     model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
