@@ -6,8 +6,11 @@ import uuid
 @pytest.fixture
 def model():
     "Create a SysML model instance"
-    model = sysml.Model()
+    model = sysml.Model('Constitution-Class Starship')
     return model
+
+def test_model(model):
+    assert repr(model) ==  "\xabmodel\xbb 'Constitution-Class Starship'"
 
 @pytest.fixture
 def add_package(model):
@@ -74,6 +77,17 @@ def test_bdd(add_parts_to_block):
     model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
     model['Structure'].show() # show diagrams generated for package, 'Structure'
     # Need some way to test diagram was generated
+
+def create_model_instance(model):
+    ncc1701 = model
+    ncc1701._label = 'NCC-1701'
+    return ncc1701
+
+@pytest.mark.skip('WIP')
+def test_create_model_instance(create_instance):
+    ncc1701 = create_instance
+    assert repr(model) == "\xabmodel\xbb 'Constitution-Class Starship'"
+    assert repr(ncc1701) == "\xabmodel\xbb 'NCC-1701'"
 
 @pytest.fixture
 def add_requirements(model):
