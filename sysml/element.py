@@ -15,7 +15,7 @@ class Block(object):
 
     Parameters
     ----------
-    label : string, default None
+    name : string, default None
 
     values : dict, default None
 
@@ -28,11 +28,11 @@ class Block(object):
 
     Examples
     --------
-    >>> warpcore = Block(label='warp core',
+    >>> warpcore = Block(name='warp core',
     ...                 parts=[antimatterinjector, Dilithiumcrystalchamber],
     ...                 flow={'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
     ...                 references=[antimatter])
-    >>> warpdrive = Block(label='warp drive',
+    >>> warpdrive = Block(name='warp drive',
     ...                 values={'class-7'},
     ...                 parts=[antimattercontainment, warpcore, plasmainducer],
 
@@ -41,7 +41,7 @@ class Block(object):
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
     _baseStereotype = "block"
 
-    def __init__(self, label=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
+    def __init__(self, name=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Stereotype"""
@@ -54,13 +54,13 @@ class Block(object):
             self._stereotypes = set({Block._baseStereotype}).union(stereotypes)
 
         """Label"""
-        if label is None:
+        if name is None:
             Block._id_no += 1
-            self._label = 'Block' + str(Block._id_no)
-        elif type(label) is not str:
-            raise TypeError(label + " must be a string")
+            self._name = 'Block' + str(Block._id_no)
+        elif type(name) is not str:
+            raise TypeError(name + " must be a string")
         else:
-            self._label = label
+            self._name = name
 
         """Part Property"""
         if type(parts) is not dict:
@@ -119,13 +119,13 @@ class Block(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "'{}'".format(self._label)
+        return _stereotypes + "'{}'".format(self._name)
 
     ## Getters
     @property
-    def label(self):
-        "Returns block label"
-        return self._label
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def stereotype(cls):
@@ -153,13 +153,13 @@ class Block(object):
         return self._flowProperties
 
     ## Setters
-    @label.setter
-    def label(self, label):
-        "Sets block label"
-        if type(label) is not str:
-            raise TypeError(label + " must be a string")
+    @name.setter
+    def name(self, name):
+        "Sets block name"
+        if type(name) is not str:
+            raise TypeError(name + " must be a string")
         else:
-            self._label = label
+            self._name = name
 
     @uuid.setter
     def uuid(self, UUID):
@@ -170,12 +170,12 @@ class Block(object):
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
 
-    def add_part(self, label):
+    def add_part(self, name):
         """Creates a block element in block"""
-        if type(label) is str:
-            self._setElement(label, Block(label))
+        if type(name) is str:
+            self._setElement(name, Block(name))
         else:
-            raise TypeError(label + " must be a string")
+            raise TypeError(name + " must be a string")
 
     ## Structural Diagrams
     def bdd(self):
@@ -284,7 +284,7 @@ class Requirement(object):
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
     _baseStereotype = "requirement"
 
-    def __init__(self, label=None, txt=None, id_no=None):
+    def __init__(self, name=None, txt=None, id_no=None):
         self._stereotypes = set({Requirement._baseStereotype})
         # ID no.
         if id_no is None:
@@ -295,16 +295,16 @@ class Requirement(object):
         else:
             raise TypeError("argument is not int or float!")
         # Label
-        if label is None:
-            self._label = 'Requirement' + str(self._id_no)
-        elif type(label) is str:
-            self._label = label
+        if name is None:
+            self._name = 'Requirement' + str(self._id_no)
+        elif type(name) is str:
+            self._name = name
         else:
             raise TypeError("argument is not a string!")
         # Text
         if txt is None:
             self.txt = ''
-        elif type(label) is str:
+        elif type(name) is str:
             self.txt = txt
         else:
             raise TypeError("argument is not a string!")
@@ -313,7 +313,7 @@ class Requirement(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "'{}'".format(self._label)
+        return _stereotypes + "'{}'".format(self._name)
 
     @property
     def stereotype(cls):
@@ -422,9 +422,9 @@ class Package(object):
     _validElementTypes = set({Block, Requirement, ConstraintBlock, Dependency})
     _baseStereotype = "package"
 
-    def __init__(self, label=None, elements={}):
+    def __init__(self, name=None, elements={}):
         self._stereotypes = set({Package._baseStereotype})
-        self._label = label
+        self._name = name
         self._elements = elements
 
     def __setitem__(self, key, element):
@@ -445,12 +445,12 @@ class Package(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "'{}'".format(self._label)
+        return _stereotypes + "'{}'".format(self._name)
 
     @property
-    def label(self):
-        "Returns block label"
-        return self._label
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def elements(self):
@@ -474,26 +474,26 @@ class Package(object):
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
 
-    def add_package(self, label=None):
+    def add_package(self, name=None):
         """Creates a package element in model"""
-        if type(label) is str:
-            self._setElement(label, Package(label))
+        if type(name) is str:
+            self._setElement(name, Package(name))
         else:
-            raise TypeError(label + " must be a string")
+            raise TypeError(name + " must be a string")
 
-    def add_block(self, label):
+    def add_block(self, name):
         """Creates a block element in package"""
-        if type(label) is str:
-            self._setElement(label, Block(label))
+        if type(name) is str:
+            self._setElement(name, Block(name))
         else:
-            raise TypeError(label + " must be a string")
+            raise TypeError(name + " must be a string")
 
-    def add_requirement(self, label, txt):
+    def add_requirement(self, name, txt):
         """Creates a requirement element in package"""
-        if type(label) is str:
-            self._setElement(label, Requirement(label, txt))
+        if type(name) is str:
+            self._setElement(name, Requirement(name, txt))
         else:
-            raise TypeError(label + " must be a string")
+            raise TypeError(name + " must be a string")
 
     def add_dependency(self, source, target, stereotype):
         """Creates a dependency element in package"""

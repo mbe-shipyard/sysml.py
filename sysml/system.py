@@ -16,19 +16,19 @@ class Model(Package):
 
     _id_no = 0
 
-    def __init__(self, label=None, elements={}, relations={}):
+    def __init__(self, name=None, elements={}, relations={}):
 
         """Stereotype"""
         self._stereotypes = set({"model"})
 
         """Label"""
-        if label is None:
+        if name is None:
             Model._id_no += 1
-            self._label = 'Model' + str(Model._id_no)
-        elif type(label) is not str:
-            raise TypeError(label + " must be a string")
+            self._name = 'Model' + str(Model._id_no)
+        elif type(name) is not str:
+            raise TypeError(name + " must be a string")
         else:
-            self._label = label
+            self._name = name
 
         """Elements"""
         self._elements = elements
