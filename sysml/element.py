@@ -39,7 +39,6 @@ class Block(object):
     """
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
-    _baseStereotype = "block"
 
     def __init__(self, name=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
         """Note: Block() class is intended for internal use by Model() class"""
@@ -51,7 +50,7 @@ class Block(object):
             for i in stereotypes:
                 if type(i) is not str:
                     raise TypeError(i + " must be a string")
-            self._stereotypes = set({Block._baseStereotype}).union(stereotypes)
+            self._stereotypes = set({Block.__name__.lower()}).union(stereotypes)
 
         """Label"""
         if name is None:
@@ -282,10 +281,9 @@ class Requirement(object):
     """This class defines a requirement"""
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
-    _baseStereotype = "requirement"
 
     def __init__(self, name=None, txt=None, id_no=None):
-        self._stereotypes = set({Requirement._baseStereotype})
+        self._stereotypes = set({Requirement.__name__.lower()})
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
@@ -366,7 +364,6 @@ class Dependency(object):
     """This class defines a dependency"""
 
     # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
-    _baseStereotype = "dependency"
 
     def __init__(self, source, target, stereotype):
         if stereotype is 'deriveReqt':
@@ -420,10 +417,9 @@ class Package(object):
     """This class defines a package"""
 
     _validElementTypes = set({Block, Requirement, ConstraintBlock, Dependency})
-    _baseStereotype = "package"
 
     def __init__(self, name=None, elements={}):
-        self._stereotypes = set({Package._baseStereotype})
+        self._stereotypes = set({Package.__name__.lower()})
         self._name = name
         self._elements = elements
 
@@ -537,7 +533,7 @@ class Package(object):
             for validElement in Package._validElementTypes:
                 if elementType is validElement or elementType is Package:
                     for id_no in range(1, len(self._elements)+1):
-                        newKey = validElement._baseStereotype + str(id_no)
+                        newKey = validElement.__name__.lower() + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
         else:
