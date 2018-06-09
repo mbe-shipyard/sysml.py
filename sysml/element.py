@@ -285,7 +285,7 @@ class Requirement(object):
     #tk: need to fix id_no state; store all existing id_no's in a list?
 
     def __init__(self, label=None, txt=None, id_no=None):
-        self._stereotypes = ["requirement"]
+        self._stereotypes = set({"requirement"})
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
@@ -401,14 +401,36 @@ class Package(object):
         "constraint":ConstraintBlock
     }
 
-    _validRelations = {
-        "deriveReqt":{
-            "source":[Requirement],
-            "target":[Requirement]}
-    }
+    # Dictionary of valid model relations. key: element [string], value: valid element nodes [list of classes]
+    # _validRelations = {
+    #     "containment":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "inheritance":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "association":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "generalization":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "partProperty":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "valueProperty":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "referenceProperty":{
+    #         "source":[Block],
+    #         "target":[Block]},
+    #     "flowProperty":{
+    #         "source":[Block],
+    #         "target":[Block]}
+    # }
 
     def __init__(self, label=None, elements={}):
-        self._stereotypes = ["package"]
+        self._stereotypes = set({"package"})
         self._label = label
         self._elements = elements
 
@@ -469,6 +491,13 @@ class Package(object):
         if self._isValidRelation(relation):
             key = self._generateKey(relation, 9999)
             self._setRelation(key, relation)
+        else:
+            raise TypeError(label + " must be a string")
+
+    def add_package(self, label=None):
+        """Creates a package element in model"""
+        if type(label) is str:
+            self._setElement(label, Package(label))
         else:
             raise TypeError(label + " must be a string")
 
@@ -545,7 +574,7 @@ class Package(object):
             self._elements[key].uuid = str(uuid.uuid1())
 
     def _isValidElement(self, element):
-        return type(element) in self._validElements.values()
+        return type(element) in self._validElements.values() or type(element) is Package
 
     def _setRelation(self, key, relation):
         self._elements[key] = relation
