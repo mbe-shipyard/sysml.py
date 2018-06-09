@@ -126,14 +126,16 @@ def test_refine_requirement(add_requirements):
     # assert dependency target is of type(use case)
     # assert dependency stereotype is "refine"
 
-@pytest.mark.skip('WIP')
+# @pytest.mark.skip('WIP')
 def test_satisfy_requirement(add_requirements):
     model = add_requirements
-    # instantiate block
-    # add dependency where requirement is source node (i.e., "supplier") and block is target node (i.e., "client")
-    # assert dependency source is of type(Requirement)
-    # assert dependency target stereotype is a «block»
-    # assert dependency stereotype is "satisfy"
+    model['Structure']['Constitution-class starship'].add_part('class-7 warp drive')
+    model['Requirements'].add_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
+    assert repr(model['Requirements']['dependency2'].source) == "\xabrequirement\xbb 'Functional'"
+    assert repr(model['Requirements']['dependency2'].target) == "\xabblock\xbb 'class-7 warp drive'"
+    assert repr(type(model['Requirements']['dependency2'].source)) == "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['dependency2'].target)) == "<class 'sysml.element.Block'>"
+    assert model['Requirements']['dependency2'].stereotype == "satisfy"
 
 @pytest.mark.skip('WIP')
 def test_verify_requirement(add_requirements):

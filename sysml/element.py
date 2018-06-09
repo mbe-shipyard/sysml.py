@@ -378,6 +378,15 @@ class Dependency(object):
                 self._source = source
                 self._target = target
                 self._stereotype = stereotype
+        elif stereotype is 'satisfy':
+            if type(source) is not Requirement:
+                raise TypeError(repr(source) + ' is not a Requirement')
+            elif type(target) is not Block:
+                raise TypeError(repr(target) + ' is not a Block')
+            else:
+                self._source = source
+                self._target = target
+                self._stereotype = stereotype
         else:
             raise ValueError(stereotype + ' is not a valid dependency stereotype')
 
