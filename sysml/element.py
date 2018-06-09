@@ -402,6 +402,20 @@ class Dependency(object):
     def stereotype(self):
         return self._stereotype
 
+    @property
+    def uuid(self):
+        "Returns block uuid"
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, UUID):
+        "Sets uuid"
+        try:
+            uuid.UUID(UUID, version=1)
+            self._uuid = UUID
+        except:
+            raise ValueError(UUID + " must be a valid uuid of type, string")
+
 class Package(object):
     """This class defines a package"""
 

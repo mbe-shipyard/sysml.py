@@ -77,6 +77,7 @@ def test_derive_requirement(model):
     assert repr(type(model['Requirements']['dependency1'].source)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['dependency1'].target)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements']['dependency1'].stereotype == "deriveReqt"
+    assert uuid.UUID(model['Requirements']['dependency1'].uuid, version=1)
 
 @pytest.mark.skip('WIP')
 def test_refine_requirement(model):
@@ -96,6 +97,7 @@ def test_satisfy_requirement(model):
     assert repr(type(model['Requirements']['dependency2'].source)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['dependency2'].target)) == "<class 'sysml.element.Block'>"
     assert model['Requirements']['dependency2'].stereotype == "satisfy"
+    assert uuid.UUID(model['Requirements']['dependency2'].uuid, version=1)
 
 @pytest.mark.skip('WIP')
 def test_verify_requirement(model):
