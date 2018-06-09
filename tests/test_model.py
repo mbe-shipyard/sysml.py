@@ -12,6 +12,7 @@ def model():
 
 def test_model(model):
     assert repr(model) ==  "\xabmodel\xbb 'Constitution-Class Starship'"
+    assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
 
 @pytest.fixture
 def add_package(model):
@@ -24,6 +25,7 @@ def add_package(model):
 def test_add_package(add_package):
     model = add_package
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
+    assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
 
 # @pytest.mark.skip('WIP')
 def test_package_has_valid_uuid(add_package):
@@ -43,6 +45,7 @@ def test_add_block_to_package(add_block_to_package):
     """ add block elements as parts to parent blocks using `add_block` the method"""
     model = add_block_to_package
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb 'Constitution-class starship'"
+    assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
 
 # @pytest.mark.skip('WIP')
 def test_block_has_valid_uuid(add_block_to_package):
@@ -63,6 +66,8 @@ def test_add_parts_to_block(add_parts_to_block):
     model = add_parts_to_block
     assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb 'Primary Hull'"
     assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb 'Engineering Hull'"
+    assert repr(type(model['Structure']['Constitution-class starship'].parts['Primary Hull'])) ==  "<class 'sysml.element.Block'>"
+    assert repr(type(model['Structure']['Constitution-class starship'].parts['Engineering Hull'])) ==  "<class 'sysml.element.Block'>"
 
 # @pytest.mark.skip('WIP')
 def test_block_part_has_valid_uuid(add_parts_to_block):
@@ -99,6 +104,8 @@ def test_add_requirements(add_requirements):
     model = add_requirements
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb 'Top-level'"
     assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb 'Functional'"
+    assert repr(type(model['Requirements']['Top-level'])) ==  "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['Functional'])) ==  "<class 'sysml.element.Requirement'>"
 
 # @pytest.mark.skip('WIP')
 def test_requirement_valid_uuid(add_requirements):
