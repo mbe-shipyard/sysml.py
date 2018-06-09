@@ -79,14 +79,10 @@ def test_bdd(add_parts_to_block):
     model['Structure'].show() # show diagrams generated for package, 'Structure'
     # Need some way to test diagram was generated
 
-def create_model_instance(model):
-    ncc1701 = model
-    ncc1701._label = 'NCC-1701'
-    return ncc1701
-
 @pytest.mark.skip('WIP')
-def test_create_model_instance(create_instance):
+def test_create_model_instance(model):
     ncc1701 = create_instance
+    ncc1701.label = 'NCC-1701'
     assert repr(model) == "\xabmodel\xbb 'Constitution-Class Starship'"
     assert repr(ncc1701) == "\xabmodel\xbb 'NCC-1701'"
 
@@ -111,15 +107,37 @@ def test_requirement_valid_uuid(add_requirements):
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
     assert uuid.UUID(model['Requirements']['Functional-1'].uuid, version=1)
 
-@pytest.fixture
-def add_relation_between_reqts(add_requirements):
-    "adds relation to 'Requirements' package consisting of source-target pair and relationship type as arguments."
+@pytest.mark.skip('WIP')
+def test_derive_requirement(add_requirements):
     model = add_requirements
-    model['Requirements'].add_relation(model['Requirements']['Top-level'], model['Requirements']['Functional-1'], 'deriveReqt')
-    return model
+    model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional-1'], 'deriveReqt')
+    assert repr(model['Requirements']['dependency-1'].source) == "\xabrequirement\xbb 'Top-level'"
+    assert repr(model['Requirements']['dependency-1'].target) == "\xabrequirement\xbb 'Functional-1'"
+    assert repr(model['Requirements']['dependency-1'].stereotype) == "deriveReqt"
 
-# @pytest.mark.skip('WIP')
-def test_add_relation_between_reqts(add_relation_between_reqts):
-    model = add_relation_between_reqts
-    assert repr(model['Requirements']['deriveReqt-1']['source']) == "\xabrequirement\xbb 'Top-level'"
-    assert repr(model['Requirements']['deriveReqt-1']['target']) == "\xabrequirement\xbb 'Functional-1'"
+@pytest.mark.skip('WIP')
+def test_refine_requirement(add_requirements):
+    model = add_requirements
+    # instantiate use case
+    # add dependency where requirement is source node (i.e., "supplier") and use case is target node (i.e., "client")
+    # assert dependency source is of type(requirement)
+    # assert dependency target is of type(use case)
+    # assert dependency stereotype is "refine"
+
+@pytest.mark.skip('WIP')
+def test_satisfy_requirement(add_requirements):
+    model = add_requirements
+    # instantiate block
+    # add dependency where requirement is source node (i.e., "supplier") and block is target node (i.e., "client")
+    # assert dependency source is of type(Requirement)
+    # assert dependency target stereotype is a «block»
+    # assert dependency stereotype is "satisfy"
+
+@pytest.mark.skip('WIP')
+def test_verify_requirement(add_requirements):
+    model = add_requirements
+    # instantiate test case
+    # add dependency where requirement is source node (i.e., "supplier") and test case is target node (i.e., "client")
+    # assert dependency source is of type(Requirement)
+    # assert dependency target stereotype is a «testCase»
+    # assert dependency stereotype is "verify"
