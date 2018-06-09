@@ -42,6 +42,10 @@ def test_add_parts_to_block(model):
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
 
 @pytest.mark.skip('WIP')
+def test_add_parts_withMultiplicity_to_block(model):
+    pass
+
+@pytest.mark.skip('WIP')
 def test_bdd(model):
     "methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
     model = add_parts_to_block
