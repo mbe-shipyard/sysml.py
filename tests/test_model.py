@@ -15,22 +15,22 @@ def test_model(model):
     assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
 
 # @pytest.mark.skip('WIP')
-def test_add_package(model):
+def test_package(model):
     model.add_package('Structure')
     assert repr(model['Structure']) == "\xabpackage\xbb 'Structure'"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
     assert uuid.UUID(model['Structure'].uuid, version=1)
 
 # @pytest.mark.skip('WIP')
-def test_add_block_to_package(model):
-    """ add block elements as parts to parent blocks using `add_block` the method"""
+def test_block(model):
+    """ add block elements as parts to parent blocks using `block` the method"""
     model['Structure'].add_block('Constitution-class starship')
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb 'Constitution-class starship'"
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class starship'].uuid, version=1)
 
 # @pytest.mark.skip('WIP')
-def test_add_parts_to_block(model):
+def test_block_partProperty(model):
     "Parts added to a block element are callable by index via the 'parts' attribute"
     model['Structure']['Constitution-class starship'].add_part('Primary Hull')
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
@@ -42,27 +42,36 @@ def test_add_parts_to_block(model):
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
 
 @pytest.mark.skip('WIP')
-def test_add_parts_withMultiplicity_to_block(model):
+def test_block_partProperty_withMultiplicity(model):
+    pass
+
+@pytest.mark.skip('WIP')
+def test_block_valueProperty(model):
+    pass
+
+@pytest.mark.skip('WIP')
+def test_block_referenceProperty(model):
+    pass
+
+@pytest.mark.skip('WIP')
+def test_block_constraintProperty(model):
+    pass
+
+@pytest.mark.skip('WIP')
+def test_block_port(model):
     pass
 
 @pytest.mark.skip('WIP')
 def test_bdd(model):
     "methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
-    model = add_parts_to_block
+    model = parts_to_block
     model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
     model['Structure'].show() # show diagrams generated for package, 'Structure'
     # Need some way to test diagram was generated
 
-@pytest.mark.skip('WIP')
-def test_create_model_instance(model):
-    ncc1701 = create_instance
-    ncc1701.label = 'NCC-1701'
-    assert repr(model) == "\xabmodel\xbb 'Constitution-Class Starship'"
-    assert repr(ncc1701) == "\xabmodel\xbb 'NCC-1701'"
-
 """Requirements"""
 # @pytest.mark.skip('WIP')
-def test_add_requirements(model):
+def test_requirements(model):
     model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
     model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
     model['Requirements'].add_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
