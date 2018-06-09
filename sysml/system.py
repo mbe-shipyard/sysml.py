@@ -23,7 +23,7 @@ class Model(Package):
 
         """Label"""
         if label is None:
-            cls._id_no += 1
+            Model._id_no += 1
             self._label = 'Model' + str(Model._id_no)
         elif type(label) is not str:
             raise TypeError(label + " must be a string")

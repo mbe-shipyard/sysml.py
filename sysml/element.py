@@ -38,8 +38,8 @@ class Block(object):
 
     """
 
-    _id_no = 0
-    #tk: need to fix id_no state; store all existing id_no's in a list?
+    _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
+    _baseStereotype = "block"
 
     def __init__(self, label=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
         """Note: Block() class is intended for internal use by Model() class"""
@@ -51,11 +51,11 @@ class Block(object):
             for i in stereotypes:
                 if type(i) is not str:
                     raise TypeError(i + " must be a string")
-            self._stereotypes = set({"block"}).union(stereotypes)
+            self._stereotypes = set({Block._baseStereotype}).union(stereotypes)
 
         """Label"""
         if label is None:
-            cls._id_no += 1
+            Block._id_no += 1
             self._label = 'Block' + str(Block._id_no)
         elif type(label) is not str:
             raise TypeError(label + " must be a string")
@@ -216,7 +216,7 @@ class Block(object):
                         if newKey not in self._relationships.keys():
                             return newKey
         else:
-            raise TypeError(element + " is not a valid element.")
+            raise TypeError(repr(element) + " is not a valid element.")
 
     def _setElement(self, key, element):
         if key is None:
@@ -281,16 +281,16 @@ class Block(object):
 class Requirement(object):
     """This class defines a requirement"""
 
-    _id_no = 0
-    #tk: need to fix id_no state; store all existing id_no's in a list?
+    _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
+    _baseStereotype = "requirement"
 
     def __init__(self, label=None, txt=None, id_no=None):
-        self._stereotypes = set({"requirement"})
+        self._stereotypes = set({Requirement._baseStereotype})
         # ID no.
         if id_no is None:
             Requirement._id_no += 1
             self._id_no = 'ID' + str(Requirement._id_no).zfill(3)
-        elif type(id_no) in [int,float]:
+        elif type(id_no) in [int, float]:
             self._id_no = 'ID' + str(id_no).zfill(3)
         else:
             raise TypeError("argument is not int or float!")
@@ -308,26 +308,7 @@ class Requirement(object):
             self.txt = txt
         else:
             raise TypeError("argument is not a string!")
-        # # Satisfy
-        # if satisfy is None:
-        #     self._satisfy = []
-        # elif type(satisfy) is []: #tk: change to accept block or list of blocks
-        #     self._satisfy = satisfy
-        # # Verify
-        # if verify is None:
-        #     self._verify = []
-        # elif type(verify) is []: #tk: change to accept block or list of blocks
-        #     self._verify = verify
-        # # Refine
-        # if refine is None:
-        #     self.refine = []
-        # elif type(refine) is []: #tk: change to accept block or list of blocks
-        #     self._refine = refine
-        # # Trace
-        # if trace is None:
-        #     self.trace = []
-        # elif type(trace) is []: #tk: change to accept block or list of blocks
-        #     self._trace = trace
+
     def __repr__(self):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
@@ -342,17 +323,6 @@ class Requirement(object):
     def uuid(self):
         "Returns block uuid"
         return self._uuid
-
-    ## Set requirement relations
-    # def satisfiedBy(self, *sourcev):
-    #     for source in sourcev:
-    #         self._satisfy.append(source)
-    # def refinedBy(self, *sourcev):
-    #     for source in sourcev:
-    #         self._refine.append(source)
-    # def verifiedBy(self, *sourcev):
-    #     for source in sourcev:
-    #         self._verify.append(source)
 
     @uuid.setter
     def uuid(self, UUID):
@@ -392,45 +362,45 @@ class ConstraintBlock(object):
         """
         pass
 
+class Dependency(object):
+    """This class defines a dependency"""
+
+    # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
+    _baseStereotype = "dependency"
+
+    def __init__(self, source, target, stereotype):
+        if stereotype is 'deriveReqt':
+            if type(source) is not Requirement:
+                raise TypeError(repr(source) + ' is not a Requirement')
+            elif type(target) is not Requirement:
+                raise TypeError(repr(target) + ' is not a Requirement')
+            else:
+                self._source = source
+                self._target = target
+                self._stereotype = stereotype
+        else:
+            raise ValueError(stereotype + ' is not a valid dependency stereotype')
+
+    @property
+    def source(self):
+        return self._source
+
+    @property
+    def target(self):
+        return self._target
+
+    @property
+    def stereotype(self):
+        return self._stereotype
+
 class Package(object):
     """This class defines a package"""
 
-    _validElements = {
-        "block":Block,
-        "requirement":Requirement,
-        "constraint":ConstraintBlock
-    }
-
-    # Dictionary of valid model relations. key: element [string], value: valid element nodes [list of classes]
-    # _validRelations = {
-    #     "containment":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "inheritance":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "association":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "generalization":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "partProperty":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "valueProperty":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "referenceProperty":{
-    #         "source":[Block],
-    #         "target":[Block]},
-    #     "flowProperty":{
-    #         "source":[Block],
-    #         "target":[Block]}
-    # }
+    _validElementTypes = set({Block, Requirement, ConstraintBlock, Dependency})
+    _baseStereotype = "package"
 
     def __init__(self, label=None, elements={}):
-        self._stereotypes = set({"package"})
+        self._stereotypes = set({Package._baseStereotype})
         self._label = label
         self._elements = elements
 
@@ -438,19 +408,15 @@ class Package(object):
         "Sets/overwrites element-valid model element or relationship into model"
         if self._isValidElement(element):
             self._setElement(key, element)
-        # elif self._isValidRelationshipKey(key):
-        #     self._setRelationship(key, element)
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
         if key in self._elements.keys():
             return self._elements[key]
-        # elif key in self._relationships.keys():
-        #     return self._relationships[key]
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing a dash-separated element and integer, e.g., 'partProperty-42' ")
+            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
 
     def __repr__(self):
         _stereotypes = ""
@@ -469,7 +435,7 @@ class Package(object):
 
     @property
     def stereotype(cls):
-        return self._stereotype
+        return self._stereotypes
 
     @property
     def uuid(self):
@@ -484,15 +450,6 @@ class Package(object):
             self._uuid = UUID
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
-
-    def add_relation(self, source, target, relationType):
-        """Creates a requirement element in package"""
-        relation = {'source':source, 'target':target, 'relationType':relationType}
-        if self._isValidRelation(relation):
-            key = self._generateKey(relation, 9999)
-            self._setRelation(key, relation)
-        else:
-            raise TypeError(label + " must be a string")
 
     def add_package(self, label=None):
         """Creates a package element in model"""
@@ -514,6 +471,12 @@ class Package(object):
             self._setElement(label, Requirement(label, txt))
         else:
             raise TypeError(label + " must be a string")
+
+    def add_dependency(self, source, target, stereotype):
+        """Creates a dependency element in package"""
+        # element = Dependency(source, target, stereotype)
+        key = self._generateKey(Dependency)
+        self._setElement(key, Dependency(source, target, stereotype))
 
     ## Structural Diagrams
     def bdd(self):
@@ -546,42 +509,28 @@ class Package(object):
         """
         pass
 
-    def _generateKey(self, element, maxId_no):
-        if self._isValidElement(element):
-            for validElement in self._validElements.keys():
-                if isinstance(element, self._validElements[validElement]):
-                    for id_no in range(1, maxId_no+1):
-                        newKey = validElement + "-" + str(id_no)
-                        if newKey not in self._elements.keys():
-                            return newKey
-        elif self._isValidRelation(element):
-            for validRelation in self._validRelations.keys():
-                if element["relationType"] is validRelation:
-                    for id_no in range(1, maxId_no+1):
-                        newKey = validRelation + "-" + str(id_no)
+    def _generateKey(self, elementType):
+        if self._isValidElementType(elementType):
+            for validElement in Package._validElementTypes:
+                if elementType is validElement or elementType is Package:
+                    for id_no in range(1, len(self._elements)+1):
+                        newKey = validElement._baseStereotype + str(id_no)
                         if newKey not in self._elements.keys():
                             return newKey
         else:
-            raise TypeError(element + " is not a valid model element.")
+            raise TypeError(repr(element) + " is not a valid model element.")
 
     def _setElement(self, key, element):
-        if key is None:
-            key = self._generateKey(element)
-        if not self._isValidElement(element):
+        # if key is None:
+        #     key = self._generateKey(element)
+        if not self._isValidElementType(type(element)):
             raise TypeError(repr(element) + " is not a valid model element.")
         else:
             self._elements[key] = element
             self._elements[key].uuid = str(uuid.uuid1())
 
-    def _isValidElement(self, element):
-        return type(element) in self._validElements.values() or type(element) is Package
-
-    def _setRelation(self, key, relation):
-        self._elements[key] = relation
-
-    def _isValidRelation(self, relation):
-        source, target, relationType = relation['source'], relation['target'], relation['relationType']
-        return type(source) in self._validRelations[relationType]['source'] and type(target) in self._validRelations[relationType]['target']
+    def _isValidElementType(self, elementType):
+        return elementType in self._validElementTypes or elementType is Package
 
 class StateMachine(object):
     """This class defines a state"""

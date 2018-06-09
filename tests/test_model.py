@@ -90,30 +90,32 @@ def test_create_model_instance(model):
 @pytest.fixture
 def add_requirements(model):
     model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
-    model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall be able to boldly go where no one has gone before')
-    model['Requirements'].add_requirement('Functional-1', 'A constitution-class starship shall be able to travel at warp 8 or higher')
+    model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
+    model['Requirements'].add_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     return model
 
 # @pytest.mark.skip('WIP')
 def test_add_requirements(add_requirements):
     model = add_requirements
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb 'Top-level'"
-    assert repr(model['Requirements']['Functional-1']) == "\xabrequirement\xbb 'Functional-1'"
+    assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb 'Functional'"
 
 # @pytest.mark.skip('WIP')
 def test_requirement_valid_uuid(add_requirements):
     "Model elements should be assigned a uuid upon assimilation into model"
     model = add_requirements
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
-    assert uuid.UUID(model['Requirements']['Functional-1'].uuid, version=1)
+    assert uuid.UUID(model['Requirements']['Functional'].uuid, version=1)
 
-@pytest.mark.skip('WIP')
+# @pytest.mark.skip('WIP')
 def test_derive_requirement(add_requirements):
     model = add_requirements
-    model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional-1'], 'deriveReqt')
-    assert repr(model['Requirements']['dependency-1'].source) == "\xabrequirement\xbb 'Top-level'"
-    assert repr(model['Requirements']['dependency-1'].target) == "\xabrequirement\xbb 'Functional-1'"
-    assert repr(model['Requirements']['dependency-1'].stereotype) == "deriveReqt"
+    model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
+    assert repr(model['Requirements']['dependency1'].source) == "\xabrequirement\xbb 'Top-level'"
+    assert repr(model['Requirements']['dependency1'].target) == "\xabrequirement\xbb 'Functional'"
+    assert repr(type(model['Requirements']['dependency1'].source)) == "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['dependency1'].target)) == "<class 'sysml.element.Requirement'>"
+    assert model['Requirements']['dependency1'].stereotype == "deriveReqt"
 
 @pytest.mark.skip('WIP')
 def test_refine_requirement(add_requirements):
