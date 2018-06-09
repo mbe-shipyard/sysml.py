@@ -173,7 +173,7 @@ class Block(object):
     def add_part(self, name):
         """Creates a block element in block"""
         if type(name) is str:
-            self._setElement(name, Block(name))
+            self._addPart(name, Block(name))
         else:
             raise TypeError(name + " must be a string")
 
@@ -218,7 +218,7 @@ class Block(object):
         else:
             raise TypeError(repr(element) + " is not a valid element.")
 
-    def _setElement(self, key, element):
+    def _addPart(self, key, element):
         if key is None:
             key = self._generateKey(element)
         if not self._isValidElement(element):
