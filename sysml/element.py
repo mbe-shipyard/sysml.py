@@ -118,7 +118,7 @@ class Block(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._name)
 
     ## Getters
     @property
@@ -311,7 +311,7 @@ class Requirement(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._name)
 
     @property
     def stereotype(cls):
@@ -441,7 +441,7 @@ class Package(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._name)
 
     @property
     def name(self):
