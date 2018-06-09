@@ -87,6 +87,7 @@ def test_derive_requirement(model):
     model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
     assert repr(model['Requirements']['dependency1'].source) == "\xabrequirement\xbb 'Top-level'"
     assert repr(model['Requirements']['dependency1'].target) == "\xabrequirement\xbb 'Functional'"
+    assert repr(type(model['Requirements']['dependency1'])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements']['dependency1'].source)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['dependency1'].target)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements']['dependency1'].stereotype == "deriveReqt"
@@ -107,6 +108,7 @@ def test_satisfy_requirement(model):
     model['Requirements'].add_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
     assert repr(model['Requirements']['dependency2'].source) == "\xabrequirement\xbb 'Functional'"
     assert repr(model['Requirements']['dependency2'].target) == "\xabblock\xbb 'class-7 warp drive'"
+    assert repr(type(model['Requirements']['dependency2'])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements']['dependency2'].source)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['dependency2'].target)) == "<class 'sysml.element.Block'>"
     assert model['Requirements']['dependency2'].stereotype == "satisfy"
