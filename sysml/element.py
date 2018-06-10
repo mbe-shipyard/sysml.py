@@ -116,8 +116,8 @@ class Block(object):
         return self._name
 
     @property
-    def stereotype(cls):
-        return cls._stereotype
+    def stereotypes(self):
+        return self._stereotypes
 
     @property
     def uuid(self):
@@ -305,8 +305,8 @@ class Requirement(object):
         return _stereotypes + "\n{}".format(self._name)
 
     @property
-    def stereotype(cls):
-        return cls._stereotype
+    def stereotypes(self):
+        return self._stereotypes
 
     @property
     def uuid(self):
@@ -444,7 +444,7 @@ class Package(object):
         return self._elements
 
     @property
-    def stereotype(cls):
+    def stereotypes(self):
         return self._stereotypes
 
     @property
