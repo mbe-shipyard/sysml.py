@@ -103,6 +103,7 @@ class Block(object):
         ## Constraints
         self.constaints = []
         """
+
     def __repr__(self):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
@@ -161,6 +162,13 @@ class Block(object):
             self._uuid = UUID
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
+
+    @multiplicity.setter
+    def multiplicity(self, multiplicity):
+        if type(multiplicity) is not int and multiplicity > 0:
+            raise TypeError(multiplicity + " must be a positive int")
+        else:
+            self._multiplicity = multiplicity
 
     def add_part(self, name, multiplicity=None):
         """Creates a block element in block"""

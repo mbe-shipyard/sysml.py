@@ -51,6 +51,9 @@ def test_block_partProperty_withMultiplicity(model):
     assert repr(type(model['Structure']['Constitution-class starship'].parts['Pylon'])) == "<class 'sysml.element.Block'>"
     assert model['Structure']['Constitution-class starship'].parts['Nacelle'].multiplicity == 2
     assert model['Structure']['Constitution-class starship'].parts['Pylon'].multiplicity == 2
+    with pytest.raises(TypeError) as info:
+        model['Structure']['Constitution-class starship'].parts['Pylon'].multiplicity = 'mayonnaise'
+        assert "must be a positive int" in str(info.value)
 
 @pytest.mark.skip('WIP')
 def test_block_valueProperty(model):
