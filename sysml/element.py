@@ -159,9 +159,12 @@ class Block(object):
         "Sets uuid"
         try:
             uuid.UUID(UUID, version=1)
-            self._uuid = UUID
         except:
-            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+            if type(UUID) is not str:
+                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
+            else:
+                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+        self._uuid = UUID
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
@@ -328,9 +331,12 @@ class Requirement(object):
         "Sets uuid"
         try:
             uuid.UUID(UUID, version=1)
-            self._uuid = UUID
         except:
-            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+            if type(UUID) is not str:
+                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
+            else:
+                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+        self._uuid = UUID
 
     def req(self):
         """Generates a requirement diagram
@@ -410,9 +416,12 @@ class Dependency(object):
         "Sets uuid"
         try:
             uuid.UUID(UUID, version=1)
-            self._uuid = UUID
         except:
-            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+            if type(UUID) is not str:
+                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
+            else:
+                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+        self._uuid = UUID
 
 class Package(object):
     """This class defines a package"""
@@ -467,9 +476,12 @@ class Package(object):
         "Sets uuid"
         try:
             uuid.UUID(UUID, version=1)
-            self._uuid = UUID
         except:
-            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+            if type(UUID) is not str:
+                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
+            else:
+                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
+        self._uuid = UUID
 
     def add_package(self, name=None):
         """Creates a package element in model"""

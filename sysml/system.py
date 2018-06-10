@@ -26,7 +26,7 @@ class Model(Package):
             Model._id_no += 1
             self._name = 'Model' + str(Model._id_no)
         elif type(name) is not str:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
         else:
             self._name = name
 
