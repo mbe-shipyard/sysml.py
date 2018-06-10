@@ -54,6 +54,9 @@ def test_block_partProperty_withMultiplicity(model):
     with pytest.raises(TypeError) as info:
         model['Structure']['Constitution-class starship'].parts['Pylon'].multiplicity = 'mayonnaise'
         assert "must be a positive int" in str(info.value)
+    with pytest.raises(ValueError) as info:
+        model['Structure']['Constitution-class starship'].parts['Pylon'].multiplicity = -1
+        assert "must be a positive int" in str(info.value)
 
 @pytest.mark.skip('WIP')
 def test_block_valueProperty(model):

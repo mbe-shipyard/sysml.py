@@ -34,11 +34,11 @@ class Block(object):
 
         """Stereotype"""
         if type(stereotypes) is not set:
-            raise TypeError(repr(stereotypes) + " must be a set")
+            raise TypeError(str(stereotypes) + " must be a set")
         else:
             for i in stereotypes:
                 if type(i) is not str:
-                    raise TypeError(i + " must be a string")
+                    raise TypeError(str(i) + " must be a string")
             self._stereotypes = set({Block.__name__.lower()}).union(stereotypes)
 
         """Label"""
@@ -46,41 +46,41 @@ class Block(object):
             Block._id_no += 1
             self._name = 'Block' + str(Block._id_no)
         elif type(name) is not str:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
         else:
             self._name = name
 
         """Part Property"""
         if type(parts) is not dict:
-            raise TypeError(repr(parts) + " must be a dict")
+            raise TypeError(str(parts) + " must be a dict")
         else:
             for key in parts:
                 if type(key) is not str:
-                    raise TypeError(key + " must be a string")
+                    raise TypeError(str(key) + " must be a string")
                 elif not isinstance(parts[key], Block): #tk: change to accept block or list of blocks
-                    raise TypeError(part[key] + " must be a Block")
+                    raise TypeError(str(part[key]) + " must be a Block")
             self._parts = parts
 
         """Value Property"""
         if type(values) is not dict:
-            raise TypeError(repr(values) + " must be a dict")
+            raise TypeError(str(values) + " must be a dict")
         else:
             for key in values:
                 if type(key) is not str:
-                    raise TypeError(key + " must be a string")
+                    raise TypeError(str(key) + " must be a string")
                 elif type(values[key]) is not int or type(values[key]) is not float or not hasattr(values[key],'units'):
-                    raise TypeError(values[key] + " must be an int, float, or have attribute 'unit'")
+                    raise TypeError(str(values[key]) + " must be an int, float, or have attribute 'unit'")
             self._values = values
 
         """Constraint Property"""
         if type(constraints) is not dict:
-            raise TypeError(repr(constraints) + " must be a dict")
+            raise TypeError(str(constraints) + " must be a dict")
         else:
             for key in constraints:
                 if type(key) is not str:
-                    raise TypeError(key + " must be a string")
+                    raise TypeError(str(key) + " must be a string")
                 if not isinstance(constraints[key], ConstraintBlock):
-                    raise TypeError(constraints[key] + " must be a ConstraintBlock")
+                    raise TypeError(str(constraints[key]) + " must be a ConstraintBlock")
             self._constraints = constraints
 
         """
@@ -150,7 +150,7 @@ class Block(object):
     def name(self, name):
         "Sets block name"
         if type(name) is not str:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
         else:
             self._name = name
 
@@ -161,19 +161,21 @@ class Block(object):
             uuid.UUID(UUID, version=1)
             self._uuid = UUID
         except:
-            raise ValueError(UUID + " must be a valid uuid of type, string")
+            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
-        if type(multiplicity) is not int and multiplicity > 0:
-            raise TypeError(multiplicity + " must be a positive int")
+        if type(multiplicity) is not int:
+            raise TypeError(str(multiplicity) + " must be a positive int")
+        elif not multiplicity > 0:
+            raise ValueError(str(multiplicity) + " must be a positive int")
         else:
             self._multiplicity = multiplicity
 
     def add_part(self, name, multiplicity=None):
         """Creates a block element in block"""
         if type(name) is not str:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
         else:
             self._addPart(name, Block(name), multiplicity)
 
@@ -209,11 +211,11 @@ class Block(object):
                         if newKey not in self._elements.keys():
                             return newKey
         else:
-            raise TypeError(repr(element) + " is not a valid model element.")
+            raise TypeError(str(element) + " is not a valid model element.")
 
     def _addPart(self, key, element, multiplicity):
         if not self._isValidElement(element):
-            raise TypeError(repr(element) + " is not a valid model element")
+            raise TypeError(str(element) + " is not a valid model element")
         if key is None:
             key = self._generateKey(element)
         else:
@@ -221,7 +223,7 @@ class Block(object):
             self._parts[key].uuid = str(uuid.uuid1())
             if multiplicity is not None:
                 if type(multiplicity) is not int:
-                    raise TypeError(repr(multiplicity) + " is not an int")
+                    raise TypeError(str(multiplicity) + " is not an int")
                 else:
                     element._multiplicity = multiplicity
 
@@ -290,21 +292,21 @@ class Requirement(object):
         elif type(id_no) in [int, float]:
             self._id_no = 'ID' + str(id_no).zfill(3)
         else:
-            raise TypeError("argument is not int or float!")
+            raise TypeError(str(id_no) + " must be an int or float")
         # Label
         if name is None:
             self._name = 'Requirement' + str(self._id_no)
         elif type(name) is str:
             self._name = name
         else:
-            raise TypeError("argument is not a string!")
+            raise TypeError(str(name) + " must be a string")
         # Text
         if txt is None:
             self.txt = ''
         elif type(name) is str:
             self.txt = txt
         else:
-            raise TypeError("argument is not a string!")
+            raise TypeError(str(name) + " must be a string")
 
     def __repr__(self):
         _stereotypes = ""
@@ -328,7 +330,7 @@ class Requirement(object):
             uuid.UUID(UUID, version=1)
             self._uuid = UUID
         except:
-            raise ValueError(UUID + " must be a valid uuid of type, string")
+            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
 
     def req(self):
         """Generates a requirement diagram
@@ -367,24 +369,24 @@ class Dependency(object):
     def __init__(self, source, target, stereotype):
         if stereotype is 'deriveReqt':
             if type(source) is not Requirement:
-                raise TypeError(repr(source) + ' is not a Requirement')
+                raise TypeError(str(source) + ' is not a Requirement')
             elif type(target) is not Requirement:
-                raise TypeError(repr(target) + ' is not a Requirement')
+                raise TypeError(str(target) + ' is not a Requirement')
             else:
                 self._source = source
                 self._target = target
                 self._stereotype = stereotype
         elif stereotype is 'satisfy':
             if type(source) is not Requirement:
-                raise TypeError(repr(source) + ' is not a Requirement')
+                raise TypeError(str(source) + ' is not a Requirement')
             elif type(target) is not Block:
-                raise TypeError(repr(target) + ' is not a Block')
+                raise TypeError(str(target) + ' is not a Block')
             else:
                 self._source = source
                 self._target = target
                 self._stereotype = stereotype
         else:
-            raise ValueError(stereotype + ' is not a valid dependency stereotype')
+            raise ValueError(str(stereotype) + ' is not a valid dependency stereotype')
 
     @property
     def source(self):
@@ -410,7 +412,7 @@ class Dependency(object):
             uuid.UUID(UUID, version=1)
             self._uuid = UUID
         except:
-            raise ValueError(UUID + " must be a valid uuid of type, string")
+            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
 
 class Package(object):
     """This class defines a package"""
@@ -427,14 +429,14 @@ class Package(object):
         if self._isValidElement(element):
             self._setElement(key, element)
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
+            raise ValueError(str(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
         if key in self._elements.keys():
             return self._elements[key]
         else:
-            raise ValueError(repr(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
+            raise ValueError(str(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
 
     def __repr__(self):
         _stereotypes = ""
@@ -467,28 +469,28 @@ class Package(object):
             uuid.UUID(UUID, version=1)
             self._uuid = UUID
         except:
-            raise ValueError(UUID + " must be a valid uuid of type, string")
+            raise ValueError(str(UUID) + " must be a valid uuid of type, string")
 
     def add_package(self, name=None):
         """Creates a package element in model"""
         if type(name) is str:
             self._setElement(name, Package(name))
         else:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
 
     def add_block(self, name):
         """Creates a block element in package"""
         if type(name) is str:
             self._setElement(name, Block(name))
         else:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
 
     def add_requirement(self, name, txt):
         """Creates a requirement element in package"""
         if type(name) is str:
             self._setElement(name, Requirement(name, txt))
         else:
-            raise TypeError(name + " must be a string")
+            raise TypeError(str(name) + " must be a string")
 
     def add_dependency(self, source, target, stereotype):
         """Creates a dependency element in package"""
@@ -536,13 +538,13 @@ class Package(object):
                         if newKey not in self._elements.keys():
                             return newKey
         else:
-            raise TypeError(repr(element) + " is not a valid model element.")
+            raise TypeError(str(element) + " is not a valid model element.")
 
     def _setElement(self, key, element):
         # if key is None:
         #     key = self._generateKey(element)
         if not self._isValidElementType(type(element)):
-            raise TypeError(repr(element) + " is not a valid model element.")
+            raise TypeError(str(element) + " is not a valid model element.")
         else:
             self._elements[key] = element
             self._elements[key].uuid = str(uuid.uuid1())
