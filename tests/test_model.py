@@ -37,6 +37,7 @@ def test_block(model):
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb \nConstitution-class starship"
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class starship'].uuid, version=1)
+    assert model['Structure']['Constitution-class starship'].multiplicity == 1
     with pytest.raises(TypeError) as info:
         model['Structure']['Constitution-class starship'].uuid = 47
         assert "must be a valid uuid of type, string" in str(info.value)
@@ -49,11 +50,14 @@ def test_block_partProperty(model):
     "Parts added to a block element are callable by index via the 'parts' attribute"
     model['Structure']['Constitution-class starship'].add_part('Primary Hull')
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
+
     assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb \nPrimary Hull"
     assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb \nEngineering Hull"
+
     assert repr(type(model['Structure']['Constitution-class starship'].parts['Primary Hull'])) ==  "<class 'sysml.element.Block'>"
     assert repr(type(model['Structure']['Constitution-class starship'].parts['Engineering Hull'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid, version=1)
+
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
     with pytest.raises(TypeError) as info:
         model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid = 47
@@ -61,6 +65,15 @@ def test_block_partProperty(model):
     with pytest.raises(ValueError) as info:
         model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid = "47"
         assert "must be a valid uuid of type, string" in str(info.value)
+
+    assert model['Structure']['Constitution-class starship'].parts['Primary Hull'].multiplicity == 1
+    assert model['Structure']['Constitution-class starship'].parts['Engineering Hull'].multiplicity == 1
+    with pytest.raises(TypeError) as info:
+        model['Structure']['Constitution-class starship'].parts['Primary Hull'].multiplicity = 'mayonnaise'
+        assert "must be a positive int" in str(info.value)
+    with pytest.raises(ValueError) as info:
+        model['Structure']['Constitution-class starship'].parts['Engineering Hull'].multiplicity = -1
+        assert "must be a positive int" in str(info.value)
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty_withMultiplicity(model):

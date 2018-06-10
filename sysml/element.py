@@ -29,7 +29,7 @@ class Block(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set()):
+    def __init__(self, name=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Stereotype"""
@@ -82,6 +82,9 @@ class Block(object):
                 if not isinstance(constraints[key], ConstraintBlock):
                     raise TypeError(str(constraints[key]) + " must be a ConstraintBlock")
             self._constraints = constraints
+
+        """Multiplicity"""
+        self._setMultiplicity(multiplicity)
 
         """
         ## Reference Property
@@ -168,14 +171,9 @@ class Block(object):
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
-        if type(multiplicity) is not int:
-            raise TypeError(str(multiplicity) + " must be a positive int")
-        elif not multiplicity > 0:
-            raise ValueError(str(multiplicity) + " must be a positive int")
-        else:
-            self._multiplicity = multiplicity
+        self._setMultiplicity(multiplicity)
 
-    def add_part(self, name, multiplicity=None):
+    def add_part(self, name, multiplicity=1):
         """Creates a block element in block"""
         if type(name) is not str:
             raise TypeError(str(name) + " must be a string")
@@ -221,14 +219,22 @@ class Block(object):
             raise TypeError(str(element) + " is not a valid model element")
         if key is None:
             key = self._generateKey(element)
+        if type(multiplicity) is not int:
+            raise TypeError(str(multiplicity) + " must be a positive int")
+        elif not multiplicity > 0:
+            raise ValueError(str(multiplicity) + " must be a positive int")
         else:
             self._parts[key] = element
             self._parts[key].uuid = str(uuid.uuid1())
-            if multiplicity is not None:
-                if type(multiplicity) is not int:
-                    raise TypeError(str(multiplicity) + " is not an int")
-                else:
-                    element._multiplicity = multiplicity
+            self._parts[key]._multiplicity = multiplicity
+
+    def _setMultiplicity(self, multiplicity):
+        if type(multiplicity) is not int:
+            raise TypeError(str(multiplicity) + " must be a positive int")
+        elif not multiplicity > 0:
+            raise ValueError(str(multiplicity) + " must be a positive int")
+        else:
+            self._multiplicity = multiplicity
 
     @classmethod
     def _isValidElement(cls, element):
