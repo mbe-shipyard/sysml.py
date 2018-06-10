@@ -8,7 +8,7 @@ The design intent of this project is to provide an object-oriented programming (
 
 Package Overview
 ----------------
-This python package consists of 3 modules:
+This python package consists of the following modules:
 
 - The ``system.py`` module contains the ``Model()`` class for instantiating ``Model`` objects, which serves as a central namespace for model elements (or relationships between elements).
 
