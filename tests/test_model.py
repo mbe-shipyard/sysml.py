@@ -41,9 +41,16 @@ def test_block_partProperty(model):
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid, version=1)
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
 
-@pytest.mark.skip('WIP')
+# @pytest.mark.skip('WIP')
 def test_block_partProperty_withMultiplicity(model):
-    pass
+    model['Structure']['Constitution-class starship'].add_part('Nacelle', multiplicity=2)
+    model['Structure']['Constitution-class starship'].add_part('Pylon', multiplicity=2)
+    assert repr(model['Structure']['Constitution-class starship'].parts['Nacelle']) == "\xabblock\xbb \nNacelle"
+    assert repr(model['Structure']['Constitution-class starship'].parts['Pylon']) == "\xabblock\xbb \nPylon"
+    assert repr(type(model['Structure']['Constitution-class starship'].parts['Nacelle'])) == "<class 'sysml.element.Block'>"
+    assert repr(type(model['Structure']['Constitution-class starship'].parts['Pylon'])) == "<class 'sysml.element.Block'>"
+    assert model['Structure']['Constitution-class starship'].parts['Nacelle'].multiplicity == 2
+    assert model['Structure']['Constitution-class starship'].parts['Pylon'].multiplicity == 2
 
 @pytest.mark.skip('WIP')
 def test_block_valueProperty(model):

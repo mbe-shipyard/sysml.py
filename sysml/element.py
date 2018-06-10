@@ -25,17 +25,6 @@ class Block(object):
 
     flowProperties : dict, default None
 
-
-    Examples
-    --------
-    >>> warpcore = Block(name='warp core',
-    ...                 parts=[antimatterinjector, Dilithiumcrystalchamber],
-    ...                 flow={'in':{'inflow':'antimatter'}, 'out':{'outflow':'power'}})
-    ...                 references=[antimatter])
-    >>> warpdrive = Block(name='warp drive',
-    ...                 values={'class-7'},
-    ...                 parts=[antimattercontainment, warpcore, plasmainducer],
-
     """
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
@@ -151,6 +140,10 @@ class Block(object):
     def flows(self):
         return self._flowProperties
 
+    @property
+    def multiplicity(self):
+        return self._multiplicity
+
     ## Setters
     @name.setter
     def name(self, name):
@@ -169,12 +162,12 @@ class Block(object):
         except:
             raise ValueError(UUID + " must be a valid uuid of type, string")
 
-    def add_part(self, name):
+    def add_part(self, name, multiplicity=None):
         """Creates a block element in block"""
-        if type(name) is str:
-            self._addPart(name, Block(name))
-        else:
+        if type(name) is not str:
             raise TypeError(name + " must be a string")
+        else:
+            self._addPart(name, Block(name), multiplicity)
 
     ## Structural Diagrams
     def bdd(self):
@@ -199,32 +192,30 @@ class Block(object):
         """
         pass
 
-    def _generateKey(self, element, maxId_no):
-        if self._isValidElement(element):
-            for validElement in self._validElements.keys():
-                if isinstance(element, self._validElements[validElement]):
-                    for id_no in range(1, maxId_no+1):
-                        newKey = validElement + "-" + str(id_no)
-                        if newKey not in self._parts.keys():
-                            return newKey
-        elif self._isValidRelationship(element):
-            for validRelationship in self._validRelationships.keys():
-                if element["relationshipType"] is validRelationship:
-                    for id_no in range(1, maxId_no+1):
-                        newKey = validRelationship + "-" + str(id_no)
-                        if newKey not in self._relationships.keys():
+    def _generateKey(self, elementType):
+        if self._isValidElementType(elementType):
+            for validElement in Package._validElementTypes:
+                if elementType is validElement or elementType is Package:
+                    for id_no in range(1, len(self._elements)+1):
+                        newKey = validElement.__name__.lower() + str(id_no)
+                        if newKey not in self._elements.keys():
                             return newKey
         else:
-            raise TypeError(repr(element) + " is not a valid element.")
+            raise TypeError(repr(element) + " is not a valid model element.")
 
-    def _addPart(self, key, element):
+    def _addPart(self, key, element, multiplicity):
+        if not self._isValidElement(element):
+            raise TypeError(repr(element) + " is not a valid model element")
         if key is None:
             key = self._generateKey(element)
-        if not self._isValidElement(element):
-            raise TypeError(repr(element) + " is not a valid model element.")
         else:
             self._parts[key] = element
             self._parts[key].uuid = str(uuid.uuid1())
+            if multiplicity is not None:
+                if type(multiplicity) is not int:
+                    raise TypeError(repr(multiplicity) + " is not an int")
+                else:
+                    element._multiplicity = multiplicity
 
     @classmethod
     def _isValidElement(cls, element):
