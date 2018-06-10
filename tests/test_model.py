@@ -2,11 +2,10 @@ import sysml
 import pytest
 import uuid
 
-"""Structure"""
 # Notes: block elements with starting property attributes should be broken down into granular blocks and assigned id's & relationships upon assimilation into model.
 @pytest.fixture
 def model():
-    "Create a SysML model instance"
+    """Create a model object that will also serve as the root directory for all other model elements"""
     model = sysml.Model('Constitution-Class Starship')
     return model
 
@@ -17,8 +16,13 @@ def test_model(model):
         model = sysml.Model(47)
         assert "must be a string" in str(info.value)
 
+"""Structure"""
 # @pytest.mark.skip('WIP')
 def test_package(model):
+    """Create a package, labeled 'Structure', within model which will serve as namespace for the system structure
+
+    Note: Model and Package objects can be thought of as a dict-like container for returning stereotyped model elements
+    """
     model.add_package('Structure')
     assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
@@ -32,7 +36,7 @@ def test_package(model):
 
 # @pytest.mark.skip('WIP')
 def test_block(model):
-    """ add block elements as parts to parent blocks using `block` the method"""
+    """Add block elements to package objects using built-in add_block() method"""
     model['Structure'].add_block('Constitution-class starship')
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb \nConstitution-class starship"
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
@@ -47,7 +51,9 @@ def test_block(model):
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty(model):
-    "Parts added to a block element are callable by index via the 'parts' attribute"
+    """Add block elements as parts to parent blocks using add_part() method
+
+    Parts added to a block element are dictionary-callable via the 'parts' attribute"""
     model['Structure']['Constitution-class starship'].add_part('Primary Hull')
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
 
@@ -77,6 +83,7 @@ def test_block_partProperty(model):
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty_withMultiplicity(model):
+    """Add block elements as parts to parent blocks, with multiplicity, using add_part() method"""
     model['Structure']['Constitution-class starship'].add_part('Nacelle', multiplicity=2)
     model['Structure']['Constitution-class starship'].add_part('Pylon', multiplicity=2)
     assert repr(model['Structure']['Constitution-class starship'].parts['Nacelle']) == "\xabblock\xbb \nNacelle"
@@ -110,7 +117,7 @@ def test_block_port(model):
 
 @pytest.mark.skip('WIP')
 def test_bdd(model):
-    "methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
+    "Methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
     model = parts_to_block
     model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
     model['Structure'].show() # show diagrams generated for package, 'Structure'
@@ -119,6 +126,9 @@ def test_bdd(model):
 """Requirements"""
 # @pytest.mark.skip('WIP')
 def test_requirements(model):
+    """Create a package, labeled 'Requirements', within model which will serve as namespace for the system
+
+     Define two requirement elements, passing in a string name and text field as its constructor arguments"""
     model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
     model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
     model['Requirements'].add_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
@@ -137,6 +147,7 @@ def test_requirements(model):
 
 # @pytest.mark.skip('WIP')
 def test_derive_requirement(model):
+    """Define a dependency relationship, of stereotype «derive», between two requirements"""
     model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
     assert repr(model['Requirements']['dependency1'].source) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements']['dependency1'].target) == "\xabrequirement\xbb \nFunctional"
@@ -163,6 +174,7 @@ def test_refine_requirement(model):
 
 # @pytest.mark.skip('WIP')
 def test_satisfy_requirement(model):
+    """Define a dependency relationship, of stereotype «satisfy», between a requirement and block"""
     model['Structure']['Constitution-class starship'].add_part('class-7 warp drive')
     model['Requirements'].add_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
     assert repr(model['Requirements']['dependency2'].source) == "\xabrequirement\xbb \nFunctional"
