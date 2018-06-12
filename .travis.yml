@@ -10,6 +10,8 @@ python:
   - "3.6-dev"  # 3.6 development branch
   - "3.7-dev"  # 3.7 development branch
 # command to install dependencies
+before_script:
+  - echo $PYTHONPATH
 install:
   - pip install --upgrade pip
   - pip install uuid
@@ -18,4 +20,4 @@ install:
   # - pip install python-coveralls
   # - pip install pytest-cov# command to run tests
 script:
-  - py.test -v tests/test_model.py # or py.test for Python versions 3.5 and below
+  - pytest -v tests/test_model.py # or py.test for Python versions 3.5 and below
