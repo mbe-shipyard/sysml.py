@@ -1,6 +1,8 @@
 ============================
  SysML.py
 ============================
+.. image:: https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev
+    :target: https://travis-ci.com/spacedecentral/SysML.py
 
 A Python package for the Systems Modeling Language (SysML) - a general-purpose modeling language for systems engineering applications.
 
