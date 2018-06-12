@@ -1,4 +1,4 @@
-    import sysml
+import sysml
 import pytest
 import uuid
 
@@ -207,3 +207,8 @@ def test_verify_requirement(model):
     # assert dependency source is of type(Requirement)
     # assert dependency target stereotype is a «testCase»
     # assert dependency stereotype is "verify"
+
+
+if __name__ == '__main__':
+    print(__doc__)
+    pytest.main(args=['-v'])
