@@ -1,7 +1,4 @@
-try:
     import sysml
-except ImportError:
-    from context import sysml
 import pytest
 import uuid
 
