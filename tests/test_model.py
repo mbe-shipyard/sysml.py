@@ -1,4 +1,7 @@
-import sysml
+try:
+    import sysml
+except ImportError:
+    from context import sysml
 import pytest
 import uuid
 
@@ -122,6 +125,14 @@ def test_bdd(model):
     model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
     model['Structure'].show() # show diagrams generated for package, 'Structure'
     # Need some way to test diagram was generated
+
+"""Analysis"""
+@pytest.mark.skip('WIP')
+def test_interaction(model):
+    """Create an interaction, stereotyped as a test case, to be used to verify a requirement"""
+    pass
+    # model.add_package('Analysis')
+    # model['Analysis'].add_interaction('Warp Field Analysis','testCase')
 
 """Requirements"""
 # @pytest.mark.skip('WIP')
