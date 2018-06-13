@@ -1,9 +1,10 @@
 # SysML.py
-[![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
 
-A Python package for the Systems Modeling Language (SysML) - a general-purpose modeling language for systems engineering applications.
+> A Python package for the Systems Modeling Language (SysML) - a general-purpose modeling language for systems engineering applications.
 
 The design intent of this project is to provide an object-oriented programming (OOP) paradigm for model-based systems engineering.
+
+[![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
 
 ## Package Overview
 
@@ -20,3 +21,11 @@ This python package consists of the following modules:
 This project is still in pre-alpha. For more details on current
 milestone, please refer to
 [#1](https://github.com/spacedecentral/SysML.py/issues/1).
+
+## Contributing
+
+1. Fork it (<https://github.com/yourusername/SysML.py/fork>)
+2. Create your feature branch (`git checkout -b feature/logarithms`)
+3. Commit your changes (`git commit -am 'Add some logarithms'`)
+4. Push to the branch (`git push origin feature/logarithms`)
+5. Create a new Pull Request
