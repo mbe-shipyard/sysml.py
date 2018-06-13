@@ -9,9 +9,11 @@ The design intent of this project is to provide an object-oriented programming (
 
 This python package consists of the following modules:
 
-- The `system.py` module contains the `Model()` class for instantiating `Model` objects, which serves as a central namespace for model elements (or relationships between elements).
+- `system.py` - contains the `Model()` class for instantiating `Model` objects, which serves as a central namespace for model elements (or relationships between elements).
 
-- The `element.py` module contains classes for instantiating *model element* objects (s.a., `Package`, `Block`, `Requirement`, `Activity`, etc.). These objects are intended for internal use by `Model` objects.
+- `element.py` - contains classes for instantiating *model element* objects (s.a., `Package`, `Block`, `Requirement`, `Activity`, etc.). These objects are intended for internal use by `Model` objects.
+
+- `parser.py` - module for serializing/deserializing `Model` objects, using pickling.
 
 ## Developer Notes
 
