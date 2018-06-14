@@ -5,12 +5,13 @@
 The design intent of this project is to provide an object-oriented programming (OOP) paradigm for model-based systems engineering.
 
 [![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
+[![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg?branch=dev)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
 
 ## Package Overview
 
 This python package consists of the following modules:
 
-- `system.py` - contains the `Model()` class for instantiating `Model` objects, which serves as a central namespace for model elements (or relationships between elements).
+- `system.py` - contains the `Model()` class for instantiating `Model` objects, which serves as a central namespace for model elements (and relationships between elements).
 
 - `element.py` - contains classes for instantiating *model element* objects (s.a., `Package`, `Block`, `Requirement`, `Activity`, etc.). These objects are intended for internal use by `Model` objects.
 
