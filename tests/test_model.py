@@ -23,6 +23,9 @@ def test_package(model):
 
     Note: Model and Package objects can be thought of as a dict-like container for returning stereotyped model elements
     """
+    with pytest.raises(TypeError) as info:
+        model.add_package()
+        assert "add_package() missing 1 required positional argument: 'name'" in str(info.value)
     model.add_package('Structure')
     assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
@@ -37,6 +40,9 @@ def test_package(model):
 # @pytest.mark.skip('WIP')
 def test_block(model):
     """Add block elements to package objects using built-in add_block() method"""
+    with pytest.raises(TypeError) as info:
+        model['Structure'].add_block()
+        assert "add_block() missing 1 required positional argument: 'name'" in str(info.value)
     model['Structure'].add_block('Constitution-class starship')
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb \nConstitution-class starship"
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
@@ -54,6 +60,9 @@ def test_block_partProperty(model):
     """Add block elements as parts to parent blocks using add_part() method
 
     Parts added to a block element are dictionary-callable via the 'parts' attribute"""
+    with pytest.raises(TypeError) as info:
+        model['Structure']['Constitution-class starship'].add_part()
+        assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
     model['Structure']['Constitution-class starship'].add_part('Primary Hull')
     model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
 
@@ -118,7 +127,6 @@ def test_block_port(model):
 @pytest.mark.skip('WIP')
 def test_bdd(model):
     "Methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
-    model = parts_to_block
     model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
     model['Structure'].show() # show diagrams generated for package, 'Structure'
     # Need some way to test diagram was generated
@@ -136,8 +144,12 @@ def test_interaction(model):
 def test_requirements(model):
     """Create a package, labeled 'Requirements', within model which will serve as namespace for the system
 
-     Define two requirement elements, passing in a string name and text field as its constructor arguments"""
+    Define two requirement elements, passing in a string name and text field as its constructor arguments
+    """
     model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
+    with pytest.raises(TypeError) as info:
+        model['Requirements'].add_requirement()
+        assert "add_requirement() missing 2 required positional argument: 'name' and 'txt'" in str(info.value)
     model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
     model['Requirements'].add_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb \nTop-level"
@@ -156,6 +168,9 @@ def test_requirements(model):
 # @pytest.mark.skip('WIP')
 def test_derive_requirement(model):
     """Define a dependency relationship, of stereotype «derive», between two requirements"""
+    with pytest.raises(TypeError) as info:
+        model['Requirements'].add_dependency()
+        assert "add_dependency() missing 3 required positional arguments: 'source', 'target', and 'stereotype'" in str(info.value)
     model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
     assert repr(model['Requirements']['dependency1'].source) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements']['dependency1'].target) == "\xabrequirement\xbb \nFunctional"

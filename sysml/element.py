@@ -489,12 +489,9 @@ class Package(object):
                 raise ValueError(str(UUID) + " must be a valid uuid of type, string")
         self._uuid = UUID
 
-    def add_package(self, name=None):
+    def add_package(self, name):
         """Creates a package element in model"""
-        if type(name) is str:
-            self._setElement(name, Package(name))
-        else:
-            raise TypeError(str(name) + " must be a string")
+        self._setElement(name, Package(name))
 
     def add_block(self, name):
         """Creates a block element in package"""
