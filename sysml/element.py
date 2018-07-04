@@ -448,10 +448,7 @@ class Package(object):
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
-        if key in self._elements.keys():
-            return self._elements[key]
-        else:
-            raise ValueError(str(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
+        return self._elements[key]
 
     def __repr__(self):
         _stereotypes = ""

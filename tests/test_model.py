@@ -26,6 +26,9 @@ def test_package(model):
     with pytest.raises(TypeError) as info:
         model.add_package()
         assert "add_package() missing 1 required positional argument: 'name'" in str(info.value)
+    with pytest.raises(KeyError) as info:
+        model['holodeck']
+        assert "holodeck" in str(info.value)
     model.add_package('Structure')
     assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
