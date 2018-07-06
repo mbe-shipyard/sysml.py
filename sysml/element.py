@@ -84,7 +84,10 @@ class Block(object):
             self._constraints = constraints
 
         """Multiplicity"""
-        self._setMultiplicity(multiplicity)
+        if type(multiplicity) is not int:
+            raise TypeError(str(multiplicity) + " must be an int'")
+        else:
+            self._setMultiplicity(multiplicity)
 
         """UUID"""
         self._uuid = str(uuid.uuid1())
@@ -429,13 +432,6 @@ class Package(object):
 
         """UUID"""
         self._uuid = str(uuid.uuid1())
-
-    def __setitem__(self, key, element):
-        "Sets/overwrites element-valid model element or relationship into model"
-        if self._isValidElement(element):
-            self._setElement(key, element)
-        else:
-            raise ValueError(str(key) + " is not a valid key. Keys should be a string containing an element and integer, e.g., 'partProperty42' ")
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
