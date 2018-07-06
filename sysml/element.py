@@ -485,6 +485,10 @@ class Package(object):
         key = self._generateKey(Dependency)
         self._setElement(key, Dependency(source, target, stereotype))
 
+    def remove_element(self, key):
+        """Removes a model element from package"""
+        pass
+        
     ## Structural Diagrams
     def bdd(self):
         """Generates a BlockDefinitionDiagram
