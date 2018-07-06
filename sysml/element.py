@@ -86,6 +86,9 @@ class Block(object):
         """Multiplicity"""
         self._setMultiplicity(multiplicity)
 
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
+
         """
         ## Reference Property
         if references is None:
@@ -157,18 +160,6 @@ class Block(object):
         else:
             self._name = name
 
-    @uuid.setter
-    def uuid(self, UUID):
-        "Sets uuid"
-        try:
-            uuid.UUID(UUID, version=1)
-        except:
-            if type(UUID) is not str:
-                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
-            else:
-                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
-        self._uuid = UUID
-
     @multiplicity.setter
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
@@ -225,7 +216,6 @@ class Block(object):
             raise ValueError(str(multiplicity) + " must be a positive int")
         else:
             self._parts[key] = element
-            self._parts[key].uuid = str(uuid.uuid1())
             self._parts[key]._multiplicity = multiplicity
 
     def _setMultiplicity(self, multiplicity):
@@ -294,7 +284,8 @@ class Requirement(object):
 
     def __init__(self, name=None, txt=None, id_no=None):
         self._stereotypes = set({Requirement.__name__.lower()})
-        # ID no.
+
+        """ID no."""
         if id_no is None:
             Requirement._id_no += 1
             self._id_no = 'ID' + str(Requirement._id_no).zfill(3)
@@ -302,20 +293,25 @@ class Requirement(object):
             self._id_no = 'ID' + str(id_no).zfill(3)
         else:
             raise TypeError(str(id_no) + " must be an int or float")
-        # Label
+
+        """Label"""
         if name is None:
             self._name = 'Requirement' + str(self._id_no)
         elif type(name) is str:
             self._name = name
         else:
             raise TypeError(str(name) + " must be a string")
-        # Text
+
+        """Text"""
         if txt is None:
             self.txt = ''
         elif type(name) is str:
             self.txt = txt
         else:
             raise TypeError(str(name) + " must be a string")
+
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
 
     def __repr__(self):
         _stereotypes = ""
@@ -331,18 +327,6 @@ class Requirement(object):
     def uuid(self):
         "Returns block uuid"
         return self._uuid
-
-    @uuid.setter
-    def uuid(self, UUID):
-        "Sets uuid"
-        try:
-            uuid.UUID(UUID, version=1)
-        except:
-            if type(UUID) is not str:
-                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
-            else:
-                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
-        self._uuid = UUID
 
     def req(self):
         """Generates a requirement diagram
@@ -400,6 +384,9 @@ class Dependency(object):
         else:
             raise ValueError(str(stereotype) + ' is not a valid dependency stereotype')
 
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
+
     @property
     def source(self):
         return self._source
@@ -417,18 +404,6 @@ class Dependency(object):
         "Returns block uuid"
         return self._uuid
 
-    @uuid.setter
-    def uuid(self, UUID):
-        "Sets uuid"
-        try:
-            uuid.UUID(UUID, version=1)
-        except:
-            if type(UUID) is not str:
-                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
-            else:
-                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
-        self._uuid = UUID
-
 class Package(object):
     """This class defines a package"""
 
@@ -438,6 +413,9 @@ class Package(object):
         self._stereotypes = set({Package.__name__.lower()})
         self._name = name
         self._elements = elements
+
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
 
     def __setitem__(self, key, element):
         "Sets/overwrites element-valid model element or relationship into model"
@@ -473,18 +451,6 @@ class Package(object):
     def uuid(self):
         "Returns block uuid"
         return self._uuid
-
-    @uuid.setter
-    def uuid(self, UUID):
-        "Sets uuid"
-        try:
-            uuid.UUID(UUID, version=1)
-        except:
-            if type(UUID) is not str:
-                raise TypeError(str(UUID) + " must be a valid uuid of type, string")
-            else:
-                raise ValueError(str(UUID) + " must be a valid uuid of type, string")
-        self._uuid = UUID
 
     def add_package(self, name):
         """Creates a package element in model"""
@@ -559,7 +525,6 @@ class Package(object):
             raise TypeError(str(element) + " is not a valid model element.")
         else:
             self._elements[key] = element
-            self._elements[key].uuid = str(uuid.uuid1())
 
     def _isValidElementType(self, elementType):
         return elementType in self._validElementTypes or elementType is Package

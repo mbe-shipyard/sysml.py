@@ -16,7 +16,7 @@ class Model(Package):
 
     _id_no = 0
 
-    def __init__(self, name=None, elements={}, relations={}):
+    def __init__(self, name=None, elements={}):
 
         """Stereotype"""
         self._stereotypes = set({"model"})

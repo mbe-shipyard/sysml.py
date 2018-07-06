@@ -33,12 +33,12 @@ def test_package(model):
     assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
     assert uuid.UUID(model['Structure'].uuid, version=1)
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Structure'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Structure'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
 # @pytest.mark.skip('WIP')
 def test_block(model):
@@ -51,12 +51,12 @@ def test_block(model):
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class starship'].uuid, version=1)
     assert model['Structure']['Constitution-class starship'].multiplicity == 1
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Structure']['Constitution-class starship'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Structure']['Constitution-class starship'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty(model):
@@ -77,12 +77,12 @@ def test_block_partProperty(model):
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid, version=1)
 
     assert uuid.UUID(model['Structure']['Constitution-class starship'].parts['Engineering Hull'].uuid, version=1)
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Structure']['Constitution-class starship'].parts['Primary Hull'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
     assert model['Structure']['Constitution-class starship'].parts['Primary Hull'].multiplicity == 1
     assert model['Structure']['Constitution-class starship'].parts['Engineering Hull'].multiplicity == 1
@@ -161,12 +161,12 @@ def test_requirements(model):
     assert repr(type(model['Requirements']['Functional'])) ==  "<class 'sysml.element.Requirement'>"
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
     assert uuid.UUID(model['Requirements']['Functional'].uuid, version=1)
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['Top-level'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['Top-level'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
 # @pytest.mark.skip('WIP')
 def test_derive_requirement(model):
@@ -182,12 +182,12 @@ def test_derive_requirement(model):
     assert repr(type(model['Requirements']['dependency1'].target)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements']['dependency1'].stereotype == "deriveReqt"
     assert uuid.UUID(model['Requirements']['dependency1'].uuid, version=1)
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['dependency1'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['dependency1'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
 @pytest.mark.skip('WIP')
 def test_refine_requirement(model):
@@ -210,12 +210,12 @@ def test_satisfy_requirement(model):
     assert repr(type(model['Requirements']['dependency2'].target)) == "<class 'sysml.element.Block'>"
     assert model['Requirements']['dependency2'].stereotype == "satisfy"
     assert uuid.UUID(model['Requirements']['dependency2'].uuid, version=1)
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['dependency2'].uuid = 47
-        assert "must be a valid uuid of type, string" in str(info.value)
-    with pytest.raises(ValueError) as info:
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
         model['Requirements']['dependency2'].uuid = "47"
-        assert "must be a valid uuid of type, string" in str(info.value)
+        assert "can't set attribute" in str(info.value)
 
 @pytest.mark.skip('WIP')
 def test_verify_requirement(model):
