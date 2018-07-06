@@ -297,10 +297,10 @@ class Requirement(object):
         """Label"""
         if name is None:
             self._name = 'Requirement' + str(self._id_no)
-        elif type(name) is str:
-            self._name = name
-        else:
+        elif type(name) is not str:
             raise TypeError(str(name) + " must be a string")
+        else:
+            self._name = name
 
         """Text"""
         if txt is None:
@@ -407,11 +407,24 @@ class Dependency(object):
 class Package(object):
     """This class defines a package"""
 
+    _id_no = 0
     _validElementTypes = set({Block, Requirement, ConstraintBlock, Dependency})
 
     def __init__(self, name=None, elements={}):
-        self._stereotypes = set({Package.__name__.lower()})
-        self._name = name
+
+        """Stereotype"""
+        self._stereotypes = set({"package"})
+
+        """Label"""
+        if name is None:
+            Package._id_no += 1
+            self._name = 'Package' + str(Package._id_no)
+        elif type(name) is not str:
+            raise TypeError(str(name) + " must be a string")
+        else:
+            self._name = name
+
+        """Elements"""
         self._elements = elements
 
         """UUID"""
