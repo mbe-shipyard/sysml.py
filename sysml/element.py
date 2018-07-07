@@ -365,24 +365,24 @@ class Dependency(object):
 
     # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
 
-    def __init__(self, source, target, stereotype):
+    def __init__(self, supplier, client, stereotype):
         if stereotype is 'deriveReqt':
-            if type(source) is not Requirement:
-                raise TypeError(str(source) + ' is not a Requirement')
-            elif type(target) is not Requirement:
-                raise TypeError(str(target) + ' is not a Requirement')
+            if type(supplier) is not Requirement:
+                raise TypeError(str(supplier) + ' is not a Requirement')
+            elif type(client) is not Requirement:
+                raise TypeError(str(client) + ' is not a Requirement')
             else:
-                self._source = source
-                self._target = target
+                self._supplier = supplier
+                self._client = client
                 self._stereotype = stereotype
         elif stereotype is 'satisfy':
-            if type(source) is not Requirement:
-                raise TypeError(str(source) + ' is not a Requirement')
-            elif type(target) is not Block:
-                raise TypeError(str(target) + ' is not a Block')
+            if type(supplier) is not Requirement:
+                raise TypeError(str(supplier) + ' is not a Requirement')
+            elif type(client) is not Block:
+                raise TypeError(str(client) + ' is not a Block')
             else:
-                self._source = source
-                self._target = target
+                self._supplier = supplier
+                self._client = client
                 self._stereotype = stereotype
         else:
             raise ValueError(str(stereotype) + ' is not a valid dependency stereotype')
@@ -391,12 +391,12 @@ class Dependency(object):
         self._uuid = str(uuid.uuid1())
 
     @property
-    def source(self):
-        return self._source
+    def supplier(self):
+        return self._supplier
 
     @property
-    def target(self):
-        return self._target
+    def client(self):
+        return self._client
 
     @property
     def stereotype(self):
@@ -479,16 +479,16 @@ class Package(object):
         else:
             raise TypeError(str(name) + " must be a string")
 
-    def add_dependency(self, source, target, stereotype):
+    def add_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
-        # element = Dependency(source, target, stereotype)
+        # element = Dependency(supplier, client, stereotype)
         key = self._generateKey(Dependency)
-        self._setElement(key, Dependency(source, target, stereotype))
+        self._setElement(key, Dependency(supplier, client, stereotype))
 
     def remove_element(self, key):
         """Removes a model element from package"""
         pass
-        
+
     ## Structural Diagrams
     def bdd(self):
         """Generates a BlockDefinitionDiagram

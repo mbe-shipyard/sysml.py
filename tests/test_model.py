@@ -173,13 +173,13 @@ def test_derive_requirement(model):
     """Define a dependency relationship, of stereotype «derive», between two requirements"""
     with pytest.raises(TypeError) as info:
         model['Requirements'].add_dependency()
-        assert "add_dependency() missing 3 required positional arguments: 'source', 'target', and 'stereotype'" in str(info.value)
+        assert "add_dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
     model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
-    assert repr(model['Requirements']['dependency1'].source) == "\xabrequirement\xbb \nTop-level"
-    assert repr(model['Requirements']['dependency1'].target) == "\xabrequirement\xbb \nFunctional"
+    assert repr(model['Requirements']['dependency1'].supplier) == "\xabrequirement\xbb \nTop-level"
+    assert repr(model['Requirements']['dependency1'].client) == "\xabrequirement\xbb \nFunctional"
     assert repr(type(model['Requirements']['dependency1'])) == "<class 'sysml.element.Dependency'>"
-    assert repr(type(model['Requirements']['dependency1'].source)) == "<class 'sysml.element.Requirement'>"
-    assert repr(type(model['Requirements']['dependency1'].target)) == "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['dependency1'].supplier)) == "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['dependency1'].client)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements']['dependency1'].stereotype == "deriveReqt"
     assert uuid.UUID(model['Requirements']['dependency1'].uuid, version=1)
     with pytest.raises(AttributeError) as info:
@@ -193,9 +193,9 @@ def test_derive_requirement(model):
 def test_refine_requirement(model):
     pass
     # instantiate use case
-    # add dependency where requirement is source node (i.e., "supplier") and use case is target node (i.e., "client")
-    # assert dependency source is of type(requirement)
-    # assert dependency target is of type(use case)
+    # add dependency where requirement is supplier node (i.e., "supplier") and use case is client node (i.e., "client")
+    # assert dependency supplier is of type(requirement)
+    # assert dependency client is of type(use case)
     # assert dependency stereotype is "refine"
 
 # @pytest.mark.skip('WIP')
@@ -203,11 +203,11 @@ def test_satisfy_requirement(model):
     """Define a dependency relationship, of stereotype «satisfy», between a requirement and block"""
     model['Structure']['Constitution-class starship'].add_part('class-7 warp drive')
     model['Requirements'].add_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
-    assert repr(model['Requirements']['dependency2'].source) == "\xabrequirement\xbb \nFunctional"
-    assert repr(model['Requirements']['dependency2'].target) == "\xabblock\xbb \nclass-7 warp drive"
+    assert repr(model['Requirements']['dependency2'].supplier) == "\xabrequirement\xbb \nFunctional"
+    assert repr(model['Requirements']['dependency2'].client) == "\xabblock\xbb \nclass-7 warp drive"
     assert repr(type(model['Requirements']['dependency2'])) == "<class 'sysml.element.Dependency'>"
-    assert repr(type(model['Requirements']['dependency2'].source)) == "<class 'sysml.element.Requirement'>"
-    assert repr(type(model['Requirements']['dependency2'].target)) == "<class 'sysml.element.Block'>"
+    assert repr(type(model['Requirements']['dependency2'].supplier)) == "<class 'sysml.element.Requirement'>"
+    assert repr(type(model['Requirements']['dependency2'].client)) == "<class 'sysml.element.Block'>"
     assert model['Requirements']['dependency2'].stereotype == "satisfy"
     assert uuid.UUID(model['Requirements']['dependency2'].uuid, version=1)
     with pytest.raises(AttributeError) as info:
@@ -221,9 +221,9 @@ def test_satisfy_requirement(model):
 def test_verify_requirement(model):
     pass
     # instantiate test case
-    # add dependency where requirement is source node (i.e., "supplier") and test case is target node (i.e., "client")
-    # assert dependency source is of type(Requirement)
-    # assert dependency target stereotype is a «testCase»
+    # add dependency where requirement is supplier node (i.e., "supplier") and test case is client node (i.e., "client")
+    # assert dependency supplier is of type(Requirement)
+    # assert dependency client stereotype is a «testCase»
     # assert dependency stereotype is "verify"
 
 
