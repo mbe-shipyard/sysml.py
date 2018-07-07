@@ -174,9 +174,11 @@ def test_derive_requirement(model):
     with pytest.raises(TypeError) as info:
         model['Requirements'].add_dependency()
         assert "add_dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
-    model['Requirements'].add_dependency(model['Requirements']['Top-level'], model['Requirements']['Functional'], 'deriveReqt')
-    assert repr(model['Requirements']['dependency1'].supplier) == "\xabrequirement\xbb \nTop-level"
-    assert repr(model['Requirements']['dependency1'].client) == "\xabrequirement\xbb \nFunctional"
+    supplier = model['Requirements']['Functional']
+    client = model['Requirements']['Top-level']
+    model['Requirements'].add_dependency(supplier, client, 'deriveReqt')
+    assert repr(model['Requirements']['dependency1'].client) == "\xabrequirement\xbb \nTop-level"
+    assert repr(model['Requirements']['dependency1'].supplier) == "\xabrequirement\xbb \nFunctional"
     assert repr(type(model['Requirements']['dependency1'])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements']['dependency1'].supplier)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['dependency1'].client)) == "<class 'sysml.element.Requirement'>"
