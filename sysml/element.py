@@ -29,7 +29,7 @@ class Block(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name=None, values={}, parts={}, constraints={}, references=None, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def __init__(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Stereotype"""
