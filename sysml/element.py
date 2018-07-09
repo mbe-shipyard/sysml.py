@@ -572,7 +572,53 @@ class Activity(object):
 class Interaction(object):
     """This class defines an interaction"""
 
-    def __init__(self):
+    _id_no = 0
+    # _validElementTypes = set({Lifeline, Message, Occurence})
+
+    def __init__(self, name=None, elements={}):
+
+        """Stereotype"""
+        self._stereotypes = set({"interaction"})
+
+        """Label"""
+        if name is None:
+            Interaction._id_no += 1
+            self._name = 'Package' + str(Interaction._id_no)
+        elif type(name) is not str:
+            raise TypeError(str(name) + " must be a string")
+        else:
+            self._name = name
+
+        """Elements"""
+        self._elements = elements
+
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
+
+    def __repr__(self):
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "\n{}".format(self._name)
+
+    @property
+    def name(self):
+        "Returns block name"
+        return self._name
+
+    @property
+    def elements(self):
+        return self._elements
+
+    @property
+    def stereotypes(self):
+        return self._stereotypes
+
+    @property
+    def uuid(self):
+        "Returns block uuid"
+        return self._uuid
+    def add_lifeline(self):
         pass
 
     ## Behavioral Diagrams
