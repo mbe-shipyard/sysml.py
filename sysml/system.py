@@ -11,27 +11,8 @@ import uuid
 # developer notes: to use hidden vs unhidden attributes
 
 class Model(Package):
-    """This class defines a SysML model for subsuming elements into model elements or relations.
+    """This class defines a SysML system model. A system model serves as the root namespace for subsuming all model elements (and relationships between elements) of a system.
     """
-
-    _id_no = 0
-
-    def __init__(self, name=None, elements={}):
-
-        """Stereotype"""
-        self._stereotypes = set({"model"})
-
-        """Label"""
-        if name is None:
-            Model._id_no += 1
-            self._name = 'Model' + str(Model._id_no)
-        elif type(name) is not str:
-            raise TypeError(str(name) + " must be a string")
-        else:
-            self._name = name
-
-        """Elements"""
-        self._elements = elements
 
     def isValid(self):
         """Checks whether all requirements contained within model are satisfied by a «block» and verified by a «testCase»"""

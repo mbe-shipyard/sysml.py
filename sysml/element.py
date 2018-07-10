@@ -43,8 +43,8 @@ class Block(object):
 
         """Label"""
         if name is None:
-            Block._id_no += 1
-            self._name = 'Block' + str(Block._id_no)
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
         elif type(name) is not str:
             raise TypeError("'{}' must be a string".format(str(name)))
         else:
@@ -290,7 +290,7 @@ class Requirement(object):
 
         """ID no."""
         if id_no is None:
-            Requirement._id_no += 1
+            self.__class__._id_no += 1
             self._id_no = 'ID' + str(Requirement._id_no).zfill(3)
         elif type(id_no) in [int, float]:
             self._id_no = 'ID' + str(id_no).zfill(3)
@@ -299,7 +299,7 @@ class Requirement(object):
 
         """Label"""
         if name is None:
-            self._name = 'Requirement' + str(self._id_no)
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
         elif type(name) is not str:
             raise TypeError("'{}' must be a string".format(str(name)))
         else:
@@ -416,12 +416,12 @@ class Package(object):
     def __init__(self, name=None, elements={}):
 
         """Stereotype"""
-        self._stereotypes = set({"package"})
+        self._stereotypes = set({self.__class__.__name__.lower()})
 
         """Label"""
         if name is None:
-            Package._id_no += 1
-            self._name = 'Package' + str(Package._id_no)
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
         elif type(name) is not str:
             raise TypeError("'{}' must be a string".format(str(name)))
         else:
@@ -582,8 +582,8 @@ class Interaction(object):
 
         """Label"""
         if name is None:
-            Interaction._id_no += 1
-            self._name = 'Package' + str(Interaction._id_no)
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
         elif type(name) is not str:
             raise TypeError("'{}' must be a string".format(str(name)))
         else:
