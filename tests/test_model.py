@@ -96,6 +96,7 @@ def test_block_partProperty(model):
 # @pytest.mark.skip('WIP')
 def test_block_partProperty_withMultiplicity(model):
     """Add block elements as parts to parent blocks, with multiplicity, using new_part() method"""
+    # notes: need to redesign multiplicity constructor and setter
     model['Structure']['Constitution-class starship'].new_part('Nacelle', multiplicity=2)
     model['Structure']['Constitution-class starship'].new_part('Pylon', multiplicity=2)
     assert repr(model['Structure']['Constitution-class starship'].parts['nacelle']) == "\xabblock\xbb \nNacelle"

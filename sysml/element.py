@@ -169,17 +169,18 @@ class Block(object):
 
     def new_part(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in block"""
-        if name is None:
-            key = _generateModelerElementName(self.__class__.__name__)
-        elif type(name) is str:
-            key = _generateModelerElementName(name)
         if type(multiplicity) is not int:
             raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
         elif not multiplicity > 0:
             raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-        else:
-            self._parts[key] = Block(name)
-            self._parts[key]._multiplicity = multiplicity
+        if type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
+        elif name is None:
+            Block._id_no += 1
+            name =  'Block' + str(Block._id_no)
+        key = _generateKey(name)
+        self._parts[key] = Block(name)
+        self._parts[key]._multiplicity = multiplicity
 
     ## Structural Diagrams
     def bdd(self):
@@ -467,7 +468,7 @@ class Package(object):
         """Creates a dependency element in package"""
         # element = Dependency(supplier, client, stereotype)
         Dependency._id_no += 1
-        key = _generateModelerElementName('dependency' + str(Dependency._id_no))
+        key = _generateKey('dependency' + str(Dependency._id_no))
         self._setElement(key, Dependency(supplier, client, stereotype))
 
     def remove_element(self, key):
@@ -511,7 +512,7 @@ class Package(object):
 
     def _setElement(self, key, element):
         # if key is None:
-        #     key = _generateModelerElementName(element)
+        #     key = _generateKey(element)
         if not self._isValidElement(type(element)):
             raise TypeError("'{}' is not a valid model element".format(str(element)))
         else:
@@ -607,7 +608,13 @@ class Interaction(object):
         """
         pass
 
-def _generateModelerElementName(name):
+def _isValidModelerDefinedName(name):
+    if type(name) is not str or name[0] != name[0].lower() or ' ' in name:
+        raise TypeError("'{}' is must be a string starting with a lowercase char and must not contain whitespaces".format(str(name)))
+    else:
+        return True
+
+def _generateKey(name):
     """Generates a modeler-defined name for the given model element, and returns a string for use as a key within the namespace of a parent model element."""
     if type(name) is not str:
         raise TypeError("'{}' is must be a string".format(str(name)))
