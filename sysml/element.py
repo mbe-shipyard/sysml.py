@@ -489,6 +489,10 @@ class Package(object):
         """Removes a model element from package"""
         pass
 
+    def RTM(self):
+        """Generates a requirements traceability matrix for model elements contained and referenced within package"""
+        pass
+
     ## Structural Diagrams
     def bdd(self):
         """Generates a BlockDefinitionDiagram
