@@ -167,12 +167,19 @@ class Block(object):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, name, multiplicity=1):
+    def new_part(self, name=None, multiplicity=1):
         """Creates a block element in block"""
-        if type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+        if name is None:
+            key = _generateModelerElementName(self.__class__.__name__)
+        elif type(name) is str:
+            key = _generateModelerElementName(name)
+        if type(multiplicity) is not int:
+            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
+        elif not multiplicity > 0:
+            raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
         else:
-            self._addPart(name, Block(name), multiplicity)
+            self._parts[key] = Block(name)
+            self._parts[key]._multiplicity = multiplicity
 
     ## Structural Diagrams
     def bdd(self):
@@ -196,30 +203,6 @@ class Block(object):
         The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
         """
         pass
-
-    def _generateKey(self, elementType):
-        if self._isValidElementType(elementType):
-            for validElement in Package._validElementTypes:
-                if elementType is validElement or elementType is Package:
-                    for id_no in range(1, len(self._elements)+1):
-                        newKey = validElement.__name__.lower() + str(id_no)
-                        if newKey not in self._elements.keys():
-                            return newKey
-        else:
-            raise TypeError("'{}' is not a valid model element".format(str(element)))
-
-    def _addPart(self, key, element, multiplicity):
-        if not self._isValidElement(element):
-            raise TypeError(str(element) + " is not a valid model element")
-        if key is None:
-            key = self._generateKey(element)
-        if type(multiplicity) is not int:
-            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
-        elif not multiplicity > 0:
-            raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-        else:
-            self._parts[key] = element
-            self._parts[key]._multiplicity = multiplicity
 
     def _setMultiplicity(self, multiplicity):
         if type(multiplicity) is not int:
@@ -363,6 +346,7 @@ class ConstraintBlock(object):
 class Dependency(object):
     """This class defines a dependency"""
 
+    _id_no = 0
     # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
 
     def __init__(self, supplier, client, stereotype):
@@ -411,7 +395,7 @@ class Package(object):
     """This class defines a package"""
 
     _id_no = 0
-    _validElementTypes = set({Block, Requirement, ConstraintBlock, Dependency})
+    _validElements = set({Block, Requirement, ConstraintBlock, Dependency})
 
     def __init__(self, name=None, elements={}):
 
@@ -482,7 +466,8 @@ class Package(object):
     def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
         # element = Dependency(supplier, client, stereotype)
-        key = self._generateKey(Dependency)
+        Dependency._id_no += 1
+        key = _generateModelerElementName('dependency' + str(Dependency._id_no))
         self._setElement(key, Dependency(supplier, client, stereotype))
 
     def remove_element(self, key):
@@ -524,27 +509,16 @@ class Package(object):
         """
         pass
 
-    def _generateKey(self, elementType):
-        if self._isValidElementType(elementType):
-            for validElement in Package._validElementTypes:
-                if elementType is validElement or elementType is Package:
-                    for id_no in range(1, len(self._elements)+1):
-                        newKey = validElement.__name__.lower() + str(id_no)
-                        if newKey not in self._elements.keys():
-                            return newKey
-        else:
-            raise TypeError("'{}' is not a valid model element".format(str(element)))
-
     def _setElement(self, key, element):
         # if key is None:
-        #     key = self._generateKey(element)
-        if not self._isValidElementType(type(element)):
+        #     key = _generateModelerElementName(element)
+        if not self._isValidElement(type(element)):
             raise TypeError("'{}' is not a valid model element".format(str(element)))
         else:
             self._elements[key] = element
 
-    def _isValidElementType(self, elementType):
-        return elementType in self._validElementTypes or elementType is Package
+    def _isValidElement(self, modelElement):
+        return modelElement in self._validElements or modelElement is Package
 
 class StateMachine(object):
     """This class defines a state"""
@@ -577,7 +551,7 @@ class Interaction(object):
     """This class defines an interaction"""
 
     _id_no = 0
-    # _validElementTypes = set({Lifeline, Message, Occurence})
+    # _validElements = set({Lifeline, Message, Occurence})
 
     def __init__(self, name=None, elements={}):
 
@@ -632,3 +606,10 @@ class Interaction(object):
         A sequence diagram represents the interaction between collaborating parts of a system.
         """
         pass
+
+def _generateModelerElementName(name):
+    """Generates a modeler-defined name for the given model element, and returns a string for use as a key within the namespace of a parent model element."""
+    if type(name) is not str:
+        raise TypeError("'{}' is must be a string".format(str(name)))
+    else:
+        return name[0].lower() + name[1:].replace(' ','')
