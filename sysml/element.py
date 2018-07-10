@@ -37,12 +37,12 @@ class Block(object):
             pass
 
         """Stereotype"""
-        self._stereotypes = set({Block.__name__.lower()}).union(stereotypes)
+        self._stereotypes = set({'block'}).union(stereotypes)
 
-        """Label"""
+        """Name"""
         if name is None:
-            self.__class__._id_no += 1
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
+            Block._id_no += 1
+            self._name = 'block' + str(Block._id_no)
         else:
             self._name = name
 
@@ -242,8 +242,8 @@ class Block(object):
                 if type(i) is not str:
                     raise TypeError("'{}' must be a string".format(str(i)))
 
-        """Label"""
-        if type(name) not in (None, str):
+        """Name"""
+        if name is not None and type(name) is not str:
             raise TypeError("'{}' must be a string".format(str(name)))
 
         """Part Property"""
@@ -287,33 +287,35 @@ class Requirement(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name=None, txt=None, id_no=None):
-        self._stereotypes = set({Requirement.__name__.lower()})
+    def __init__(self, name=None, txt=None, id=None):
+        """Note: Requirement() class is intended for internal use by Model() class"""
 
-        """ID no."""
-        if id_no is None:
-            self.__class__._id_no += 1
-            self._id_no = 'ID' + str(Requirement._id_no).zfill(3)
-        elif type(id_no) in [int, float]:
-            self._id_no = 'ID' + str(id_no).zfill(3)
+        "Check if constructor arguments are valid"
+        if self._isValidRequirementArgs(name, txt, id):
+            pass
+
+        """Stereotype"""
+        self._stereotypes = set({'requirement'})
+
+        """ID"""
+        if id is None:
+            Requirement._id_no += 1
+            self._id = 'ID' + str(Requirement._id_no).zfill(3)
         else:
-            raise TypeError("'{}' must be an int or float".format(str(id_no)))
+            self._id = 'ID' + str(id_no).zfill(3)
 
-        """Label"""
+        """Name"""
         if name is None:
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            Requirement._id_no += 1
+            self._name = 'block' + str(Requirement._id_no)
         else:
             self._name = name
 
         """Text"""
         if txt is None:
             self.txt = ''
-        elif type(name) is str:
-            self.txt = txt
         else:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            self.txt = txt
 
         """UUID"""
         self._uuid = str(uuid.uuid1())
@@ -339,6 +341,20 @@ class Requirement(object):
         The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
         """
         pass
+
+    @staticmethod
+    def _isValidRequirementArgs(name, txt, id):
+        """Name"""
+        if name is not None and type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
+
+        """Text"""
+        if type(txt) is not str:
+            raise TypeError("'{}' must be a string".format(str(txt)))
+
+        """id"""
+        if id is not None and type(id) not in [int, float, str]:
+            raise TypeError("'{}' must be an int, float, or string".format(str(id)))
 
 class ConstraintBlock(object):
     """This class defines a constraint"""
@@ -412,14 +428,14 @@ class Package(object):
     """This class defines a package"""
 
     _id_no = 0
-    _validElements = (Block, Requirement, ConstraintBlock, Dependency)
+    _validElements = [Block, Requirement, ConstraintBlock, Dependency]
 
     def __init__(self, name=None, elements={}):
 
         """Stereotype"""
         self._stereotypes = set({self.__class__.__name__.lower()})
 
-        """Label"""
+        """Name"""
         if name is None:
             self.__class__._id_no += 1
             self._name = self.__class__.__name__ + str(self.__class__._id_no)
@@ -581,7 +597,7 @@ class Interaction(object):
         """Stereotype"""
         self._stereotypes = set({"interaction"})
 
-        """Label"""
+        """Name"""
         if name is None:
             self.__class__._id_no += 1
             self._name = self.__class__.__name__ + str(self.__class__._id_no)
