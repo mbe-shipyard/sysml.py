@@ -462,17 +462,29 @@ class Package(object):
         "Returns block uuid"
         return self._uuid
 
-    def new_package(self, name):
+    def new_package(self, name=None, elements={}):
         """Creates a package element in model"""
-        self._setElement(name, Package(name))
+        if name is None:
+            key = _generateKey('package' + str(Package._id_no + 1))
+        else:
+            key = _generateKey(name)
+        self._setElement(key, Package(name, elements))
 
     def new_block(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in package"""
-        self._setElement(name, Block(name))
+        if name is None:
+            key = _generateKey('package' + str(Package._id_no + 1))
+        else:
+            key = _generateKey(name)
+        self._setElement(key, Block(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
 
-    def new_requirement(self, name, txt):
+    def new_requirement(self, name=None, txt=None):
         """Creates a requirement element in package"""
-        self._setElement(name, Requirement(name, txt))
+        if name is None:
+            key = _generateKey('package' + str(Package._id_no + 1))
+        else:
+            key = _generateKey(name)
+        self._setElement(key, Requirement(name, txt))
 
     def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
