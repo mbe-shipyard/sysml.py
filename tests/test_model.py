@@ -24,12 +24,12 @@ def test_package(model):
     Note: Model and Package objects can be thought of as a dict-like container for returning stereotyped model elements
     """
     with pytest.raises(TypeError) as info:
-        model.add_package()
-        assert "add_package() missing 1 required positional argument: 'name'" in str(info.value)
+        model.new_package()
+        assert "new_package() missing 1 required positional argument: 'name'" in str(info.value)
     with pytest.raises(KeyError) as info:
         model['holodeck']
         assert "holodeck" in str(info.value)
-    model.add_package('Structure')
+    model.new_package('Structure')
     assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
     assert uuid.UUID(model['Structure'].uuid, version=1)
@@ -42,11 +42,11 @@ def test_package(model):
 
 # @pytest.mark.skip('WIP')
 def test_block(model):
-    """Add block elements to package objects using built-in add_block() method"""
+    """Add block elements to package objects using built-in new_block() method"""
     with pytest.raises(TypeError) as info:
-        model['Structure'].add_block()
-        assert "add_block() missing 1 required positional argument: 'name'" in str(info.value)
-    model['Structure'].add_block('Constitution-class starship')
+        model['Structure'].new_block()
+        assert "new_block() missing 1 required positional argument: 'name'" in str(info.value)
+    model['Structure'].new_block('Constitution-class starship')
     assert repr(model['Structure']['Constitution-class starship']) == "\xabblock\xbb \nConstitution-class starship"
     assert repr(type(model['Structure']['Constitution-class starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class starship'].uuid, version=1)
@@ -60,14 +60,14 @@ def test_block(model):
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty(model):
-    """Add block elements as parts to parent blocks using add_part() method
+    """Add block elements as parts to parent blocks using new_part() method
 
     Parts added to a block element are dictionary-callable via the 'parts' attribute"""
     with pytest.raises(TypeError) as info:
-        model['Structure']['Constitution-class starship'].add_part()
-        assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
-    model['Structure']['Constitution-class starship'].add_part('Primary Hull')
-    model['Structure']['Constitution-class starship'].add_part('Engineering Hull')
+        model['Structure']['Constitution-class starship'].new_part()
+        assert "new_part() missing 1 required positional argument: 'name'" in str(info.value)
+    model['Structure']['Constitution-class starship'].new_part('Primary Hull')
+    model['Structure']['Constitution-class starship'].new_part('Engineering Hull')
 
     assert repr(model['Structure']['Constitution-class starship'].parts['Primary Hull']) == "\xabblock\xbb \nPrimary Hull"
     assert repr(model['Structure']['Constitution-class starship'].parts['Engineering Hull']) == "\xabblock\xbb \nEngineering Hull"
@@ -95,9 +95,9 @@ def test_block_partProperty(model):
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty_withMultiplicity(model):
-    """Add block elements as parts to parent blocks, with multiplicity, using add_part() method"""
-    model['Structure']['Constitution-class starship'].add_part('Nacelle', multiplicity=2)
-    model['Structure']['Constitution-class starship'].add_part('Pylon', multiplicity=2)
+    """Add block elements as parts to parent blocks, with multiplicity, using new_part() method"""
+    model['Structure']['Constitution-class starship'].new_part('Nacelle', multiplicity=2)
+    model['Structure']['Constitution-class starship'].new_part('Pylon', multiplicity=2)
     assert repr(model['Structure']['Constitution-class starship'].parts['Nacelle']) == "\xabblock\xbb \nNacelle"
     assert repr(model['Structure']['Constitution-class starship'].parts['Pylon']) == "\xabblock\xbb \nPylon"
     assert repr(type(model['Structure']['Constitution-class starship'].parts['Nacelle'])) == "<class 'sysml.element.Block'>"
@@ -139,8 +139,8 @@ def test_bdd(model):
 def test_interaction(model):
     """Create an interaction, stereotyped as a test case, to be used to verify a requirement"""
     pass
-    # model.add_package('Analysis')
-    # model['Analysis'].add_interaction('Warp Field Analysis','testCase')
+    # model.new_package('Analysis')
+    # model['Analysis'].new_interaction('Warp Field Analysis','testCase')
 
 """Requirements"""
 # @pytest.mark.skip('WIP')
@@ -149,12 +149,12 @@ def test_requirements(model):
 
     Define two requirement elements, passing in a string name and text field as its constructor arguments
     """
-    model.add_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
+    model.new_package('Requirements') # creates a package, labeled 'Requirements', within model for storing model requirements
     with pytest.raises(TypeError) as info:
-        model['Requirements'].add_requirement()
-        assert "add_requirement() missing 2 required positional argument: 'name' and 'txt'" in str(info.value)
-    model['Requirements'].add_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
-    model['Requirements'].add_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
+        model['Requirements'].new_requirement()
+        assert "new_requirement() missing 2 required positional argument: 'name' and 'txt'" in str(info.value)
+    model['Requirements'].new_requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.')
+    model['Requirements'].new_requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher')
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb \nFunctional"
     assert repr(type(model['Requirements']['Top-level'])) ==  "<class 'sysml.element.Requirement'>"
@@ -172,11 +172,11 @@ def test_requirements(model):
 def test_derive_requirement(model):
     """Define a dependency relationship, of stereotype «derive», between two requirements"""
     with pytest.raises(TypeError) as info:
-        model['Requirements'].add_dependency()
-        assert "add_dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
+        model['Requirements'].new_dependency()
+        assert "new_dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
     supplier = model['Requirements']['Functional']
     client = model['Requirements']['Top-level']
-    model['Requirements'].add_dependency(supplier, client, 'deriveReqt')
+    model['Requirements'].new_dependency(supplier, client, 'deriveReqt')
     assert repr(model['Requirements']['dependency1'].client) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements']['dependency1'].supplier) == "\xabrequirement\xbb \nFunctional"
     assert repr(type(model['Requirements']['dependency1'])) == "<class 'sysml.element.Dependency'>"
@@ -203,8 +203,8 @@ def test_refine_requirement(model):
 # @pytest.mark.skip('WIP')
 def test_satisfy_requirement(model):
     """Define a dependency relationship, of stereotype «satisfy», between a requirement and block"""
-    model['Structure']['Constitution-class starship'].add_part('class-7 warp drive')
-    model['Requirements'].add_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
+    model['Structure']['Constitution-class starship'].new_part('class-7 warp drive')
+    model['Requirements'].new_dependency(model['Requirements']['Functional'], model['Structure']['Constitution-class starship'].parts['class-7 warp drive'], 'satisfy')
     assert repr(model['Requirements']['dependency2'].supplier) == "\xabrequirement\xbb \nFunctional"
     assert repr(model['Requirements']['dependency2'].client) == "\xabblock\xbb \nclass-7 warp drive"
     assert repr(type(model['Requirements']['dependency2'])) == "<class 'sysml.element.Dependency'>"

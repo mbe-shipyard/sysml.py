@@ -167,7 +167,7 @@ class Block(object):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def add_part(self, name, multiplicity=1):
+    def new_part(self, name, multiplicity=1):
         """Creates a block element in block"""
         if type(name) is not str:
             raise TypeError(str(name) + " must be a string")
@@ -461,25 +461,25 @@ class Package(object):
         "Returns block uuid"
         return self._uuid
 
-    def add_package(self, name):
+    def new_package(self, name):
         """Creates a package element in model"""
         self._setElement(name, Package(name))
 
-    def add_block(self, name):
+    def new_block(self, name):
         """Creates a block element in package"""
         if type(name) is str:
             self._setElement(name, Block(name))
         else:
             raise TypeError(str(name) + " must be a string")
 
-    def add_requirement(self, name, txt):
+    def new_requirement(self, name, txt):
         """Creates a requirement element in package"""
         if type(name) is str:
             self._setElement(name, Requirement(name, txt))
         else:
             raise TypeError(str(name) + " must be a string")
 
-    def add_dependency(self, supplier, client, stereotype):
+    def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
         # element = Dependency(supplier, client, stereotype)
         key = self._generateKey(Dependency)
@@ -618,7 +618,7 @@ class Interaction(object):
     def uuid(self):
         "Returns block uuid"
         return self._uuid
-    def add_lifeline(self):
+    def new_lifeline(self):
         pass
 
     ## Behavioral Diagrams
