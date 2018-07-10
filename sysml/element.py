@@ -167,7 +167,7 @@ class Block(object):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, name=None, multiplicity=1):
+    def new_part(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in block"""
         if name is None:
             key = _generateModelerElementName(self.__class__.__name__)
@@ -449,7 +449,7 @@ class Package(object):
         """Creates a package element in model"""
         self._setElement(name, Package(name))
 
-    def new_block(self, name):
+    def new_block(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in package"""
         if type(name) is str:
             self._setElement(name, Block(name))
