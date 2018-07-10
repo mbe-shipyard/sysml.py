@@ -32,62 +32,31 @@ class Block(object):
     def __init__(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
+        "Check if constructor arguments are valid"
+        if self._isValidBlockArgs(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+            pass
+
         """Stereotype"""
-        if type(stereotypes) is not set:
-            raise TypeError("'{}' must be a string".format(str(stereotypes)))
-        else:
-            for i in stereotypes:
-                if type(i) is not str:
-                    raise TypeError("'{}' must be a string".format(str(i)))
-            self._stereotypes = set({Block.__name__.lower()}).union(stereotypes)
+        self._stereotypes = set({Block.__name__.lower()}).union(stereotypes)
 
         """Label"""
         if name is None:
             self.__class__._id_no += 1
             self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
         else:
             self._name = name
 
         """Part Property"""
-        if type(parts) is not dict:
-            raise TypeError(str(parts) + " must be a dict")
-        else:
-            for key in parts:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                elif not isinstance(parts[key], Block): #tk: change to accept block or list of blocks
-                    raise TypeError(str(part[key]) + " must be a Block")
-            self._parts = parts
+        self._parts = parts
 
         """Value Property"""
-        if type(values) is not dict:
-            raise TypeError(str(values) + " must be a dict")
-        else:
-            for key in values:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                elif type(values[key]) is not int or type(values[key]) is not float or not hasattr(values[key],'units'):
-                    raise TypeError("'{}' must be an int, float, or have attribute 'unit'".format(str(values[key])))
-            self._values = values
+        self._values = values
 
         """Constraint Property"""
-        if type(constraints) is not dict:
-            raise TypeError(str(constraints) + " must be a dict")
-        else:
-            for key in constraints:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                if not isinstance(constraints[key], ConstraintBlock):
-                    raise TypeError("'{}' must be a ConstraintBlock".format(str(constraints[key])))
-            self._constraints = constraints
+        self._constraints = constraints
 
         """Multiplicity"""
-        if type(multiplicity) is not int:
-            raise TypeError("'{}' must be an int".format(str(multiplicity)))
-        else:
-            self._setMultiplicity(multiplicity)
+        self._setMultiplicity(multiplicity)
 
         """UUID"""
         self._uuid = str(uuid.uuid1())
@@ -179,8 +148,7 @@ class Block(object):
             Block._id_no += 1
             name =  'Block' + str(Block._id_no)
         key = _generateKey(name)
-        self._parts[key] = Block(name)
-        self._parts[key]._multiplicity = multiplicity
+        self._parts[key] = Block(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
 
     ## Structural Diagrams
     def bdd(self):
@@ -263,6 +231,56 @@ class Block(object):
     #                 raise TypeError("key is not a string!")
     #     else:
     #         raise TypeError("argument is not a dictionary!")
+
+    @staticmethod
+    def _isValidBlockArgs(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+        """Stereotype"""
+        if type(stereotypes) is not set:
+            raise TypeError("'{}' must be a string".format(str(stereotypes)))
+        else:
+            for i in stereotypes:
+                if type(i) is not str:
+                    raise TypeError("'{}' must be a string".format(str(i)))
+
+        """Label"""
+        if type(name) not in (None, str):
+            raise TypeError("'{}' must be a string".format(str(name)))
+
+        """Part Property"""
+        if type(parts) is not dict:
+            raise TypeError(str(parts) + " must be a dict")
+        else:
+            for key in parts:
+                if type(key) is not str:
+                    raise TypeError("'{}' must be a string".format(str(key)))
+                elif not isinstance(parts[key], Block): #tk: change to accept block or list of blocks
+                    raise TypeError(str(part[key]) + " must be a Block")
+
+        """Value Property"""
+        if type(values) is not dict:
+            raise TypeError(str(values) + " must be a dict")
+        else:
+            for key in values:
+                if type(key) is not str:
+                    raise TypeError("'{}' must be a string".format(str(key)))
+                elif type(values[key]) is not int or type(values[key]) is not float or not hasattr(values[key],'units'):
+                    raise TypeError("'{}' must be an int, float, or have attribute 'unit'".format(str(values[key])))
+
+        """Constraint Property"""
+        if type(constraints) is not dict:
+            raise TypeError(str(constraints) + " must be a dict")
+        else:
+            for key in constraints:
+                if type(key) is not str:
+                    raise TypeError("'{}' must be a string".format(str(key)))
+                if not isinstance(constraints[key], ConstraintBlock):
+                    raise TypeError("'{}' must be a ConstraintBlock".format(str(constraints[key])))
+
+        """Multiplicity"""
+        if type(multiplicity) is not int:
+            raise TypeError("'{}' must be an int".format(str(multiplicity)))
+
+        return True
 
 class Requirement(object):
     """This class defines a requirement"""
@@ -369,8 +387,6 @@ class Dependency(object):
                 self._supplier = supplier
                 self._client = client
                 self._stereotype = stereotype
-        else:
-            raise ValueError("'{}' is not a valid dependency stereotype".format(str(stereotype)))
 
         """UUID"""
         self._uuid = str(uuid.uuid1())
@@ -396,7 +412,7 @@ class Package(object):
     """This class defines a package"""
 
     _id_no = 0
-    _validElements = set({Block, Requirement, ConstraintBlock, Dependency})
+    _validElements = (Block, Requirement, ConstraintBlock, Dependency)
 
     def __init__(self, name=None, elements={}):
 
@@ -452,24 +468,18 @@ class Package(object):
 
     def new_block(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in package"""
-        if type(name) is str:
-            self._setElement(name, Block(name))
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
+        self._setElement(name, Block(name))
 
     def new_requirement(self, name, txt):
         """Creates a requirement element in package"""
-        if type(name) is str:
-            self._setElement(name, Requirement(name, txt))
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
+        self._setElement(name, Requirement(name, txt))
 
     def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
         # element = Dependency(supplier, client, stereotype)
-        Dependency._id_no += 1
-        key = _generateKey('dependency' + str(Dependency._id_no))
+        key = _generateKey('dependency' + str(Dependency._id_no + 1))
         self._setElement(key, Dependency(supplier, client, stereotype))
+        Dependency._id_no += 1
 
     def remove_element(self, key):
         """Removes a model element from package"""
@@ -607,12 +617,6 @@ class Interaction(object):
         A sequence diagram represents the interaction between collaborating parts of a system.
         """
         pass
-
-def _isValidModelerDefinedName(name):
-    if type(name) is not str or name[0] != name[0].lower() or ' ' in name:
-        raise TypeError("'{}' is must be a string starting with a lowercase char and must not contain whitespaces".format(str(name)))
-    else:
-        return True
 
 def _generateKey(name):
     """Generates a modeler-defined name for the given model element, and returns a string for use as a key within the namespace of a parent model element."""
