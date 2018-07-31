@@ -29,7 +29,7 @@ class Block(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def __init__(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         "Check if constructor arguments are valid"
@@ -37,6 +37,8 @@ class Block(object):
             pass
 
         """Stereotype"""
+        if stereotypes is None:
+            stereotypes = set()
         self._stereotypes = set({'block'}).union(stereotypes)
 
         """Name"""
@@ -47,13 +49,16 @@ class Block(object):
             self._modelName = modelName
 
         """Part Property"""
-        self._parts = parts
+        if parts is None:
+            self._parts = {}
 
         """Value Property"""
-        self._values = values
+        if values is None:
+            self._values = {}
 
         """Constraint Property"""
-        self._constraints = constraints
+        if constraints is None:
+            self._constraints = {}
 
         """Multiplicity"""
         self._setMultiplicity(multiplicity)
@@ -136,7 +141,7 @@ class Block(object):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def new_part(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Creates a block element in block"""
         if type(multiplicity) is not int:
             raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
@@ -235,9 +240,9 @@ class Block(object):
     @staticmethod
     def _isValidBlockArgs(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
         """Stereotype"""
-        if type(stereotypes) is not set:
-            raise TypeError("'{}' must be a string".format(str(stereotypes)))
-        else:
+        if stereotypes is not None and type(stereotypes) is not set:
+            raise TypeError("'{}' must be a string or set of strings".format(str(stereotypes)))
+        elif type(stereotypes) is set:
             for i in stereotypes:
                 if type(i) is not str:
                     raise TypeError("'{}' must be a string".format(str(i)))
@@ -247,9 +252,9 @@ class Block(object):
             raise TypeError("'{}' must be a string".format(str(modelName)))
 
         """Part Property"""
-        if type(parts) is not dict:
+        if parts is not None and type(parts) is not dict:
             raise TypeError(str(parts) + " must be a dict")
-        else:
+        elif type(parts) is dict:
             for key in parts:
                 if type(key) is not str:
                     raise TypeError("'{}' must be a string".format(str(key)))
@@ -257,9 +262,9 @@ class Block(object):
                     raise TypeError(str(part[key]) + " must be a Block")
 
         """Value Property"""
-        if type(values) is not dict:
+        if values is not None and type(values) is not dict:
             raise TypeError(str(values) + " must be a dict")
-        else:
+        elif type(values) is dict:
             for key in values:
                 if type(key) is not str:
                     raise TypeError("'{}' must be a string".format(str(key)))
@@ -267,9 +272,9 @@ class Block(object):
                     raise TypeError("'{}' must be an int, float, or have attribute 'unit'".format(str(values[key])))
 
         """Constraint Property"""
-        if type(constraints) is not dict:
+        if constraints is not None and type(constraints) is not dict:
             raise TypeError(str(constraints) + " must be a dict")
-        else:
+        elif type(constraints) is dict:
             for key in constraints:
                 if type(key) is not str:
                     raise TypeError("'{}' must be a string".format(str(key)))
@@ -277,7 +282,7 @@ class Block(object):
                     raise TypeError("'{}' must be a ConstraintBlock".format(str(constraints[key])))
 
         """Multiplicity"""
-        if type(multiplicity) is not int:
+        if multiplicity is not None and type(multiplicity) is not int:
             raise TypeError("'{}' must be an int".format(str(multiplicity)))
 
         return True
@@ -430,7 +435,7 @@ class Package(object):
     _id_no = 0
     _validElements = [Block, Requirement, ConstraintBlock, Dependency]
 
-    def __init__(self, modelName=None, elements={}):
+    def __init__(self, modelName=None, elements=None):
 
         """Stereotype"""
         self._stereotypes = set({self.__class__.__name__.lower()})
@@ -445,6 +450,8 @@ class Package(object):
             self._modelName = modelName
 
         """Elements"""
+        if elements is None:
+            elements = {}
         self._elements = elements
 
         """UUID"""
@@ -478,29 +485,29 @@ class Package(object):
         "Returns block uuid"
         return self._uuid
 
-    def new_package(self, modelName=None, elements={}):
+    def new_package(self, modelName=None, elements=None):
         """Creates a package element in model"""
         if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(modelName)
-        self._setElement(key, Package(modelName, elements))
+            key = modelName
+        self._setElement(key, Package(key, elements))
 
-    def new_block(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def new_block(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Creates a block element in package"""
         if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(modelName)
-        self._setElement(key, Block(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
+            key = modelName
+        self._setElement(key, Block(key, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
 
     def new_requirement(self, modelName=None, txt=None):
         """Creates a requirement element in package"""
         if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(modelName)
-        self._setElement(key, Requirement(modelName, txt))
+            key = modelName
+        self._setElement(key, Requirement(key, txt))
 
     def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
@@ -592,7 +599,7 @@ class Interaction(object):
     _id_no = 0
     # _validElements = set({Lifeline, Message, Occurence})
 
-    def __init__(self, modelName=None, elements={}):
+    def __init__(self, modelName=None, elements=None):
 
         """Stereotype"""
         self._stereotypes = set({"interaction"})
@@ -607,6 +614,8 @@ class Interaction(object):
             self._modelName = modelName
 
         """Elements"""
+        if elements is None:
+            elements = {}
         self._elements = elements
 
         """UUID"""
