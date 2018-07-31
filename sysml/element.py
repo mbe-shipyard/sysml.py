@@ -7,15 +7,31 @@ Model elements are the building blocks that make up the 9 SysML diagrams
 """
 
 import uuid
+from abc import ABC, abstractproperty
 
 # developer notes: to use hidden vs unhidden attributes
 
-class Block(object):
+class ModelElement(ABC):
+    """Abstract base class for all model elements"""
+
+    def __init__(self):
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
+
+    @abstractproperty
+    def name(self):
+        pass
+
+    @property
+    def uuid(self):
+        return self._uuid
+
+class Block(ModelElement):
     """This class defines a block
 
     Parameters
     ----------
-    modelName : string, default None
+    name : string, default None
 
     values : dict, default None
 
@@ -29,12 +45,15 @@ class Block(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         "Check if constructor arguments are valid"
-        if self._isValidBlockArgs(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+        if self._isValidBlockArgs(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
             pass
+
+        """Construct ModelElement"""
+        super().__init__()
 
         """Stereotype"""
         if stereotypes is None:
@@ -42,11 +61,11 @@ class Block(object):
         self._stereotypes = set({'block'}).union(stereotypes)
 
         """Name"""
-        if modelName is None:
+        if name is None:
             Block._id_no += 1
-            self._modelName = 'block' + str(Block._id_no)
+            self._name = 'block' + str(Block._id_no)
         else:
-            self._modelName = modelName
+            self._name = name
 
         """Part Property"""
         if parts is None:
@@ -62,9 +81,6 @@ class Block(object):
 
         """Multiplicity"""
         self._setMultiplicity(multiplicity)
-
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
 
         """
         ## Reference Property
@@ -91,22 +107,17 @@ class Block(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._modelName)
+        return _stereotypes + "\n{}".format(self._name)
 
     ## Getters
     @property
-    def modelName(self):
-        "Returns block modelName"
-        return self._modelName
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def stereotypes(self):
         return self._stereotypes
-
-    @property
-    def uuid(self):
-        "Returns block uuid"
-        return self._uuid
 
     @property
     def parts(self):
@@ -129,31 +140,31 @@ class Block(object):
         return self._multiplicity
 
     ## Setters
-    @modelName.setter
-    def modelName(self, modelName):
-        "Sets block modelName"
-        if type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
+    @name.setter
+    def name(self, name):
+        "Sets block name"
+        if type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
         else:
-            self._modelName = modelName
+            self._name = name
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    def new_part(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Creates a block element in block"""
         if type(multiplicity) is not int:
             raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
         elif not multiplicity > 0:
             raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-        if type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
-        elif modelName is None:
+        if type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
+        elif name is None:
             Block._id_no += 1
-            modelName =  'Block' + str(Block._id_no)
-        key = _generateKey(modelName)
-        self._parts[key] = Block(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
+            name =  'Block' + str(Block._id_no)
+        key = _generateKey(name)
+        self._parts[key] = Block(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
 
     ## Structural Diagrams
     def bdd(self):
@@ -238,7 +249,7 @@ class Block(object):
     #         raise TypeError("argument is not a dictionary!")
 
     @staticmethod
-    def _isValidBlockArgs(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+    def _isValidBlockArgs(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
         """Stereotype"""
         if stereotypes is not None and type(stereotypes) is not set:
             raise TypeError("'{}' must be a string or set of strings".format(str(stereotypes)))
@@ -248,8 +259,8 @@ class Block(object):
                     raise TypeError("'{}' must be a string".format(str(i)))
 
         """Name"""
-        if modelName is not None and type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
+        if name is not None and type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Part Property"""
         if parts is not None and type(parts) is not dict:
@@ -287,17 +298,20 @@ class Block(object):
 
         return True
 
-class Requirement(object):
+class Requirement(ModelElement):
     """This class defines a requirement"""
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, modelName=None, txt=None, id=None):
+    def __init__(self, name=None, txt=None, id=None):
         """Note: Requirement() class is intended for internal use by Model() class"""
 
         "Check if constructor arguments are valid"
-        if self._isValidRequirementArgs(modelName, txt, id):
+        if self._isValidRequirementArgs(name, txt, id):
             pass
+
+        """Construct ModelElement"""
+        super().__init__()
 
         """Stereotype"""
         self._stereotypes = set({'requirement'})
@@ -310,11 +324,11 @@ class Requirement(object):
             self._id = 'ID' + str(id_no).zfill(3)
 
         """Name"""
-        if modelName is None:
+        if name is None:
             Requirement._id_no += 1
-            self._modelName = 'block' + str(Requirement._id_no)
+            self._name = 'requirement' + str(Requirement._id_no)
         else:
-            self._modelName = modelName
+            self._name = name
 
         """Text"""
         if txt is None:
@@ -322,23 +336,20 @@ class Requirement(object):
         else:
             self.txt = txt
 
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
-
     def __repr__(self):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._modelName)
+        return _stereotypes + "\n{}".format(self._name)
+
+    @property
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def stereotypes(self):
         return self._stereotypes
-
-    @property
-    def uuid(self):
-        "Returns block uuid"
-        return self._uuid
 
     def req(self):
         """Generates a requirement diagram
@@ -348,10 +359,10 @@ class Requirement(object):
         pass
 
     @staticmethod
-    def _isValidRequirementArgs(modelName, txt, id):
+    def _isValidRequirementArgs(name, txt, id):
         """Name"""
-        if modelName is not None and type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
+        if name is not None and type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Text"""
         if type(txt) is not str:
@@ -361,11 +372,13 @@ class Requirement(object):
         if id is not None and type(id) not in [int, float, str]:
             raise TypeError("'{}' must be an int, float, or string".format(str(id)))
 
-class ConstraintBlock(object):
+class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
 
     def __init__(self):
-        pass
+
+        """Construct ModelElement"""
+        super().__init__()
 
     ## Structural Diagrams
     def bdd(self):
@@ -383,7 +396,7 @@ class ConstraintBlock(object):
         """
         pass
 
-class Dependency(object):
+class Dependency(ModelElement):
     """This class defines a dependency"""
 
     _id_no = 0
@@ -409,8 +422,13 @@ class Dependency(object):
                 self._client = client
                 self._stereotype = stereotype
 
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
+        """Construct ModelElement"""
+        super().__init__()
+
+    @property
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def supplier(self):
@@ -424,38 +442,33 @@ class Dependency(object):
     def stereotype(self):
         return self._stereotype
 
-    @property
-    def uuid(self):
-        "Returns block uuid"
-        return self._uuid
-
-class Package(object):
+class Package(ModelElement):
     """This class defines a package"""
 
     _id_no = 0
     _validElements = [Block, Requirement, ConstraintBlock, Dependency]
 
-    def __init__(self, modelName=None, elements=None):
+    def __init__(self, name=None, elements=None):
+
+        """Construct ModelElement"""
+        super().__init__()
 
         """Stereotype"""
         self._stereotypes = set({self.__class__.__name__.lower()})
 
         """Name"""
-        if modelName is None:
+        if name is None:
             self.__class__._id_no += 1
-            self._modelName = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
+        elif type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
         else:
-            self._modelName = modelName
+            self._name = name
 
         """Elements"""
         if elements is None:
             elements = {}
         self._elements = elements
-
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
 
     def __getitem__(self, key):
         "Returns data for key-specified model element or relationship"
@@ -465,12 +478,12 @@ class Package(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._modelName)
+        return _stereotypes + "\n{}".format(self._name)
 
     @property
-    def modelName(self):
-        "Returns block modelName"
-        return self._modelName
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def elements(self):
@@ -480,33 +493,28 @@ class Package(object):
     def stereotypes(self):
         return self._stereotypes
 
-    @property
-    def uuid(self):
-        "Returns block uuid"
-        return self._uuid
-
-    def new_package(self, modelName=None, elements=None):
+    def new_package(self, name=None, elements=None):
         """Creates a package element in model"""
-        if modelName is None:
+        if name is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = modelName
+            key = name
         self._setElement(key, Package(key, elements))
 
-    def new_block(self, modelName=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    def new_block(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Creates a block element in package"""
-        if modelName is None:
+        if name is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = modelName
+            key = name
         self._setElement(key, Block(key, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
 
-    def new_requirement(self, modelName=None, txt=None):
+    def new_requirement(self, name=None, txt=None):
         """Creates a requirement element in package"""
-        if modelName is None:
+        if name is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = modelName
+            key = name
         self._setElement(key, Requirement(key, txt))
 
     def new_dependency(self, supplier, client, stereotype):
@@ -566,11 +574,13 @@ class Package(object):
     def _isValidElement(self, modelElement):
         return modelElement in self._validElements or modelElement is Package
 
-class StateMachine(object):
+class StateMachine(ModelElement):
     """This class defines a state"""
 
     def __init__(self):
-        pass
+
+        """Construct ModelElement"""
+        super().__init__()
 
     def stm(self):
         """Generates a state machine diagram for a valid model element key
@@ -579,11 +589,13 @@ class StateMachine(object):
          """
         pass
 
-class Activity(object):
+class Activity(ModelElement):
     """This class defines a activity"""
 
     def __init__(self):
-        pass
+
+        """Construct ModelElement"""
+        super().__init__()
 
     ## Behavioral Diagrams
     def act(self):
@@ -593,44 +605,44 @@ class Activity(object):
         """
         pass
 
-class Interaction(object):
+class Interaction(ModelElement):
     """This class defines an interaction"""
 
     _id_no = 0
     # _validElements = set({Lifeline, Message, Occurence})
 
-    def __init__(self, modelName=None, elements=None):
+    def __init__(self, name=None, elements=None):
+
+        """Construct ModelElement"""
+        super().__init__()
 
         """Stereotype"""
         self._stereotypes = set({"interaction"})
 
         """Name"""
-        if modelName is None:
+        if name is None:
             self.__class__._id_no += 1
-            self._modelName = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(modelName) is not str:
-            raise TypeError("'{}' must be a string".format(str(modelName)))
+            self._name = self.__class__.__name__ + str(self.__class__._id_no)
+        elif type(name) is not str:
+            raise TypeError("'{}' must be a string".format(str(name)))
         else:
-            self._modelName = modelName
+            self._name = name
 
         """Elements"""
         if elements is None:
             elements = {}
         self._elements = elements
 
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
-
     def __repr__(self):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._modelName)
+        return _stereotypes + "\n{}".format(self._name)
 
     @property
-    def modelName(self):
-        "Returns block modelName"
-        return self._modelName
+    def name(self):
+        "Returns block name"
+        return self._name
 
     @property
     def elements(self):
@@ -640,10 +652,6 @@ class Interaction(object):
     def stereotypes(self):
         return self._stereotypes
 
-    @property
-    def uuid(self):
-        "Returns block uuid"
-        return self._uuid
     def new_lifeline(self):
         pass
 
@@ -655,9 +663,9 @@ class Interaction(object):
         """
         pass
 
-def _generateKey(modelName):
-    """Generates a modeler-defined modelName for the given model element, and returns a string for use as a key within the modelNamespace of a parent model element."""
-    if type(modelName) is not str:
-        raise TypeError("'{}' is must be a string".format(str(modelName)))
+def _generateKey(name):
+    """Generates a modeler-defined name for the given model element, and returns a string for use as a key within the namespace of a parent model element."""
+    if type(name) is not str:
+        raise TypeError("'{}' is must be a string".format(str(name)))
     else:
-        return modelName[0].lower() + modelName[1:].replace(' ','')
+        return name[0].lower() + name[1:].replace(' ','')

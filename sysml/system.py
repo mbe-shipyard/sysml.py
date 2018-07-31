@@ -6,7 +6,6 @@ The `Model` class is used to instantiate a central namespace for a SysML model b
 Model elements and relations are the building blocks that make up the 9 SysML diagrams
 """
 from sysml.element import *
-import uuid
 
 # developer notes: to use hidden vs unhidden attributes
 

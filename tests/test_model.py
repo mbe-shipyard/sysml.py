@@ -15,7 +15,6 @@ def model():
 def test_model(model):
     assert repr(model) ==  "\xabmodel\xbb \nConstitution-class Starship"
     assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
-    model.someatt = 1
     with pytest.raises(TypeError) as info:
         model = sysml.Model(47)
         assert "must be a string" in str(info.value)
