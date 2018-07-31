@@ -2,7 +2,9 @@ import sysml
 import pytest
 import uuid
 
-# Notes: block elements with starting property attributes should be broken down into granular blocks and assigned id's & relationships upon assimilation into model.
+# Notes:
+# block elements with starting property attributes should be broken down into granular blocks and assigned id's & relationships upon assimilation into model.
+# Need to add tests for ensuring mutable default arguments
 @pytest.fixture
 def model():
     """Create a model object that will also serve as the root directory for all other model elements"""

@@ -15,7 +15,7 @@ class Block(object):
 
     Parameters
     ----------
-    name : string, default None
+    modelName : string, default None
 
     values : dict, default None
 
@@ -29,22 +29,22 @@ class Block(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def __init__(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         "Check if constructor arguments are valid"
-        if self._isValidBlockArgs(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+        if self._isValidBlockArgs(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
             pass
 
         """Stereotype"""
         self._stereotypes = set({'block'}).union(stereotypes)
 
         """Name"""
-        if name is None:
+        if modelName is None:
             Block._id_no += 1
-            self._name = 'block' + str(Block._id_no)
+            self._modelName = 'block' + str(Block._id_no)
         else:
-            self._name = name
+            self._modelName = modelName
 
         """Part Property"""
         self._parts = parts
@@ -86,13 +86,13 @@ class Block(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._modelName)
 
     ## Getters
     @property
-    def name(self):
-        "Returns block name"
-        return self._name
+    def modelName(self):
+        "Returns block modelName"
+        return self._modelName
 
     @property
     def stereotypes(self):
@@ -124,31 +124,31 @@ class Block(object):
         return self._multiplicity
 
     ## Setters
-    @name.setter
-    def name(self, name):
-        "Sets block name"
-        if type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+    @modelName.setter
+    def modelName(self, modelName):
+        "Sets block modelName"
+        if type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
         else:
-            self._name = name
+            self._modelName = modelName
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def new_part(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in block"""
         if type(multiplicity) is not int:
             raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
         elif not multiplicity > 0:
             raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-        if type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-        elif name is None:
+        if type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
+        elif modelName is None:
             Block._id_no += 1
-            name =  'Block' + str(Block._id_no)
-        key = _generateKey(name)
-        self._parts[key] = Block(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
+            modelName =  'Block' + str(Block._id_no)
+        key = _generateKey(modelName)
+        self._parts[key] = Block(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
 
     ## Structural Diagrams
     def bdd(self):
@@ -233,7 +233,7 @@ class Block(object):
     #         raise TypeError("argument is not a dictionary!")
 
     @staticmethod
-    def _isValidBlockArgs(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
+    def _isValidBlockArgs(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
         """Stereotype"""
         if type(stereotypes) is not set:
             raise TypeError("'{}' must be a string".format(str(stereotypes)))
@@ -243,8 +243,8 @@ class Block(object):
                     raise TypeError("'{}' must be a string".format(str(i)))
 
         """Name"""
-        if name is not None and type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+        if modelName is not None and type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
 
         """Part Property"""
         if type(parts) is not dict:
@@ -287,11 +287,11 @@ class Requirement(object):
 
     _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
 
-    def __init__(self, name=None, txt=None, id=None):
+    def __init__(self, modelName=None, txt=None, id=None):
         """Note: Requirement() class is intended for internal use by Model() class"""
 
         "Check if constructor arguments are valid"
-        if self._isValidRequirementArgs(name, txt, id):
+        if self._isValidRequirementArgs(modelName, txt, id):
             pass
 
         """Stereotype"""
@@ -305,11 +305,11 @@ class Requirement(object):
             self._id = 'ID' + str(id_no).zfill(3)
 
         """Name"""
-        if name is None:
+        if modelName is None:
             Requirement._id_no += 1
-            self._name = 'block' + str(Requirement._id_no)
+            self._modelName = 'block' + str(Requirement._id_no)
         else:
-            self._name = name
+            self._modelName = modelName
 
         """Text"""
         if txt is None:
@@ -324,7 +324,7 @@ class Requirement(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._modelName)
 
     @property
     def stereotypes(self):
@@ -343,10 +343,10 @@ class Requirement(object):
         pass
 
     @staticmethod
-    def _isValidRequirementArgs(name, txt, id):
+    def _isValidRequirementArgs(modelName, txt, id):
         """Name"""
-        if name is not None and type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+        if modelName is not None and type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
 
         """Text"""
         if type(txt) is not str:
@@ -430,19 +430,19 @@ class Package(object):
     _id_no = 0
     _validElements = [Block, Requirement, ConstraintBlock, Dependency]
 
-    def __init__(self, name=None, elements={}):
+    def __init__(self, modelName=None, elements={}):
 
         """Stereotype"""
         self._stereotypes = set({self.__class__.__name__.lower()})
 
         """Name"""
-        if name is None:
+        if modelName is None:
             self.__class__._id_no += 1
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            self._modelName = self.__class__.__name__ + str(self.__class__._id_no)
+        elif type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
         else:
-            self._name = name
+            self._modelName = modelName
 
         """Elements"""
         self._elements = elements
@@ -458,12 +458,12 @@ class Package(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._modelName)
 
     @property
-    def name(self):
-        "Returns block name"
-        return self._name
+    def modelName(self):
+        "Returns block modelName"
+        return self._modelName
 
     @property
     def elements(self):
@@ -478,29 +478,29 @@ class Package(object):
         "Returns block uuid"
         return self._uuid
 
-    def new_package(self, name=None, elements={}):
+    def new_package(self, modelName=None, elements={}):
         """Creates a package element in model"""
-        if name is None:
+        if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(name)
-        self._setElement(key, Package(name, elements))
+            key = _generateKey(modelName)
+        self._setElement(key, Package(modelName, elements))
 
-    def new_block(self, name=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
+    def new_block(self, modelName=None, typeName=None, parts={}, references=None, values={}, constraints={}, flowProperties=None, stereotypes=set(), multiplicity=1):
         """Creates a block element in package"""
-        if name is None:
+        if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(name)
-        self._setElement(key, Block(name, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
+            key = _generateKey(modelName)
+        self._setElement(key, Block(modelName, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity))
 
-    def new_requirement(self, name=None, txt=None):
+    def new_requirement(self, modelName=None, txt=None):
         """Creates a requirement element in package"""
-        if name is None:
+        if modelName is None:
             key = _generateKey('package' + str(Package._id_no + 1))
         else:
-            key = _generateKey(name)
-        self._setElement(key, Requirement(name, txt))
+            key = _generateKey(modelName)
+        self._setElement(key, Requirement(modelName, txt))
 
     def new_dependency(self, supplier, client, stereotype):
         """Creates a dependency element in package"""
@@ -592,19 +592,19 @@ class Interaction(object):
     _id_no = 0
     # _validElements = set({Lifeline, Message, Occurence})
 
-    def __init__(self, name=None, elements={}):
+    def __init__(self, modelName=None, elements={}):
 
         """Stereotype"""
         self._stereotypes = set({"interaction"})
 
         """Name"""
-        if name is None:
+        if modelName is None:
             self.__class__._id_no += 1
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            self._modelName = self.__class__.__name__ + str(self.__class__._id_no)
+        elif type(modelName) is not str:
+            raise TypeError("'{}' must be a string".format(str(modelName)))
         else:
-            self._name = name
+            self._modelName = modelName
 
         """Elements"""
         self._elements = elements
@@ -616,12 +616,12 @@ class Interaction(object):
         _stereotypes = ""
         for _stereotype in self._stereotypes:
             _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        return _stereotypes + "\n{}".format(self._modelName)
 
     @property
-    def name(self):
-        "Returns block name"
-        return self._name
+    def modelName(self):
+        "Returns block modelName"
+        return self._modelName
 
     @property
     def elements(self):
@@ -646,9 +646,9 @@ class Interaction(object):
         """
         pass
 
-def _generateKey(name):
-    """Generates a modeler-defined name for the given model element, and returns a string for use as a key within the namespace of a parent model element."""
-    if type(name) is not str:
-        raise TypeError("'{}' is must be a string".format(str(name)))
+def _generateKey(modelName):
+    """Generates a modeler-defined modelName for the given model element, and returns a string for use as a key within the modelNamespace of a parent model element."""
+    if type(modelName) is not str:
+        raise TypeError("'{}' is must be a string".format(str(modelName)))
     else:
-        return name[0].lower() + name[1:].replace(' ','')
+        return modelName[0].lower() + modelName[1:].replace(' ','')
