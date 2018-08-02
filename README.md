@@ -9,9 +9,9 @@ This project is intended to provide an object-oriented programming (OOP) paradig
 
 ## Package Contents
 
-- `sysml/system.py` - contains the `Model()` class for creating `Model` objects, which serves as a central namespace for model elements (and relationships between elements).
+- `sysml/system.py` - module for creating a `Model` object, which serves as a central namespace for model elements (and relationships between elements).
 
-- `sysml/element.py` - contains classes for creating *model element* objects (s.a., `Package`, `Block`, `Requirement`, `Activity`, etc.). These objects are intended for internal use by `Model` objects, using a factory method design pattern.
+- `sysml/element.py` - module for creating model elements (s.a., `Package`, `Block`, `Requirement`, `Activity`, etc.). These objects are intended to be subsumed by a `Model` object, using a composite design pattern.
 
 - `sysml/parser.py` - module for serializing/deserializing `Model` objects.
 

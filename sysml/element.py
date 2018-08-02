@@ -169,19 +169,19 @@ class Block(ModelElement):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def new_part(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
-        """Creates and adds new block element to parts attribute"""
-        if type(multiplicity) is not int:
-            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
-        elif not multiplicity > 0:
-            raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-        if type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-        elif name is None:
-            Block._id_no += 1
-            name =  'Block' + str(Block._id_no)
-        key = super()._generateKey(name)
-        self._parts[key] = Block(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
+    # def new_part(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    #     """Creates and adds new block element to parts attribute"""
+    #     if type(multiplicity) is not int:
+    #         raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
+    #     elif not multiplicity > 0:
+    #         raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
+    #     if type(name) is not str:
+    #         raise TypeError("'{}' must be a string".format(str(name)))
+    #     elif name is None:
+    #         Block._id_no += 1
+    #         name =  'Block' + str(Block._id_no)
+    #     key = super()._generateKey(name)
+    #     self._parts[key] = Block(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
 
     def add_part(self, *blocks):
         """Adds any number of block elements to parts attribute"""
@@ -429,6 +429,8 @@ class Dependency(ModelElement):
     # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
 
     def __init__(self, supplier, client, stereotype):
+
+        self._name = super()._generateKey('dependency' + str(Dependency._id_no + 1))
         if stereotype is 'deriveReqt':
             if type(supplier) is not Requirement:
                 raise TypeError("'{}' is not a Requirement".format(str(supplier)))
@@ -497,8 +499,14 @@ class Package(ModelElement):
         self._elements = elements
 
     def __getitem__(self, key):
-        "Returns data for key-specified model element or relationship"
+        "Returns model element for key-specified model element"
         return self._elements[key]
+
+    def __setitem__(self, key, element):
+        "Sets model element for key-specified model element"
+        if not self._isValidElement(type(element)):
+            raise TypeError("'{}' must be a valid model element".format(str(element)))
+        self._elements[key] = element
 
     def __repr__(self):
         _stereotypes = ""
@@ -519,7 +527,7 @@ class Package(ModelElement):
     def stereotypes(self):
         return self._stereotypes
 
-    def add_element(self, *elements):
+    def add(self, *elements):
         """Adds any number of model elements to package"""
         for element in elements:
             if not self._isValidElement(type(element)):
@@ -528,38 +536,38 @@ class Package(ModelElement):
             key = element.name
             self._elements[key] = element
 
-    def new_package(self, name=None, elements=None):
-        """Creates a package element in package"""
-        if name is None:
-            key = super()._generateKey('package' + str(Package._id_no + 1))
-        else:
-            key = name
-        self._elements[key] = Package(key, elements)
+    # def new_package(self, name=None, elements=None):
+    #     """Creates a package element in package"""
+    #     if name is None:
+    #         key = super()._generateKey('package' + str(Package._id_no + 1))
+    #     else:
+    #         key = name
+    #     self._elements[key] = Package(key, elements)
+    #
+    # def new_block(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    #     """Creates a block element in package"""
+    #     if name is None:
+    #         key = super()._generateKey('package' + str(Package._id_no + 1))
+    #     else:
+    #         key = name
+    #     self._elements[key] = Block(key, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
+    #
+    # def new_requirement(self, name=None, txt=None):
+    #     """Creates a requirement element in package"""
+    #     if name is None:
+    #         key = super()._generateKey('package' + str(Package._id_no + 1))
+    #     else:
+    #         key = name
+    #     self._elements[key] = Requirement(key, txt)
+    #
+    # def new_dependency(self, supplier, client, stereotype):
+    #     """Creates a dependency element in package"""
+    #     # element = Dependency(supplier, client, stereotype)
+    #     key = super()._generateKey('dependency' + str(Dependency._id_no + 1))
+    #     self._elements[key] = Dependency(supplier, client, stereotype)
+    #     Dependency._id_no += 1
 
-    def new_block(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
-        """Creates a block element in package"""
-        if name is None:
-            key = super()._generateKey('package' + str(Package._id_no + 1))
-        else:
-            key = name
-        self._elements[key] = Block(key, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
-
-    def new_requirement(self, name=None, txt=None):
-        """Creates a requirement element in package"""
-        if name is None:
-            key = super()._generateKey('package' + str(Package._id_no + 1))
-        else:
-            key = name
-        self._elements[key] = Requirement(key, txt)
-
-    def new_dependency(self, supplier, client, stereotype):
-        """Creates a dependency element in package"""
-        # element = Dependency(supplier, client, stereotype)
-        key = super()._generateKey('dependency' + str(Dependency._id_no + 1))
-        self._elements[key] = Dependency(supplier, client, stereotype)
-        Dependency._id_no += 1
-
-    def remove_element(self, key):
+    def remove(self, key):
         """Removes a model element from package"""
         self._elements.pop(key)
 
@@ -679,8 +687,8 @@ class Interaction(ModelElement):
     def stereotypes(self):
         return self._stereotypes
 
-    def new_lifeline(self):
-        pass
+    # def new_lifeline(self):
+    #     pass
 
     ## Behavioral Diagrams
     def sd(self):
