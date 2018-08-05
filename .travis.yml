@@ -14,14 +14,11 @@ install:
   - pip install --upgrade pip
   - pip install coverage
   - pip install python-coveralls
+  - pip install pytest
   - pip install pytest-cov
   - pip install -r requirements.txt
-  - pip install pytest
-  - python setup.py install
-  # - pip install coverage
-  # - pip install python-coveralls
-  # - pip install pytest-cov# command to run tests
 script:
-  - pytest -v --cov-report term --cov=sysml tests/ # or py.test for Python versions 3.5 and below
+  - python setup.py install
+  - pytest -v --cov-report term --cov-report xml --cov=sysml tests/ # or py.test for Python versions 3.5 and below
 after_success:
   - coveralls
