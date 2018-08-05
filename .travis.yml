@@ -19,4 +19,6 @@ install:
   # - pip install python-coveralls
   # - pip install pytest-cov# command to run tests
 script:
-  - pytest -v tests/test_model.py # or py.test for Python versions 3.5 and below
+  - pytest -v --cov-report term --cov=sysml tests/ # or py.test for Python versions 3.5 and below
+after_success:
+  - coveralls
