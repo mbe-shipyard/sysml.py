@@ -19,6 +19,6 @@ install:
   - pip install -r requirements.txt
 script:
   - python setup.py install
-  - pytest -v --cov-report term --cov-report xml --cov=sysml tests/ # or py.test for Python versions 3.5 and below
+  - py.test -v --cov-config .coveragerc --cov=sysml/ # or py.test for Python versions 3.5 and below
 after_success:
   - coveralls
