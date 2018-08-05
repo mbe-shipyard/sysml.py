@@ -169,20 +169,6 @@ class Block(ModelElement):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    # def new_part(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
-    #     """Creates and adds new block element to parts attribute"""
-    #     if type(multiplicity) is not int:
-    #         raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
-    #     elif not multiplicity > 0:
-    #         raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
-    #     if type(name) is not str:
-    #         raise TypeError("'{}' must be a string".format(str(name)))
-    #     elif name is None:
-    #         Block._id_no += 1
-    #         name =  'Block' + str(Block._id_no)
-    #     key = super()._generateKey(name)
-    #     self._parts[key] = Block(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
-
     def add_part(self, *blocks):
         """Adds any number of block elements to parts attribute"""
         for block in blocks:
@@ -191,29 +177,6 @@ class Block(ModelElement):
         for block in blocks:
             key = block.name
             self._parts[key] = block
-
-    ## Structural Diagrams
-    def bdd(self):
-        """Generates a BlockDefinitionDiagram
-
-        A block definition diagram describes the system hierarchy and system/component classifications.
-        """
-        pass
-
-    def ibd(self):
-        """Generates an internal block diagram
-
-        The internal block diagram describes the internal structure of a system in terms of its parts, ports, and connectors.
-        """
-        pass
-
-    ## Parametric Diagrams
-    def par(self):
-        """Generates a parametric diagram
-
-        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
-        """
-        pass
 
     def _setMultiplicity(self, multiplicity):
         if type(multiplicity) is not int:
@@ -377,13 +340,6 @@ class Requirement(ModelElement):
     def stereotypes(self):
         return self._stereotypes
 
-    def req(self):
-        """Generates a requirement diagram
-
-        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
-        """
-        pass
-
     @staticmethod
     def _isValidRequirementArgs(name, txt, id):
         """Name"""
@@ -406,27 +362,10 @@ class ConstraintBlock(ModelElement):
         """Construct ModelElement"""
         super().__init__()
 
-    ## Structural Diagrams
-    def bdd(self):
-        """Generates a BlockDefinitionDiagram
-
-        A block definition diagram describes the system hierarchy and system/component classifications.
-        """
-        pass
-
-    ## Parametric Diagrams
-    def par(self):
-        """Generates a parametric diagram
-
-        The parametric diagram represents constraints on system property values such as performance, reliability, and mass properties, and serves as a means to integrate the specification and design models with engineering analysis models.
-        """
-        pass
-
 class Dependency(ModelElement):
     """This class defines a dependency"""
 
     _id_no = 0
-    # _validStereotypes = set({'deriveReqt','refine','satisfy','verify'})
 
     def __init__(self, supplier, client, stereotype):
 
@@ -536,74 +475,12 @@ class Package(ModelElement):
             key = element.name
             self._elements[key] = element
 
-    # def new_package(self, name=None, elements=None):
-    #     """Creates a package element in package"""
-    #     if name is None:
-    #         key = super()._generateKey('package' + str(Package._id_no + 1))
-    #     else:
-    #         key = name
-    #     self._elements[key] = Package(key, elements)
-    #
-    # def new_block(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
-    #     """Creates a block element in package"""
-    #     if name is None:
-    #         key = super()._generateKey('package' + str(Package._id_no + 1))
-    #     else:
-    #         key = name
-    #     self._elements[key] = Block(key, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity)
-    #
-    # def new_requirement(self, name=None, txt=None):
-    #     """Creates a requirement element in package"""
-    #     if name is None:
-    #         key = super()._generateKey('package' + str(Package._id_no + 1))
-    #     else:
-    #         key = name
-    #     self._elements[key] = Requirement(key, txt)
-    #
-    # def new_dependency(self, supplier, client, stereotype):
-    #     """Creates a dependency element in package"""
-    #     # element = Dependency(supplier, client, stereotype)
-    #     key = super()._generateKey('dependency' + str(Dependency._id_no + 1))
-    #     self._elements[key] = Dependency(supplier, client, stereotype)
-    #     Dependency._id_no += 1
-
     def remove(self, key):
         """Removes a model element from package"""
         self._elements.pop(key)
 
     def RTM(self):
         """Generates a requirements traceability matrix for model elements contained and referenced within package"""
-        pass
-
-    ## Structural Diagrams
-    def bdd(self):
-        """Generates a BlockDefinitionDiagram
-
-        A block definition diagram describes the system hierarchy and system/component classifications.
-        """
-        pass
-
-    def pkg(self):
-        """Generates a package diagram
-
-        The package diagram is used to organize the model.
-        """
-        pass
-
-    ## Behavior
-    def uc(self):
-        """Generates a use case diagram
-
-        A use-case diagram provides a high-level description of functionality that is achieved through interaction among systems or system parts.
-        """
-        pass
-
-    ## Requirement Diagram
-    def req(self):
-        """Generates a requirement diagram
-
-        The requirements diagram captures requirements hierarchies and requirements derivation, and the satisfy and verify relationships allow a modeler to relate a requirement to a model element that satisfies or verifies the requirements.
-        """
         pass
 
     def _isValidElement(self, modelElement):
@@ -617,13 +494,6 @@ class StateMachine(ModelElement):
         """Construct ModelElement"""
         super().__init__()
 
-    def stm(self):
-        """Generates a state machine diagram for a valid model element key
-
-        The state machine diagram describes the state transitions and actions that a system or its parts perform in response to events.
-         """
-        pass
-
 class Activity(ModelElement):
     """This class defines a activity"""
 
@@ -631,14 +501,6 @@ class Activity(ModelElement):
 
         """Construct ModelElement"""
         super().__init__()
-
-    ## Behavioral Diagrams
-    def act(self):
-        """Generates an activity diagram for a valid model element key
-
-        The activity diagram represents the flow of data and control between activities.
-        """
-        pass
 
 class Interaction(ModelElement):
     """This class defines an interaction"""
@@ -686,14 +548,3 @@ class Interaction(ModelElement):
     @property
     def stereotypes(self):
         return self._stereotypes
-
-    # def new_lifeline(self):
-    #     pass
-
-    ## Behavioral Diagrams
-    def sd(self):
-        """Generates a sequence diagram
-
-        A sequence diagram represents the interaction between collaborating parts of a system.
-        """
-        pass

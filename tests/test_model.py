@@ -18,6 +18,9 @@ def test_model(model):
     with pytest.raises(TypeError) as info:
         model = sysml.Model(47)
         assert "must be a string" in str(info.value)
+    with pytest.raises(TypeError) as info:
+        model = sysml.ModelElement()
+        assert "Can't instantiate abstract class base with abstract methods" in str(info.value)
 
 """Structure"""
 # @pytest.mark.skip('WIP')
