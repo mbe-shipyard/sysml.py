@@ -14,9 +14,20 @@ from abc import ABC, abstractproperty
 class ModelElement(ABC):
     """Abstract base class for all model elements"""
 
+    _id_no = 0
+
     def __init__(self):
         """UUID"""
         self._uuid = str(uuid.uuid1())
+
+        """Stereotype"""
+        self._stereotypes = set({})
+
+    def __repr__(self):
+        _stereotypes = ""
+        for _stereotype in self._stereotypes:
+            _stereotypes += "\xab" + _stereotype + "\xbb "
+        return _stereotypes + "\n{}".format(self._name)
 
     @abstractproperty
     def name(self):
@@ -30,10 +41,10 @@ class ModelElement(ABC):
     @staticmethod
     def _generateKey(name):
         """Takes a modeler-defined name and returns a formatted string for use as a key within the namespace of a parent model element"""
-        if type(name) is not str:
-            raise TypeError("'{}' is must be a string".format(str(name)))
-        else:
+        if type(name) is str:
             return name[0].lower() + name[1:].replace(' ','')
+        else:
+            raise TypeError("'{}' is must be a string".format(str(name)))
 
 class Block(ModelElement):
     """This class defines a block
@@ -60,33 +71,48 @@ class Block(ModelElement):
 
     """
 
-    _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
-
     def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
-
-        "Check if constructor arguments are valid"
-        if self._isValidBlockArgs(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
-            pass
 
         """Construct ModelElement"""
         super().__init__()
 
         """Stereotype"""
+        self._stereotypes = set({self.__class__.__name__.lower()})
         if stereotypes is None:
-            stereotypes = set()
-        self._stereotypes = set({'block'}).union(stereotypes)
+            pass
+        elif type(stereotypes) is str:
+            self._stereotypes.add(stereotype)
+        elif type(stereotypes) is set:
+            for stereotype in stereotypes:
+                if type(stereotype) is str:
+                    self._stereotypes.add(stereotype)
+        else:
+            raise TypeError("'{}' must be a string or set of strings".format(str(stereotypes)))
 
         """Name"""
         if name is None:
-            Block._id_no += 1
-            self._name = 'block' + str(Block._id_no)
-        else:
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
+        elif type(name) is str:
             self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Part Property"""
+        self._parts = {}
         if parts is None:
-            self._parts = {}
+            pass
+        elif isinstance(parts, Block):
+            self_parts[parts.name] = parts
+        elif type(parts) is set:
+            for part in parts:
+                if isinstance(part, Block):
+                    self_parts[part.name] = part
+                else:
+                    raise TypeError("'{}' must be a Block".format(str(part)))
+        else:
+            raise TypeError("'{}' must be a set".format(str(parts)))
 
         """Value Property"""
         if values is None:
@@ -119,12 +145,6 @@ class Block(ModelElement):
         ## Constraints
         self.constaints = []
         """
-
-    def __repr__(self):
-        _stereotypes = ""
-        for _stereotype in self._stereotypes:
-            _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
 
     ## Getters
     @property
@@ -160,10 +180,10 @@ class Block(ModelElement):
     @name.setter
     def name(self, name):
         "Sets block name"
-        if type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-        else:
+        if type(name) is str:
             self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
@@ -172,8 +192,7 @@ class Block(ModelElement):
     def add_part(self, block):
         """Adds block element to parts attribute"""
         if type(block) is Block:
-            key = block.name
-            self._parts[key] = block
+            self._parts[block.name] = block
         else:
             raise TypeError("'{}' must be a Block".format(str(block)))
 
@@ -182,12 +201,12 @@ class Block(ModelElement):
         self._parts.pop(block.name)
 
     def _setMultiplicity(self, multiplicity):
-        if type(multiplicity) is not int:
-            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
-        elif not multiplicity > 0:
+        if type(multiplicity) is int and multiplicity > 0:
+            self._multiplicity = multiplicity
+        elif type(multiplicity) is int:
             raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
         else:
-            self._multiplicity = multiplicity
+            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
 
     # @parts.setter
     # def parts(self, *partv):
@@ -236,99 +255,43 @@ class Block(ModelElement):
     #     else:
     #         raise TypeError("argument is not a dictionary!")
 
-    @staticmethod
-    def _isValidBlockArgs(name, typeName, parts, references, values, constraints, flowProperties, stereotypes, multiplicity):
-        """Stereotype"""
-        if stereotypes is not None and type(stereotypes) is not set:
-            raise TypeError("'{}' must be a string or set of strings".format(str(stereotypes)))
-        elif type(stereotypes) is set:
-            for stereotype in stereotypes:
-                if type(stereotype) is not str:
-                    raise TypeError("'{}' must be a string".format(str(stereotype)))
-
-        """Name"""
-        if name is not None and type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-
-        """Part Property"""
-        if parts is not None and type(parts) is not dict:
-            raise TypeError("'{}' must be a dict".format(str(parts)))
-        elif type(parts) is dict:
-            for key in parts:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                elif not isinstance(parts[key], Block): #tk: change to accept block or list of blocks
-                    raise TypeError("'{}' must be a Block".format(str(part[key])))
-
-        """Value Property"""
-        if values is not None and type(values) is not dict:
-            raise TypeError(str(values) + " must be a dict")
-        elif type(values) is dict:
-            for key in values:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                elif type(values[key]) is not int or type(values[key]) is not float or not hasattr(values[key],'units'):
-                    raise TypeError("'{}' must be an int, float, or have attribute 'unit'".format(str(values[key])))
-
-        """Constraint Property"""
-        if constraints is not None and type(constraints) is not dict:
-            raise TypeError(str(constraints) + " must be a dict")
-        elif type(constraints) is dict:
-            for key in constraints:
-                if type(key) is not str:
-                    raise TypeError("'{}' must be a string".format(str(key)))
-                if not isinstance(constraints[key], ConstraintBlock):
-                    raise TypeError("'{}' must be a ConstraintBlock".format(str(constraints[key])))
-
-        """Multiplicity"""
-        if multiplicity is not None and type(multiplicity) is not int:
-            raise TypeError("'{}' must be an int".format(str(multiplicity)))
-
-        return True
-
 class Requirement(ModelElement):
     """This class defines a requirement"""
 
-    _id_no = 0 #tk: need to fix id_no state; store all existing id_no's in a list?
-
     def __init__(self, name=None, txt=None, id=None):
         """Note: Requirement() class is intended for internal use by Model() class"""
-
-        "Check if constructor arguments are valid"
-        if self._isValidRequirementArgs(name, txt, id):
-            pass
 
         """Construct ModelElement"""
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({'requirement'})
-
-        """ID"""
-        if id is None:
-            Requirement._id_no += 1
-            self._id = 'ID' + str(Requirement._id_no).zfill(3)
-        else:
-            self._id = 'ID' + str(id_no).zfill(3)
+        self._stereotypes = set({self.__class__.__name__.lower()})
 
         """Name"""
         if name is None:
-            Requirement._id_no += 1
-            self._name = 'requirement' + str(Requirement._id_no)
-        else:
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
+        elif type(name) is str:
             self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Text"""
         if txt is None:
             self.txt = ''
-        else:
+        elif type(txt) is str:
             self.txt = txt
+        else:
+            raise TypeError("'{}' must be a string".format(str(txt)))
 
-    def __repr__(self):
-        _stereotypes = ""
-        for _stereotype in self._stereotypes:
-            _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        """ID"""
+        if id is None:
+            self.__class__._id_no += 1
+            self._id = 'ID' + str(self.__class__._id_no).zfill(3)
+        elif type(id) in [int, float, str]:
+            self._id = 'ID' + str(id_no).zfill(3)
+        else:
+            raise TypeError("'{}' must be an int, float, or string".format(str(id)))
 
     @property
     def name(self):
@@ -338,20 +301,6 @@ class Requirement(ModelElement):
     @property
     def stereotypes(self):
         return self._stereotypes
-
-    @staticmethod
-    def _isValidRequirementArgs(name, txt, id):
-        """Name"""
-        if name is not None and type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-
-        """Text"""
-        if type(txt) is not str:
-            raise TypeError("'{}' must be a string".format(str(txt)))
-
-        """id"""
-        if id is not None and type(id) not in [int, float, str]:
-            raise TypeError("'{}' must be an int, float, or string".format(str(id)))
 
 class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
@@ -364,11 +313,9 @@ class ConstraintBlock(ModelElement):
 class Dependency(ModelElement):
     """This class defines a dependency"""
 
-    _id_no = 0
-
     def __init__(self, supplier, client, stereotype):
 
-        self._name = super()._generateKey('dependency' + str(Dependency._id_no + 1))
+        self._name = super()._generateKey(self.__class__.__name__.lower() + str(self.__class__._id_no + 1))
         if stereotype is 'deriveReqt':
             if type(supplier) is Requirement and type(client) is Requirement:
                 self._supplier = supplier
@@ -411,8 +358,6 @@ class Dependency(ModelElement):
 class Package(ModelElement):
     """This class defines a package"""
 
-    _id_no = 0
-
     def __init__(self, name=None, elements=None):
 
         """Construct ModelElement"""
@@ -424,16 +369,27 @@ class Package(ModelElement):
         """Name"""
         if name is None:
             self.__class__._id_no += 1
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-        else:
+            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
+        elif type(name) is str:
             self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Elements"""
+        self._elements = {}
         if elements is None:
-            elements = {}
-        self._elements = elements
+            pass
+        elif isinstance(elements, ModelElement):
+            self._elements[element.name] = elements
+        elif type(elements) is set:
+            for element in elements:
+                if isinstance(element, ModelElement):
+                    self._elements[element.name] = element
+                else:
+                    raise TypeError("'{}' must be a valid model element".format(str(element)))
+        else:
+            raise TypeError("'{}' must be a valid model element or set of valid model elements".format(str(elements)))
+
 
     def __getitem__(self, key):
         "Returns model element for key-specified model element"
@@ -445,12 +401,6 @@ class Package(ModelElement):
             self._elements[key] = element
         else:
             raise TypeError("'{}' must be a valid model element".format(str(element)))
-
-    def __repr__(self):
-        _stereotypes = ""
-        for _stereotype in self._stereotypes:
-            _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
 
     @property
     def name(self):
@@ -468,8 +418,7 @@ class Package(ModelElement):
     def add(self, element):
         """Adds any number of model elements to package"""
         if isinstance(element, ModelElement):
-            key = element.name
-            self._elements[key] = element
+            self._elements[element.name] = element
         else:
             raise TypeError("'{}' must be a valid model element".format(str(element)))
 
@@ -500,35 +449,27 @@ class Activity(ModelElement):
 class Interaction(ModelElement):
     """This class defines an interaction"""
 
-    _id_no = 0
-
     def __init__(self, name=None, elements=None):
 
         """Construct ModelElement"""
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({"interaction"})
+        self._stereotypes = set({self.__class__.__name__.lower()})
 
         """Name"""
         if name is None:
             self.__class__._id_no += 1
             self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is not str:
-            raise TypeError("'{}' must be a string".format(str(name)))
-        else:
+        elif type(name) is str:
             self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Elements"""
         if elements is None:
             elements = {}
         self._elements = elements
-
-    def __repr__(self):
-        _stereotypes = ""
-        for _stereotype in self._stereotypes:
-            _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
 
     @property
     def name(self):

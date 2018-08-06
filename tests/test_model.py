@@ -15,6 +15,9 @@ def model():
 def test_model(model):
     assert repr(model) ==  "\xabmodel\xbb \nConstitution-class Starship"
     assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
+
+    assert model.stereotypes == {'model'}
+
     with pytest.raises(TypeError) as info:
         model = sysml.Model(47)
         assert "must be a string" in str(info.value)
@@ -29,11 +32,15 @@ def test_package(model):
 
     Note: Model and Package objects can be thought of as a dict-like container for returning stereotyped model elements
     """
-    # with pytest.raises(TypeError) as info:
-    #     model.add()
-    #     assert "add() missing 1 required positional argument: 'name'" in str(info.value)
+
+    with pytest.raises(TypeError) as info:
+        model.add()
+        assert "add() missing 1 required positional argument: 'name'" in str(info.value)
 
     holodeck = sysml.Package('Holodeck')
+
+    assert holodeck.stereotypes == {'package'}
+
     model.add(holodeck)
 
     assert repr(model['Holodeck']) == "\xabpackage\xbb \nHolodeck"
@@ -62,15 +69,21 @@ def test_package(model):
 # @pytest.mark.skip('WIP')
 def test_block(model):
     """Add block elements to package objects using built-in add_part() method"""
-    # with pytest.raises(TypeError) as info:
-    #     model['Structure'].add()
-    #     assert "add() missing 1 required positional argument: 'name'" in str(info.value)
+
+    with pytest.raises(TypeError) as info:
+        model['Structure'].add()
+        assert "add() missing 1 required positional argument: 'name'" in str(info.value)
+
     model['Structure'].add(sysml.Block('Constitution-class Starship'))
     starship_block = model['Structure']['Constitution-class Starship']
+
+    assert starship_block.stereotypes == {'block'}
+
     assert repr(model['Structure']['Constitution-class Starship']) == "\xabblock\xbb \nConstitution-class Starship"
     assert repr(type(model['Structure']['Constitution-class Starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class Starship'].uuid, version=1)
     assert model['Structure']['Constitution-class Starship'].multiplicity == 1
+
     with pytest.raises(AttributeError) as info:
         model['Structure']['Constitution-class Starship'].uuid = 47
         assert "can't set attribute" in str(info.value)
@@ -83,10 +96,13 @@ def test_block_partProperty(model):
     """Add block elements as parts to parent blocks using add_part() method
 
     Parts added to a block element are dictionary-callable via the 'parts' attribute"""
-    # with pytest.raises(TypeError) as info:
-    #     model['Structure']['Constitution-class Starship'].add_part()
-    #     assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
+
+    with pytest.raises(TypeError) as info:
+        model['Structure']['Constitution-class Starship'].add_part()
+        assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
+
     starship_block = model['Structure']['Constitution-class Starship']
+
     starship_block.add_part(sysml.Block('Primary Hull'))
     starship_block.add_part(sysml.Block('Engineering Hull'))
     starship_block.add_part(sysml.Block('Cloaking device'))
@@ -131,15 +147,21 @@ def test_block_partProperty(model):
 def test_block_partProperty_withMultiplicity(model):
     """Add block elements as parts to parent blocks, with multiplicity, using add_part() method"""
     # notes: need to redesign multiplicity constructor and setter
+
     starship_block = model['Structure']['Constitution-class Starship']
+
     starship_block.add_part(sysml.Block('Nacelle', multiplicity=2))
     starship_block.add_part(sysml.Block('Pylon', multiplicity=2))
+
     assert repr(model['Structure']['Constitution-class Starship'].parts['Nacelle']) == "\xabblock\xbb \nNacelle"
     assert repr(model['Structure']['Constitution-class Starship'].parts['Pylon']) == "\xabblock\xbb \nPylon"
+
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Nacelle'])) == "<class 'sysml.element.Block'>"
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Pylon'])) == "<class 'sysml.element.Block'>"
+
     assert model['Structure']['Constitution-class Starship'].parts['Nacelle'].multiplicity == 2
     assert model['Structure']['Constitution-class Starship'].parts['Pylon'].multiplicity == 2
+
     with pytest.raises(TypeError) as info:
         model['Structure']['Constitution-class Starship'].parts['Pylon'].multiplicity = 'mayonnaise'
         assert "must be a positive int" in str(info.value)
@@ -163,13 +185,6 @@ def test_block_constraintProperty(model):
 def test_block_port(model):
     pass
 
-@pytest.mark.skip('WIP')
-def test_bdd(model):
-    "Methods can also be called on package objects for generating 'diagram objects' for the 9 SysML diagrams"
-    model['Structure'].bdd() # generates a block-definition diagram object on the 'Structure' package
-    model['Structure'].show() # show diagrams generated for package, 'Structure'
-    # Need some way to test diagram was generated
-
 """Analysis"""
 @pytest.mark.skip('WIP')
 def test_interaction(model):
@@ -185,27 +200,39 @@ def test_requirements(model):
 
     Define two requirement elements, passing in a string name and text field as its constructor arguments
     """
+
     model.add(sysml.Package('Requirements')) # creates a package, labeled 'Requirements', within model for storing model requirements
+
     assert repr(model['Requirements']) == "\xabpackage\xbb \nRequirements"
     assert repr(type(model['Requirements'])) ==  "<class 'sysml.element.Package'>"
+
     assert uuid.UUID(model['Requirements'].uuid, version=1)
+
     with pytest.raises(AttributeError) as info:
         model['Requirements'].uuid = 47
         assert "can't set attribute" in str(info.value)
     with pytest.raises(AttributeError) as info:
         model['Requirements'].uuid = "47"
         assert "can't set attribute" in str(info.value)
+
     # with pytest.raises(TypeError) as info:
     #     model['Requirements'].add(sysml.Requirement())
     #     assert "Requirement() missing 2 required positional argument: 'name' and 'txt'" in str(info.value)
+
     model['Requirements'].add(sysml.Requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.'))
     model['Requirements'].add(sysml.Requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher'))
+
     assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb \nFunctional"
+
     assert repr(type(model['Requirements']['Top-level'])) ==  "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['Functional'])) ==  "<class 'sysml.element.Requirement'>"
+
+    assert model['Requirements']['Top-level'].stereotypes == {'requirement'}
+
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
     assert uuid.UUID(model['Requirements']['Functional'].uuid, version=1)
+
     with pytest.raises(AttributeError) as info:
         model['Requirements']['Top-level'].uuid = 47
         assert "can't set attribute" in str(info.value)
@@ -216,20 +243,27 @@ def test_requirements(model):
 # @pytest.mark.skip('WIP')
 def test_derive_requirement(model):
     """Define a dependency relationship, of stereotype «derive», between two requirements"""
+
     with pytest.raises(TypeError) as info:
         model['Requirements'].add(sysml.Dependency())
         assert "Dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
+
     supplier = model['Requirements']['Functional']
     client = model['Requirements']['Top-level']
     deriveReqt_dependency = sysml.Dependency(supplier, client, 'deriveReqt')
     model['Requirements'].add(deriveReqt_dependency)
+
     assert repr(model['Requirements'][deriveReqt_dependency.name].supplier) == "\xabrequirement\xbb \nFunctional"
     assert repr(model['Requirements'][deriveReqt_dependency.name].client) == "\xabrequirement\xbb \nTop-level"
+
     assert repr(type(model['Requirements'][deriveReqt_dependency.name])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
+
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].client)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements'][deriveReqt_dependency.name].stereotype == "deriveReqt"
+
     assert uuid.UUID(model['Requirements'][deriveReqt_dependency.name].uuid, version=1)
+
     with pytest.raises(AttributeError) as info:
         model['Requirements'][deriveReqt_dependency.name].uuid = 47
         assert "can't set attribute" in str(info.value)
@@ -275,6 +309,7 @@ def test_satisfy_requirement(model):
     assert repr(type(model['Requirements'][satisfy_dependency.name].client)) == "<class 'sysml.element.Requirement'>"
 
     assert uuid.UUID(model['Requirements'][satisfy_dependency.name].uuid, version=1)
+
     with pytest.raises(AttributeError) as info:
         model['Requirements'][satisfy_dependency.name].uuid = 47
         assert "can't set attribute" in str(info.value)
