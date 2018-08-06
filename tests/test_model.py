@@ -194,8 +194,8 @@ def test_derive_requirement(model):
     client = model['Requirements']['Top-level']
     dependency = sysml.Dependency(supplier, client, 'deriveReqt')
     model['Requirements'].add(dependency)
-    assert repr(model['Requirements'][dependency.name].client) == "\xabrequirement\xbb \nTop-level"
     assert repr(model['Requirements'][dependency.name].supplier) == "\xabrequirement\xbb \nFunctional"
+    assert repr(model['Requirements'][dependency.name].client) == "\xabrequirement\xbb \nTop-level"
     assert repr(type(model['Requirements'][dependency.name])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements'][dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements'][dependency.name].client)) == "<class 'sysml.element.Requirement'>"
@@ -223,13 +223,13 @@ def test_satisfy_requirement(model):
     model['Structure']['Constitution-class Starship'].add_part(sysml.Block('Class-7 Warp Drive'))
     reqt1 = model['Requirements']['Functional']
     warpdrive = model['Structure']['Constitution-class Starship'].parts['Class-7 Warp Drive']
-    dependency = sysml.Dependency(reqt1, warpdrive, 'satisfy')
+    dependency = sysml.Dependency(warpdrive, reqt1, 'satisfy')
     model['Requirements'].add(dependency)
-    assert repr(model['Requirements'][dependency.name].supplier) == "\xabrequirement\xbb \nFunctional"
-    assert repr(model['Requirements'][dependency.name].client) == "\xabblock\xbb \nClass-7 Warp Drive"
+    assert repr(model['Requirements'][dependency.name].supplier) == "\xabblock\xbb \nClass-7 Warp Drive"
+    assert repr(model['Requirements'][dependency.name].client) == "\xabrequirement\xbb \nFunctional"
     assert repr(type(model['Requirements'][dependency.name])) == "<class 'sysml.element.Dependency'>"
-    assert repr(type(model['Requirements'][dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
-    assert repr(type(model['Requirements'][dependency.name].client)) == "<class 'sysml.element.Block'>"
+    assert repr(type(model['Requirements'][dependency.name].supplier)) == "<class 'sysml.element.Block'>"
+    assert repr(type(model['Requirements'][dependency.name].client)) == "<class 'sysml.element.Requirement'>"
     assert model['Requirements'][dependency.name].stereotype == "satisfy"
     assert uuid.UUID(model['Requirements'][dependency.name].uuid, version=1)
     with pytest.raises(AttributeError) as info:

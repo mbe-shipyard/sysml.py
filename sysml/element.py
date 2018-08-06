@@ -371,23 +371,23 @@ class Dependency(ModelElement):
 
         self._name = super()._generateKey('dependency' + str(Dependency._id_no + 1))
         if stereotype is 'deriveReqt':
-            if type(supplier) is not Requirement:
+            if type(supplier) is Requirement and type(client) is Requirement:
+                self._supplier = supplier
+                self._client = client
+                self._stereotype = stereotype
+            elif type(supplier) is not Requirement:
                 raise TypeError("'{}' is not a Requirement".format(str(supplier)))
             elif type(client) is not Requirement:
                 raise TypeError("'{}' is not a Requirement".format(str(client)))
-            else:
-                self._supplier = supplier
-                self._client = client
-                self._stereotype = stereotype
         elif stereotype is 'satisfy':
-            if type(supplier) is not Requirement:
-                raise TypeError("'{}' is not a Requirement".format(str(supplier)))
-            elif type(client) is not Block:
-                raise TypeError("'{}' is not a Block".format(str(client)))
-            else:
+            if type(supplier) is Block and type(client) is Requirement:
                 self._supplier = supplier
                 self._client = client
                 self._stereotype = stereotype
+            elif type(supplier) is not Block:
+                raise TypeError("'{}' is not a Block".format(str(supplier)))
+            elif type(client) is not Requirement:
+                raise TypeError("'{}' is not a Requirement".format(str(client)))
 
         """Construct ModelElement"""
         super().__init__()
