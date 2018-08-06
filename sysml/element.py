@@ -169,14 +169,17 @@ class Block(ModelElement):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def add_part(self, *blocks):
-        """Adds any number of block elements to parts attribute"""
-        for block in blocks:
-            if type(block) is not Block:
-                raise TypeError("'{}' must be a Block".format(str(block)))
-        for block in blocks:
+    def add_part(self, block):
+        """Adds block element to parts attribute"""
+        if type(block) is Block:
             key = block.name
             self._parts[key] = block
+        else:
+            raise TypeError("'{}' must be a Block".format(str(block)))
+
+    def remove_part(self, block):
+        """Removes block element from parts attribute"""
+        self._parts.pop(block.name)
 
     def _setMultiplicity(self, multiplicity):
         if type(multiplicity) is not int:
@@ -185,10 +188,6 @@ class Block(ModelElement):
             raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
         else:
             self._multiplicity = multiplicity
-
-    @classmethod
-    def _isValidElement(cls, element):
-        return isinstance(element, Block)
 
     # @parts.setter
     # def parts(self, *partv):
@@ -413,7 +412,6 @@ class Package(ModelElement):
     """This class defines a package"""
 
     _id_no = 0
-    _validElements = [Block, Requirement, ConstraintBlock, Dependency]
 
     def __init__(self, name=None, elements=None):
 
@@ -443,9 +441,10 @@ class Package(ModelElement):
 
     def __setitem__(self, key, element):
         "Sets model element for key-specified model element"
-        if not self._isValidElement(type(element)):
+        if isinstance(element, ModelElement):
+            self._elements[key] = element
+        else:
             raise TypeError("'{}' must be a valid model element".format(str(element)))
-        self._elements[key] = element
 
     def __repr__(self):
         _stereotypes = ""
@@ -466,25 +465,21 @@ class Package(ModelElement):
     def stereotypes(self):
         return self._stereotypes
 
-    def add(self, *elements):
+    def add(self, element):
         """Adds any number of model elements to package"""
-        for element in elements:
-            if not self._isValidElement(type(element)):
-                raise TypeError("'{}' must be a valid model element".format(str(element)))
-        for element in elements:
+        if isinstance(element, ModelElement):
             key = element.name
             self._elements[key] = element
+        else:
+            raise TypeError("'{}' must be a valid model element".format(str(element)))
 
-    def remove(self, key):
+    def remove(self, element):
         """Removes a model element from package"""
-        self._elements.pop(key)
+        self._elements.pop(element.name)
 
     def RTM(self):
         """Generates a requirements traceability matrix for model elements contained and referenced within package"""
         pass
-
-    def _isValidElement(self, modelElement):
-        return modelElement in self._validElements or modelElement is Package
 
 class StateMachine(ModelElement):
     """This class defines a state"""
@@ -506,7 +501,6 @@ class Interaction(ModelElement):
     """This class defines an interaction"""
 
     _id_no = 0
-    # _validElements = set({Lifeline, Message, Occurence})
 
     def __init__(self, name=None, elements=None):
 
