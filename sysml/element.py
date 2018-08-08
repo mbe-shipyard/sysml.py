@@ -1,5 +1,5 @@
 """
-The `stereotypes` module contains all model elements that are valid for use by the `model` class
+The `stereotype` module contains all model elements that are valid for use by the `model` class
 
 ---------
 
@@ -20,14 +20,8 @@ class ModelElement(ABC):
         """UUID"""
         self._uuid = str(uuid.uuid1())
 
-        """Stereotype"""
-        self._stereotypes = set({})
-
     def __repr__(self):
-        _stereotypes = ""
-        for _stereotype in self._stereotypes:
-            _stereotypes += "\xab" + _stereotype + "\xbb "
-        return _stereotypes + "\n{}".format(self._name)
+        return ''.join(["\xab" + _stereotype + "\xbb\n" for _stereotype in self._stereotype]) + "{}".format(self.name)
 
     @abstractproperty
     def name(self):
@@ -65,30 +59,30 @@ class Block(ModelElement):
 
     flowProperties : dict, default None
 
-    stereotypes : set, default None
+    stereotype : set, default None
 
-    multiplicity : dict, default 1
+    multiplicity : int, default 1
 
     """
 
-    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotypes=None, multiplicity=1):
+    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotype=None, multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({self.__class__.__name__.lower()})
-        if stereotypes is None:
+        self._stereotype = [self.__class__.__name__.lower()]
+        if stereotype is None:
             pass
-        elif type(stereotypes) is str:
-            self._stereotypes.add(stereotype)
-        elif type(stereotypes) is set:
-            for stereotype in stereotypes:
+        elif type(stereotype) is str and stereotype not in self._stereotype:
+            self._stereotype.append(stereotype)
+        elif type(stereotype) is set:
+            for stereotype in stereotype:
                 if type(stereotype) is str:
-                    self._stereotypes.add(stereotype)
+                    self._stereotype.add(stereotype)
         else:
-            raise TypeError("'{}' must be a string or set of strings".format(str(stereotypes)))
+            raise TypeError("'{}' must be a string or set of strings".format(str(stereotype)))
 
         """Name"""
         if name is None:
@@ -153,8 +147,8 @@ class Block(ModelElement):
         return self._name
 
     @property
-    def stereotypes(self):
-        return self._stereotypes
+    def stereotype(self):
+        return self._stereotype
 
     @property
     def parts(self):
@@ -265,7 +259,7 @@ class Requirement(ModelElement):
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({self.__class__.__name__.lower()})
+        self._stereotype = [self.__class__.__name__.lower()]
 
         """Name"""
         if name is None:
@@ -299,8 +293,8 @@ class Requirement(ModelElement):
         return self._name
 
     @property
-    def stereotypes(self):
-        return self._stereotypes
+    def stereotype(self):
+        return self._stereotype
 
 class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
@@ -334,6 +328,8 @@ class Dependency(ModelElement):
                 raise TypeError("'{}' is not a Block".format(str(supplier)))
             elif type(client) is not Requirement:
                 raise TypeError("'{}' is not a Requirement".format(str(client)))
+        else:
+            raise Exception("'{}' is not a valid dependency".format(str(stereotype)))
 
         """Construct ModelElement"""
         super().__init__()
@@ -364,7 +360,7 @@ class Package(ModelElement):
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({self.__class__.__name__.lower()})
+        self._stereotype = [self.__class__.__name__.lower()]
 
         """Name"""
         if name is None:
@@ -390,7 +386,6 @@ class Package(ModelElement):
         else:
             raise TypeError("'{}' must be a valid model element or set of valid model elements".format(str(elements)))
 
-
     def __getitem__(self, key):
         "Returns model element for key-specified model element"
         return self._elements[key]
@@ -412,11 +407,11 @@ class Package(ModelElement):
         return self._elements
 
     @property
-    def stereotypes(self):
-        return self._stereotypes
+    def stereotype(self):
+        return self._stereotype
 
     def add(self, element):
-        """Adds any number of model elements to package"""
+        """Adds a model element to package"""
         if isinstance(element, ModelElement):
             self._elements[element.name] = element
         else:
@@ -455,7 +450,7 @@ class Interaction(ModelElement):
         super().__init__()
 
         """Stereotype"""
-        self._stereotypes = set({self.__class__.__name__.lower()})
+        self._stereotype = self.__class__.__name__.lower()
 
         """Name"""
         if name is None:
@@ -481,5 +476,5 @@ class Interaction(ModelElement):
         return self._elements
 
     @property
-    def stereotypes(self):
-        return self._stereotypes
+    def stereotype(self):
+        return self._stereotype

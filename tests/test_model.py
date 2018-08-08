@@ -13,10 +13,10 @@ def model():
     return model
 
 def test_model(model):
-    assert repr(model) ==  "\xabmodel\xbb \nConstitution-class Starship"
+    assert repr(model) ==  "\xabmodel\xbb\nConstitution-class Starship"
     assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
 
-    assert model.stereotypes == {'model'}
+    assert model.stereotype == ['model']
 
     with pytest.raises(TypeError) as info:
         model = sysml.Model(47)
@@ -39,11 +39,11 @@ def test_package(model):
 
     holodeck = sysml.Package('Holodeck')
 
-    assert holodeck.stereotypes == {'package'}
+    assert holodeck.stereotype == ['package']
 
     model.add(holodeck)
 
-    assert repr(model['Holodeck']) == "\xabpackage\xbb \nHolodeck"
+    assert repr(model['Holodeck']) == "\xabpackage\xbb\nHolodeck"
     assert repr(type(model['Holodeck'])) ==  "<class 'sysml.element.Package'>"
     assert uuid.UUID(model['Holodeck'].uuid, version=1)
 
@@ -55,7 +55,7 @@ def test_package(model):
 
     model.add(sysml.Package('Structure'))
 
-    assert repr(model['Structure']) == "\xabpackage\xbb \nStructure"
+    assert repr(model['Structure']) == "\xabpackage\xbb\nStructure"
     assert repr(type(model['Structure'])) ==  "<class 'sysml.element.Package'>"
     assert uuid.UUID(model['Structure'].uuid, version=1)
 
@@ -74,12 +74,12 @@ def test_block(model):
         model['Structure'].add()
         assert "add() missing 1 required positional argument: 'name'" in str(info.value)
 
-    model['Structure'].add(sysml.Block('Constitution-class Starship'))
+    model['Structure'].add(sysml.Block('Constitution-class Starship', stereotype='starship'))
     starship_block = model['Structure']['Constitution-class Starship']
 
-    assert starship_block.stereotypes == {'block'}
+    assert starship_block.stereotype == ['block', 'starship']
 
-    assert repr(model['Structure']['Constitution-class Starship']) == "\xabblock\xbb \nConstitution-class Starship"
+    assert repr(model['Structure']['Constitution-class Starship']) == "\xabblock\xbb\n\xabstarship\xbb\nConstitution-class Starship"
     assert repr(type(model['Structure']['Constitution-class Starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class Starship'].uuid, version=1)
     assert model['Structure']['Constitution-class Starship'].multiplicity == 1
@@ -109,9 +109,9 @@ def test_block_partProperty(model):
 
     cloaking_device = starship_block.parts['Cloaking device']
 
-    assert repr(model['Structure']['Constitution-class Starship'].parts['Primary Hull']) == "\xabblock\xbb \nPrimary Hull"
-    assert repr(model['Structure']['Constitution-class Starship'].parts['Engineering Hull']) == "\xabblock\xbb \nEngineering Hull"
-    assert repr(model['Structure']['Constitution-class Starship'].parts['Cloaking device']) == "\xabblock\xbb \nCloaking device"
+    assert repr(model['Structure']['Constitution-class Starship'].parts['Primary Hull']) == "\xabblock\xbb\nPrimary Hull"
+    assert repr(model['Structure']['Constitution-class Starship'].parts['Engineering Hull']) == "\xabblock\xbb\nEngineering Hull"
+    assert repr(model['Structure']['Constitution-class Starship'].parts['Cloaking device']) == "\xabblock\xbb\nCloaking device"
 
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Primary Hull'])) ==  "<class 'sysml.element.Block'>"
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Engineering Hull'])) ==  "<class 'sysml.element.Block'>"
@@ -153,8 +153,8 @@ def test_block_partProperty_withMultiplicity(model):
     starship_block.add_part(sysml.Block('Nacelle', multiplicity=2))
     starship_block.add_part(sysml.Block('Pylon', multiplicity=2))
 
-    assert repr(model['Structure']['Constitution-class Starship'].parts['Nacelle']) == "\xabblock\xbb \nNacelle"
-    assert repr(model['Structure']['Constitution-class Starship'].parts['Pylon']) == "\xabblock\xbb \nPylon"
+    assert repr(model['Structure']['Constitution-class Starship'].parts['Nacelle']) == "\xabblock\xbb\nNacelle"
+    assert repr(model['Structure']['Constitution-class Starship'].parts['Pylon']) == "\xabblock\xbb\nPylon"
 
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Nacelle'])) == "<class 'sysml.element.Block'>"
     assert repr(type(model['Structure']['Constitution-class Starship'].parts['Pylon'])) == "<class 'sysml.element.Block'>"
@@ -203,7 +203,7 @@ def test_requirements(model):
 
     model.add(sysml.Package('Requirements')) # creates a package, labeled 'Requirements', within model for storing model requirements
 
-    assert repr(model['Requirements']) == "\xabpackage\xbb \nRequirements"
+    assert repr(model['Requirements']) == "\xabpackage\xbb\nRequirements"
     assert repr(type(model['Requirements'])) ==  "<class 'sysml.element.Package'>"
 
     assert uuid.UUID(model['Requirements'].uuid, version=1)
@@ -222,13 +222,13 @@ def test_requirements(model):
     model['Requirements'].add(sysml.Requirement('Top-level', 'A constitution-class starship shall provide a 5-year mission capability to explore strange new worlds, to seek out new life and new civilizations, and to boldly go where no one has gone before.'))
     model['Requirements'].add(sysml.Requirement('Functional', 'A constitution-class starship shall be able to travel at warp 8 or higher'))
 
-    assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb \nTop-level"
-    assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb \nFunctional"
+    assert repr(model['Requirements']['Top-level']) == "\xabrequirement\xbb\nTop-level"
+    assert repr(model['Requirements']['Functional']) == "\xabrequirement\xbb\nFunctional"
 
     assert repr(type(model['Requirements']['Top-level'])) ==  "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['Functional'])) ==  "<class 'sysml.element.Requirement'>"
 
-    assert model['Requirements']['Top-level'].stereotypes == {'requirement'}
+    assert model['Requirements']['Top-level'].stereotype == ['requirement']
 
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
     assert uuid.UUID(model['Requirements']['Functional'].uuid, version=1)
@@ -253,8 +253,8 @@ def test_derive_requirement(model):
     deriveReqt_dependency = sysml.Dependency(supplier, client, 'deriveReqt')
     model['Requirements'].add(deriveReqt_dependency)
 
-    assert repr(model['Requirements'][deriveReqt_dependency.name].supplier) == "\xabrequirement\xbb \nFunctional"
-    assert repr(model['Requirements'][deriveReqt_dependency.name].client) == "\xabrequirement\xbb \nTop-level"
+    assert repr(model['Requirements'][deriveReqt_dependency.name].supplier) == "\xabrequirement\xbb\nFunctional"
+    assert repr(model['Requirements'][deriveReqt_dependency.name].client) == "\xabrequirement\xbb\nTop-level"
 
     assert repr(type(model['Requirements'][deriveReqt_dependency.name])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
@@ -293,16 +293,16 @@ def test_satisfy_requirement(model):
     satisfy_dependency = sysml.Dependency(warpdrive, reqt1, 'satisfy')
     model['Requirements'].add(satisfy_dependency)
 
-    assert repr(warpdrive) == "\xabblock\xbb \nClass-7 Warp Drive"
-    assert repr(reqt1) == "\xabrequirement\xbb \nFunctional"
+    assert repr(warpdrive) == "\xabblock\xbb\nClass-7 Warp Drive"
+    assert repr(reqt1) == "\xabrequirement\xbb\nFunctional"
 
     assert satisfy_dependency.stereotype == "satisfy"
 
     assert model['Requirements'][satisfy_dependency.name].name == satisfy_dependency.name
     assert model['Requirements'][satisfy_dependency.name].stereotype == "satisfy"
 
-    assert repr(model['Requirements'][satisfy_dependency.name].supplier) == "\xabblock\xbb \nClass-7 Warp Drive"
-    assert repr(model['Requirements'][satisfy_dependency.name].client) == "\xabrequirement\xbb \nFunctional"
+    assert repr(model['Requirements'][satisfy_dependency.name].supplier) == "\xabblock\xbb\nClass-7 Warp Drive"
+    assert repr(model['Requirements'][satisfy_dependency.name].client) == "\xabrequirement\xbb\nFunctional"
 
     assert repr(type(model['Requirements'][satisfy_dependency.name])) == "<class 'sysml.element.Dependency'>"
     assert repr(type(model['Requirements'][satisfy_dependency.name].supplier)) == "<class 'sysml.element.Block'>"
