@@ -37,8 +37,6 @@ class ModelElement(ABC):
         """Takes a modeler-defined name and returns a formatted string for use as a key within the namespace of a parent model element"""
         if type(name) is str:
             return name[0].lower() + name[1:].replace(' ','')
-        else:
-            raise TypeError("'{}' is must be a string".format(str(name)))
 
 class Block(ModelElement):
     """This class defines a block
@@ -77,10 +75,10 @@ class Block(ModelElement):
             pass
         elif type(stereotype) is str and stereotype not in self._stereotype:
             self._stereotype.append(stereotype)
-        elif type(stereotype) is set:
+        elif type(stereotype) is list:
             for stereotype in stereotype:
                 if type(stereotype) is str:
-                    self._stereotype.add(stereotype)
+                    self._stereotype.append(stereotype)
         else:
             raise TypeError("'{}' must be a string or set of strings".format(str(stereotype)))
 
