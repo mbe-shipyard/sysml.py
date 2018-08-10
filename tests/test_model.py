@@ -74,12 +74,10 @@ def test_block(model):
         model['Structure'].add()
         assert "add() missing 1 required positional argument: 'name'" in str(info.value)
 
-    model['Structure'].add(sysml.Block('Constitution-class Starship', stereotype='starship'))
+    model['Structure'].add(sysml.Block('Constitution-class Starship'))
     starship_block = model['Structure']['Constitution-class Starship']
 
-    assert starship_block.stereotype == ['block', 'starship']
-
-    assert repr(model['Structure']['Constitution-class Starship']) == "\xabblock\xbb\n\xabstarship\xbb\nConstitution-class Starship"
+    assert repr(model['Structure']['Constitution-class Starship']) == "\xabblock\xbb\nConstitution-class Starship"
     assert repr(type(model['Structure']['Constitution-class Starship'])) ==  "<class 'sysml.element.Block'>"
     assert uuid.UUID(model['Structure']['Constitution-class Starship'].uuid, version=1)
     assert model['Structure']['Constitution-class Starship'].multiplicity == 1
@@ -91,21 +89,33 @@ def test_block(model):
         model['Structure']['Constitution-class Starship'].uuid = "47"
         assert "can't set attribute" in str(info.value)
 
+def test_block_stereotype():
+    """Test block stereotype"""
+    enterprise = sysml.Block('NCC-1701',stereotype='constitutionClass')
+    enterpriseD = sysml.Block('NCC-1701-D',stereotype=['galaxyClass','flagship'])
+
+    assert enterprise.stereotype == ['block', 'constitutionClass']
+    assert enterpriseD.stereotype == ['block', 'galaxyClass', 'flagship']
+
+    with pytest.raises(TypeError) as info:
+        enterpriseD = sysml.Block('NCC-1701-D',stereotype=47)
+        assert "must be a string or set of strings" in str(info.value)
+
 # @pytest.mark.skip('WIP')
 def test_block_partProperty(model):
     """Add block elements as parts to parent blocks using add_part() method
 
     Parts added to a block element are dictionary-callable via the 'parts' attribute"""
 
-    with pytest.raises(TypeError) as info:
-        model['Structure']['Constitution-class Starship'].add_part()
-        assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
-
     starship_block = model['Structure']['Constitution-class Starship']
 
     starship_block.add_part(sysml.Block('Primary Hull'))
     starship_block.add_part(sysml.Block('Engineering Hull'))
     starship_block.add_part(sysml.Block('Cloaking device'))
+
+    with pytest.raises(TypeError) as info:
+        model['Structure']['Constitution-class Starship'].add_part()
+        assert "add_part() missing 1 required positional argument: 'name'" in str(info.value)
 
     cloaking_device = starship_block.parts['Cloaking device']
 

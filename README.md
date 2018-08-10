@@ -5,7 +5,7 @@
 This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
 
 [![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
-[![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg?branch=dev)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
+[![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
 
 ## Package Contents
 
