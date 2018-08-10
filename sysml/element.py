@@ -16,9 +16,18 @@ class ModelElement(ABC):
 
     _id_no = 0
 
-    def __init__(self):
+    def __init__(self, name=None):
         """UUID"""
         self._uuid = str(uuid.uuid1())
+
+        """Name"""
+        if name is None:
+            self.__class__._id_no += 1
+            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
+        elif type(name) is str:
+            self._name = name
+        else:
+            raise TypeError("'{}' must be a string".format(str(name)))
 
     def __repr__(self):
         return ''.join(["\xab" + _stereotype + "\xbb\n" for _stereotype in self._stereotype]) + "{}".format(self.name)
@@ -67,7 +76,7 @@ class Block(ModelElement):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
         """Stereotype"""
         self._stereotype = [self.__class__.__name__.lower()]
@@ -81,15 +90,6 @@ class Block(ModelElement):
                     self._stereotype.append(stereotype)
         else:
             raise TypeError("'{}' must be a string or set of strings".format(str(stereotype)))
-
-        """Name"""
-        if name is None:
-            self.__class__._id_no += 1
-            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
-        elif type(name) is str:
-            self._name = name
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Part Property"""
         self._parts = {}
@@ -254,19 +254,10 @@ class Requirement(ModelElement):
         """Note: Requirement() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
         """Stereotype"""
         self._stereotype = [self.__class__.__name__.lower()]
-
-        """Name"""
-        if name is None:
-            self.__class__._id_no += 1
-            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
-        elif type(name) is str:
-            self._name = name
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Text"""
         if txt is None:
@@ -300,7 +291,7 @@ class ConstraintBlock(ModelElement):
     def __init__(self):
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
 class Dependency(ModelElement):
     """This class defines a dependency"""
@@ -330,7 +321,7 @@ class Dependency(ModelElement):
             raise Exception("'{}' is not a valid dependency".format(str(stereotype)))
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(self._name)
 
     @property
     def name(self):
@@ -355,19 +346,10 @@ class Package(ModelElement):
     def __init__(self, name=None, elements=None):
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
         """Stereotype"""
         self._stereotype = [self.__class__.__name__.lower()]
-
-        """Name"""
-        if name is None:
-            self.__class__._id_no += 1
-            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
-        elif type(name) is str:
-            self._name = name
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Elements"""
         self._elements = {}
@@ -429,7 +411,7 @@ class StateMachine(ModelElement):
     def __init__(self):
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
 class Activity(ModelElement):
     """This class defines a activity"""
@@ -437,7 +419,7 @@ class Activity(ModelElement):
     def __init__(self):
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
 class Interaction(ModelElement):
     """This class defines an interaction"""
@@ -445,19 +427,10 @@ class Interaction(ModelElement):
     def __init__(self, name=None, elements=None):
 
         """Construct ModelElement"""
-        super().__init__()
+        super().__init__(name)
 
         """Stereotype"""
         self._stereotype = self.__class__.__name__.lower()
-
-        """Name"""
-        if name is None:
-            self.__class__._id_no += 1
-            self._name = self.__class__.__name__ + str(self.__class__._id_no)
-        elif type(name) is str:
-            self._name = name
-        else:
-            raise TypeError("'{}' must be a string".format(str(name)))
 
         """Elements"""
         if elements is None:
