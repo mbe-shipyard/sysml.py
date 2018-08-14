@@ -17,9 +17,6 @@ class ModelElement(ABC):
     _id_no = 0
 
     def __init__(self, name=None):
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
-
         """Name"""
         if name is None:
             self.__class__._id_no += 1
@@ -29,13 +26,20 @@ class ModelElement(ABC):
         else:
             raise TypeError("'{}' must be a string".format(str(name)))
 
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
+
     def __repr__(self):
-        return ''.join(["\xab" + _stereotype + "\xbb\n" for _stereotype in self._stereotype]) + "{}".format(self.name)
+        return self.stereotype + "\n{}".format(self.name)
 
     @abstractproperty
     def name(self):
         """Modeler-defined name of model element"""
         pass
+
+    @property
+    def stereotype(self):
+        return "\xab" + self.__class__.__name__.lower() + "\xbb"
 
     @property
     def uuid(self):
@@ -46,6 +50,16 @@ class ModelElement(ABC):
         """Takes a modeler-defined name and returns a formatted string for use as a key within the namespace of a parent model element"""
         if type(name) is str:
             return name[0].lower() + name[1:].replace(' ','')
+
+class ModelRelationship(ModelElement):
+    """Abstract base class for all model elements"""
+
+    def __init__(self, name=None):
+        """Name"""
+        self._name = self._generateKey(self.__class__.__name__.lower() + str(self.__class__._id_no + 1))
+
+        """UUID"""
+        self._uuid = str(uuid.uuid1())
 
 class Block(ModelElement):
     """This class defines a block
@@ -66,30 +80,15 @@ class Block(ModelElement):
 
     flowProperties : dict, default None
 
-    stereotype : set, default None
-
     multiplicity : int, default 1
 
     """
 
-    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, stereotype=None, multiplicity=1):
+    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
         super().__init__(name)
-
-        """Stereotype"""
-        self._stereotype = [self.__class__.__name__.lower()]
-        if stereotype is None:
-            pass
-        elif type(stereotype) is str and stereotype not in self._stereotype:
-            self._stereotype.append(stereotype)
-        elif type(stereotype) is list:
-            for stereotype in stereotype:
-                if type(stereotype) is str:
-                    self._stereotype.append(stereotype)
-        else:
-            raise TypeError("'{}' must be a string or set of strings".format(str(stereotype)))
 
         """Part Property"""
         self._parts = {}
@@ -145,10 +144,6 @@ class Block(ModelElement):
         return self._name
 
     @property
-    def stereotype(self):
-        return self._stereotype
-
-    @property
     def parts(self):
         return self._parts
 
@@ -183,7 +178,7 @@ class Block(ModelElement):
 
     def add_part(self, block):
         """Adds block element to parts attribute"""
-        if type(block) is Block:
+        if isinstance(block, Block):
             self._parts[block.name] = block
         else:
             raise TypeError("'{}' must be a Block".format(str(block)))
@@ -256,9 +251,6 @@ class Requirement(ModelElement):
         """Construct ModelElement"""
         super().__init__(name)
 
-        """Stereotype"""
-        self._stereotype = [self.__class__.__name__.lower()]
-
         """Text"""
         if txt is None:
             self.txt = ''
@@ -278,12 +270,8 @@ class Requirement(ModelElement):
 
     @property
     def name(self):
-        "Returns block name"
+        "Returns requirement name"
         return self._name
-
-    @property
-    def stereotype(self):
-        return self._stereotype
 
 class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
@@ -293,39 +281,20 @@ class ConstraintBlock(ModelElement):
         """Construct ModelElement"""
         super().__init__(name)
 
-class Dependency(ModelElement):
+class Dependency(ModelRelationship):
     """This class defines a dependency"""
 
-    def __init__(self, supplier, client, stereotype):
+    def __init__(self, supplier, client):
 
-        self._name = super()._generateKey(self.__class__.__name__.lower() + str(self.__class__._id_no + 1))
-        if stereotype is 'deriveReqt':
-            if type(supplier) is Requirement and type(client) is Requirement:
-                self._supplier = supplier
-                self._client = client
-                self._stereotype = stereotype
-            elif type(supplier) is not Requirement:
-                raise TypeError("'{}' is not a Requirement".format(str(supplier)))
-            elif type(client) is not Requirement:
-                raise TypeError("'{}' is not a Requirement".format(str(client)))
-        elif stereotype is 'satisfy':
-            if type(supplier) is Block and type(client) is Requirement:
-                self._supplier = supplier
-                self._client = client
-                self._stereotype = stereotype
-            elif type(supplier) is not Block:
-                raise TypeError("'{}' is not a Block".format(str(supplier)))
-            elif type(client) is not Requirement:
-                raise TypeError("'{}' is not a Requirement".format(str(client)))
-        else:
-            raise Exception("'{}' is not a valid dependency".format(str(stereotype)))
+        self._supplier = supplier
+        self._client = client
 
-        """Construct ModelElement"""
-        super().__init__(self._name)
+        """Construct ModelRelationship"""
+        super().__init__()
 
     @property
     def name(self):
-        "Returns block name"
+        "Returns dependency name"
         return self._name
 
     @property
@@ -336,9 +305,21 @@ class Dependency(ModelElement):
     def client(self):
         return self._client
 
-    @property
-    def stereotype(self):
-        return self._stereotype
+class DeriveReqt(Dependency):
+    def __init__(self, supplier, client):
+        super().__init__(supplier, client)
+        if type(supplier) is not Requirement:
+            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
+        if type(client) is not Requirement:
+            raise TypeError("'{}' is not a Requirement".format(str(client)))
+
+class Satisfy(Dependency):
+    def __init__(self, supplier, client):
+        super().__init__(supplier, client)
+        if not isinstance(supplier, Block):
+            raise TypeError("'{}' is not a Block".format(str(supplier)))
+        if type(client) is not Requirement:
+            raise TypeError("'{}' is not a Requirement".format(str(client)))
 
 class Package(ModelElement):
     """This class defines a package"""
@@ -347,9 +328,6 @@ class Package(ModelElement):
 
         """Construct ModelElement"""
         super().__init__(name)
-
-        """Stereotype"""
-        self._stereotype = [self.__class__.__name__.lower()]
 
         """Elements"""
         self._elements = {}
@@ -386,10 +364,6 @@ class Package(ModelElement):
     def elements(self):
         return self._elements
 
-    @property
-    def stereotype(self):
-        return self._stereotype
-
     def add(self, element):
         """Adds a model element to package"""
         if isinstance(element, ModelElement):
@@ -413,6 +387,11 @@ class StateMachine(ModelElement):
         """Construct ModelElement"""
         super().__init__(name)
 
+    @property
+    def name(self):
+        "Returns state machine name"
+        return self._name
+
 class Activity(ModelElement):
     """This class defines a activity"""
 
@@ -421,31 +400,42 @@ class Activity(ModelElement):
         """Construct ModelElement"""
         super().__init__(name)
 
+    @property
+    def name(self):
+        "Returns activity name"
+        return self._name
+
 class Interaction(ModelElement):
     """This class defines an interaction"""
 
-    def __init__(self, name=None, elements=None):
+    def __init__(self, name=None):
 
         """Construct ModelElement"""
         super().__init__(name)
 
-        """Stereotype"""
-        self._stereotype = self.__class__.__name__.lower()
+    @property
+    def name(self):
+        "Returns interaction name"
+        return self._name
 
-        """Elements"""
-        if elements is None:
-            elements = {}
-        self._elements = elements
+class Lifeline(ModelElement):
+    """This class defines a lifeline"""
+
+    def __init__(self, name=None):
+        super().__init__(name)
 
     @property
     def name(self):
-        "Returns block name"
+        "Returns lifeline name"
         return self._name
 
-    @property
-    def elements(self):
-        return self._elements
+class Message(ModelElement):
+    """This class defines a message"""
+
+    def __init__(self, name=None):
+        super().__init__(name)
 
     @property
-    def stereotype(self):
-        return self._stereotype
+    def name(self):
+        "Returns message name"
+        return self._name

@@ -16,7 +16,7 @@ def test_model(model):
     assert repr(model) ==  "\xabmodel\xbb\nConstitution-class Starship"
     assert repr(type(model)) ==  "<class 'sysml.system.Model'>"
 
-    assert model.stereotype == ['model']
+    assert model.stereotype == "\xabmodel\xbb"
 
     with pytest.raises(TypeError) as info:
         model = sysml.Model(47)
@@ -39,7 +39,7 @@ def test_package(model):
 
     holodeck = sysml.Package('Holodeck')
 
-    assert holodeck.stereotype == ['package']
+    assert holodeck.stereotype == "\xabpackage\xbb"
 
     model.add(holodeck)
 
@@ -89,17 +89,20 @@ def test_block(model):
         model['Structure']['Constitution-class Starship'].uuid = "47"
         assert "can't set attribute" in str(info.value)
 
+@pytest.mark.skip('Deprecated')
 def test_block_stereotype():
     """Test block stereotype"""
-    enterprise = sysml.Block('NCC-1701',stereotype='constitutionClass')
-    enterpriseD = sysml.Block('NCC-1701-D',stereotype=['galaxyClass','flagship'])
+    # Note: needs to be rewritten such that users can write derived classes, using block as base class, as a means to extend stereotype
 
-    assert enterprise.stereotype == ['block', 'constitutionClass']
-    assert enterpriseD.stereotype == ['block', 'galaxyClass', 'flagship']
-
-    with pytest.raises(TypeError) as info:
-        enterpriseD = sysml.Block('NCC-1701-D',stereotype=47)
-        assert "must be a string or set of strings" in str(info.value)
+    # enterprise = sysml.Block('NCC-1701',stereotype='constitutionClass')
+    # enterpriseD = sysml.Block('NCC-1701-D',stereotype=['galaxyClass','flagship'])
+    #
+    # assert enterprise.stereotype == ['block', 'constitutionClass']
+    # assert enterpriseD.stereotype == ['block', 'galaxyClass', 'flagship']
+    #
+    # with pytest.raises(TypeError) as info:
+    #     enterpriseD = sysml.Block('NCC-1701-D',stereotype=47)
+    #     assert "must be a string or set of strings" in str(info.value)
 
 # @pytest.mark.skip('WIP')
 def test_block_partProperty(model):
@@ -238,7 +241,7 @@ def test_requirements(model):
     assert repr(type(model['Requirements']['Top-level'])) ==  "<class 'sysml.element.Requirement'>"
     assert repr(type(model['Requirements']['Functional'])) ==  "<class 'sysml.element.Requirement'>"
 
-    assert model['Requirements']['Top-level'].stereotype == ['requirement']
+    assert model['Requirements']['Top-level'].stereotype == "\xabrequirement\xbb"
 
     assert uuid.UUID(model['Requirements']['Top-level'].uuid, version=1)
     assert uuid.UUID(model['Requirements']['Functional'].uuid, version=1)
@@ -254,23 +257,23 @@ def test_requirements(model):
 def test_derive_requirement(model):
     """Define a dependency relationship, of stereotype «derive», between two requirements"""
 
-    with pytest.raises(TypeError) as info:
-        model['Requirements'].add(sysml.Dependency())
-        assert "Dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
+    # with pytest.raises(TypeError) as info:
+    #     model['Requirements'].add(sysml.Dependency())
+    #     assert "Dependency() missing 3 required positional arguments: 'supplier', 'client', and 'stereotype'" in str(info.value)
 
     supplier = model['Requirements']['Functional']
     client = model['Requirements']['Top-level']
-    deriveReqt_dependency = sysml.Dependency(supplier, client, 'deriveReqt')
+    deriveReqt_dependency = sysml.DeriveReqt(supplier, client)
     model['Requirements'].add(deriveReqt_dependency)
 
     assert repr(model['Requirements'][deriveReqt_dependency.name].supplier) == "\xabrequirement\xbb\nFunctional"
     assert repr(model['Requirements'][deriveReqt_dependency.name].client) == "\xabrequirement\xbb\nTop-level"
 
-    assert repr(type(model['Requirements'][deriveReqt_dependency.name])) == "<class 'sysml.element.Dependency'>"
+    assert repr(type(model['Requirements'][deriveReqt_dependency.name])) == "<class 'sysml.element.DeriveReqt'>"
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
 
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].client)) == "<class 'sysml.element.Requirement'>"
-    assert model['Requirements'][deriveReqt_dependency.name].stereotype == "deriveReqt"
+    assert model['Requirements'][deriveReqt_dependency.name].stereotype == "\xabderivereqt\xbb"
 
     assert uuid.UUID(model['Requirements'][deriveReqt_dependency.name].uuid, version=1)
 
@@ -300,21 +303,21 @@ def test_satisfy_requirement(model):
     starship_block.add_part(warpdrive)
 
     reqt1 = model['Requirements']['Functional']
-    satisfy_dependency = sysml.Dependency(warpdrive, reqt1, 'satisfy')
+    satisfy_dependency = sysml.Satisfy(warpdrive, reqt1)
     model['Requirements'].add(satisfy_dependency)
 
     assert repr(warpdrive) == "\xabblock\xbb\nClass-7 Warp Drive"
     assert repr(reqt1) == "\xabrequirement\xbb\nFunctional"
 
-    assert satisfy_dependency.stereotype == "satisfy"
+    assert satisfy_dependency.stereotype == "\xabsatisfy\xbb"
 
     assert model['Requirements'][satisfy_dependency.name].name == satisfy_dependency.name
-    assert model['Requirements'][satisfy_dependency.name].stereotype == "satisfy"
+    assert model['Requirements'][satisfy_dependency.name].stereotype == "\xabsatisfy\xbb"
 
     assert repr(model['Requirements'][satisfy_dependency.name].supplier) == "\xabblock\xbb\nClass-7 Warp Drive"
     assert repr(model['Requirements'][satisfy_dependency.name].client) == "\xabrequirement\xbb\nFunctional"
 
-    assert repr(type(model['Requirements'][satisfy_dependency.name])) == "<class 'sysml.element.Dependency'>"
+    assert repr(type(model['Requirements'][satisfy_dependency.name])) == "<class 'sysml.element.Satisfy'>"
     assert repr(type(model['Requirements'][satisfy_dependency.name].supplier)) == "<class 'sysml.element.Block'>"
     assert repr(type(model['Requirements'][satisfy_dependency.name].client)) == "<class 'sysml.element.Requirement'>"
 
