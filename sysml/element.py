@@ -1,15 +1,17 @@
 """
-The `stereotype` module contains all model elements that are valid for use by the `model` class
+The `element.py` module contains all model elements that are valid for use by
+the `model` class
 
 ---------
 
-Model elements are the building blocks that make up the 9 SysML diagrams
+Model elements are the building blocks that make up SysML
 """
 
 import uuid
 from abc import ABC, abstractproperty
 
 # developer notes: to use hidden vs unhidden attributes
+
 
 class ModelElement(ABC):
     """Abstract base class for all model elements"""
@@ -20,7 +22,8 @@ class ModelElement(ABC):
         """Name"""
         if name is None:
             self.__class__._id_no += 1
-            self._name = self.__class__.__name__.lower() + str(self.__class__._id_no)
+            elementName = self.__class__.__name__
+            self._name = elementName.lower() + str(self.__class__._id_no)
         elif type(name) is str:
             self._name = name
         else:
@@ -39,7 +42,8 @@ class ModelElement(ABC):
 
     @property
     def stereotype(self):
-        return "\xab" + self.__class__.__name__[0].lower() + self.__class__.__name__[1:] + "\xbb"
+        elementName = self.__class__.__name__
+        return "\xab" + elementName[0].lower() + elementName[1:] + "\xbb"
 
     @property
     def uuid(self):
@@ -47,19 +51,25 @@ class ModelElement(ABC):
 
     @staticmethod
     def _generateKey(name):
-        """Takes a modeler-defined name and returns a formatted string for use as a key within the namespace of a parent model element"""
+        """Takes a modeler-defined name and returns a formatted string for use
+        as a key within the namespace of a parent model element"""
         if type(name) is str:
-            return name[0].lower() + name[1:].replace(' ','')
+            return name[0].lower() + name[1:].replace(' ', '')
+
 
 class ModelRelationship(ModelElement):
     """Abstract base class for all model elements"""
 
     def __init__(self, name=None):
         """Name"""
-        self._name = self._generateKey(self.__class__.__name__.lower() + str(self.__class__._id_no + 1))
+        _elementName = self.__class__.__name__
+        self.__class__._id_no += 1
+        _elementId = str(self.__class__._id_no)
+        self._name = self._generateKey(_elementName + _elementId)
 
-        """UUID"""
-        self._uuid = str(uuid.uuid1())
+        """Construct ModelElement"""
+        super().__init__(name)
+
 
 class Block(ModelElement):
     """This class defines a block
@@ -84,7 +94,16 @@ class Block(ModelElement):
 
     """
 
-    def __init__(self, name=None, typeName=None, parts=None, references=None, values=None, constraints=None, flowProperties=None, multiplicity=1):
+    def __init__(
+            self,
+            name=None,
+            typeName=None,
+            parts=None,
+            references=None,
+            values=None,
+            constraints=None,
+            flowProperties=None,
+            multiplicity=1):
         """Note: Block() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
@@ -120,7 +139,7 @@ class Block(ModelElement):
         ## Reference Property
         if references is None:
             self._references = []
-        elif type(references) is list: #tk: change to accept block or list of blocks
+            elif type(references) is list:
             self._references = references
         else:
             raise TypeError("argument is not a list!")
@@ -137,7 +156,6 @@ class Block(ModelElement):
         self.constaints = []
         """
 
-    ## Getters
     @property
     def name(self):
         "Returns block name"
@@ -163,7 +181,6 @@ class Block(ModelElement):
     def multiplicity(self):
         return self._multiplicity
 
-    ## Setters
     @name.setter
     def name(self, name):
         "Sets block name"
@@ -191,9 +208,11 @@ class Block(ModelElement):
         if type(multiplicity) is int and multiplicity > 0:
             self._multiplicity = multiplicity
         elif type(multiplicity) is int:
-            raise ValueError("'{}' must be a positive int".format(str(multiplicity)))
+            raise ValueError(
+                "'{}' must be a positive int".format(str(multiplicity)))
         else:
-            raise TypeError("'{}' must be a positive int".format(str(multiplicity)))
+            raise TypeError(
+                "'{}' must be a positive int".format(str(multiplicity)))
 
     # @parts.setter
     # def parts(self, *partv):
@@ -242,11 +261,11 @@ class Block(ModelElement):
     #     else:
     #         raise TypeError("argument is not a dictionary!")
 
+
 class Requirement(ModelElement):
     """This class defines a requirement"""
 
     def __init__(self, name=None, txt=None, id=None):
-        """Note: Requirement() class is intended for internal use by Model() class"""
 
         """Construct ModelElement"""
         super().__init__(name)
@@ -266,12 +285,14 @@ class Requirement(ModelElement):
         elif type(id) in [int, float, str]:
             self._id = 'ID' + str(id_no).zfill(3)
         else:
-            raise TypeError("'{}' must be an int, float, or string".format(str(id)))
+            raise TypeError(
+                "'{}' must be an int, float, or string".format(str(id)))
 
     @property
     def name(self):
         "Returns requirement name"
         return self._name
+
 
 class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
@@ -280,6 +301,7 @@ class ConstraintBlock(ModelElement):
 
         """Construct ModelElement"""
         super().__init__(name)
+
 
 class Dependency(ModelRelationship):
     """This class defines a dependency"""
@@ -305,6 +327,7 @@ class Dependency(ModelRelationship):
     def client(self):
         return self._client
 
+
 class DeriveReqt(Dependency):
     def __init__(self, supplier, client):
         super().__init__(supplier, client)
@@ -313,6 +336,7 @@ class DeriveReqt(Dependency):
         if type(client) is not Requirement:
             raise TypeError("'{}' is not a Requirement".format(str(client)))
 
+
 class Satisfy(Dependency):
     def __init__(self, supplier, client):
         super().__init__(supplier, client)
@@ -320,6 +344,7 @@ class Satisfy(Dependency):
             raise TypeError("'{}' is not a Block".format(str(supplier)))
         if type(client) is not Requirement:
             raise TypeError("'{}' is not a Requirement".format(str(client)))
+
 
 class Package(ModelElement):
     """This class defines a package"""
@@ -335,14 +360,17 @@ class Package(ModelElement):
             pass
         elif isinstance(elements, ModelElement):
             self._elements[element.name] = elements
-        elif type(elements) is set:
-            for element in elements:
-                if isinstance(element, ModelElement):
-                    self._elements[element.name] = element
-                else:
-                    raise TypeError("'{}' must be a valid model element".format(str(element)))
-        else:
-            raise TypeError("'{}' must be a valid model element or set of valid model elements".format(str(elements)))
+        # elif type(elements) is set:
+        #     for element in elements:
+        #         if isinstance(element, ModelElement):
+        #             self._elements[element.name] = element
+        #         else:
+        #             raise TypeError(
+        #             "{} must be a valid model element".format(str(element)))
+        # else:
+        #     raise TypeError(
+        #     "'{}' must be a valid model element or set of valid model
+        # elements".format(str(elements)))
 
     def __getitem__(self, key):
         "Returns model element for key-specified model element"
@@ -353,7 +381,8 @@ class Package(ModelElement):
         if isinstance(element, ModelElement):
             self._elements[key] = element
         else:
-            raise TypeError("'{}' must be a valid model element".format(str(element)))
+            raise TypeError(
+                "'{}' must be a valid model element".format(str(element)))
 
     @property
     def name(self):
@@ -369,15 +398,18 @@ class Package(ModelElement):
         if isinstance(element, ModelElement):
             self._elements[element.name] = element
         else:
-            raise TypeError("'{}' must be a valid model element".format(str(element)))
+            raise TypeError(
+                "'{}' must be a valid model element".format(str(element)))
 
     def remove(self, element):
         """Removes a model element from package"""
         self._elements.pop(element.name)
 
     def RTM(self):
-        """Generates a requirements traceability matrix for model elements contained and referenced within package"""
+        """Generates a requirements traceability matrix for model elements
+        contained and referenced within package"""
         pass
+
 
 class StateMachine(ModelElement):
     """This class defines a state"""
@@ -392,6 +424,7 @@ class StateMachine(ModelElement):
         "Returns state machine name"
         return self._name
 
+
 class Activity(ModelElement):
     """This class defines a activity"""
 
@@ -404,6 +437,7 @@ class Activity(ModelElement):
     def name(self):
         "Returns activity name"
         return self._name
+
 
 class Interaction(ModelElement):
     """This class defines an interaction"""

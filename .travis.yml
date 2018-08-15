@@ -21,6 +21,6 @@ install:
   - pip install -r requirements.txt
 script:
   - python setup.py install
-  - pytest -v --cov-report term-missing --cov=sysml/ # or py.test for Python versions 3.5 and below
+  - pytest -v --cov-report term-missing --cov=sysml/ --pep8 # or py.test for Python versions 3.5 and below
 after_success:
   - coveralls
