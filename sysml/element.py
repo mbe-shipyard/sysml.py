@@ -91,7 +91,7 @@ class Block(ModelElement):
         super().__init__(name)
 
         """Part Property"""
-        self._parts = {}
+        self._parts = dict()
         if parts is None:
             pass
         elif isinstance(parts, Block):
@@ -107,11 +107,11 @@ class Block(ModelElement):
 
         """Value Property"""
         if values is None:
-            self._values = {}
+            self._values = dict()
 
         """Constraint Property"""
         if constraints is None:
-            self._constraints = {}
+            self._constraints = dict()
 
         """Multiplicity"""
         self._setMultiplicity(multiplicity)
@@ -126,7 +126,7 @@ class Block(ModelElement):
             raise TypeError("argument is not a list!")
         ## Flow Property
         if flows is None:
-            self._flowProperties = {}
+            self._flowProperties = dict()
         elif type(flowProperties) is dict:
             self._flowProperties = flowProperties
         else:
@@ -330,7 +330,7 @@ class Package(ModelElement):
         super().__init__(name)
 
         """Elements"""
-        self._elements = {}
+        self._elements = dict()
         if elements is None:
             pass
         elif isinstance(elements, ModelElement):
@@ -408,34 +408,24 @@ class Activity(ModelElement):
 class Interaction(ModelElement):
     """This class defines an interaction"""
 
-    def __init__(self, name=None):
-
+    def __init__(self, name=None, lifelines=None, messages=None):
         """Construct ModelElement"""
         super().__init__(name)
+
+        self._lifelines = dict()
+        if lifelines is None:
+            pass
+        elif isinstance(lifelines, Block):
+            self._lifelines = lifelines
 
     @property
     def name(self):
         "Returns interaction name"
         return self._name
 
-class Lifeline(ModelElement):
-    """This class defines a lifeline"""
+    def add_lifeline(self, lifeline):
+        if isinstance(lifeline, Block):
+            self._lifelines[lifeline.name] = lifeline
 
-    def __init__(self, name=None):
-        super().__init__(name)
-
-    @property
-    def name(self):
-        "Returns lifeline name"
-        return self._name
-
-class Message(ModelElement):
-    """This class defines a message"""
-
-    def __init__(self, name=None):
-        super().__init__(name)
-
-    @property
-    def name(self):
-        "Returns message name"
-        return self._name
+    def remove_lifeline(self, lifeline):
+        self._lifelines.pop(lifeline.name)
