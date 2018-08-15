@@ -273,7 +273,7 @@ def test_derive_requirement(model):
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].supplier)) == "<class 'sysml.element.Requirement'>"
 
     assert repr(type(model['Requirements'][deriveReqt_dependency.name].client)) == "<class 'sysml.element.Requirement'>"
-    assert model['Requirements'][deriveReqt_dependency.name].stereotype == "\xabderivereqt\xbb"
+    assert model['Requirements'][deriveReqt_dependency.name].stereotype == "\xabderiveReqt\xbb"
 
     assert uuid.UUID(model['Requirements'][deriveReqt_dependency.name].uuid, version=1)
 

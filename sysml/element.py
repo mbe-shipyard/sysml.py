@@ -39,7 +39,7 @@ class ModelElement(ABC):
 
     @property
     def stereotype(self):
-        return "\xab" + self.__class__.__name__.lower() + "\xbb"
+        return "\xab" + self.__class__.__name__[0].lower() + self.__class__.__name__[1:] + "\xbb"
 
     @property
     def uuid(self):
