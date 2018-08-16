@@ -2,10 +2,11 @@
 
 > A Python package for the Systems Modeling Language (SysML) - a general-purpose modeling language for systems engineering applications.
 
-This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
-
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
 [![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
+
+This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
 
 ## Package Contents
 
@@ -27,7 +28,7 @@ Optional (but recommended for viewing GitHub issues): Install the [ZenHub for Gi
 The following semantic version names and corresponding features are being considered for the current development pipeline for `SysML.py`:
 
 - `0.x.y` - standalone python package for SysML (coming soon to PyPI)
-- `1.x.y` - to include features to support data interchange as per the current SysML (v1.4) specification
+- `1.x.y` - to include features to support data interchange as per the current SysML (v1.5) specification
 - `2.x.y` - to include features to support data interchange as per the upcoming SysML (v2.0) specification
 
 ## Contributing
