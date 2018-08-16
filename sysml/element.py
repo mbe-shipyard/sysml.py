@@ -10,8 +10,6 @@ Model elements are the building blocks that make up SysML
 import uuid
 from abc import ABC, abstractproperty
 
-# developer notes: to use hidden vs unhidden attributes
-
 
 class ModelElement(ABC):
     """Abstract base class for all model elements"""
@@ -19,7 +17,6 @@ class ModelElement(ABC):
     _id_no = 0
 
     def __init__(self, name=None):
-        """Name"""
         if name is None:
             self.__class__._id_no += 1
             elementName = self.__class__.__name__
@@ -29,7 +26,6 @@ class ModelElement(ABC):
         else:
             raise TypeError("'{}' must be a string".format(str(name)))
 
-        """UUID"""
         self._uuid = str(uuid.uuid1())
 
     def __repr__(self):
@@ -61,13 +57,11 @@ class ModelRelationship(ModelElement):
     """Abstract base class for all model elements"""
 
     def __init__(self, name=None):
-        """Name"""
         _elementName = self.__class__.__name__
         self.__class__._id_no += 1
         _elementId = str(self.__class__._id_no)
         self._name = self._generateKey(_elementName + _elementId)
 
-        """Construct ModelElement"""
         super().__init__(name)
 
 
@@ -94,22 +88,11 @@ class Block(ModelElement):
 
     """
 
-    def __init__(
-            self,
-            name=None,
-            typeName=None,
-            parts=None,
-            references=None,
-            values=None,
-            constraints=None,
-            flowProperties=None,
-            multiplicity=1):
-        """Note: Block() class is intended for internal use by Model() class"""
-
-        """Construct ModelElement"""
+    def __init__(self, name=None, typeName=None, parts=None, references=None,
+                 values=None, constraints=None, flowProperties=None,
+                 multiplicity=1):
         super().__init__(name)
 
-        """Part Property"""
         self._parts = dict()
         if parts is None:
             pass
@@ -124,15 +107,12 @@ class Block(ModelElement):
         else:
             raise TypeError("'{}' must be a set".format(str(parts)))
 
-        """Value Property"""
         if values is None:
             self._values = dict()
 
-        """Constraint Property"""
         if constraints is None:
             self._constraints = dict()
 
-        """Multiplicity"""
         self._setMultiplicity(multiplicity)
 
         """
@@ -158,7 +138,6 @@ class Block(ModelElement):
 
     @property
     def name(self):
-        "Returns block name"
         return self._name
 
     @property
@@ -183,7 +162,6 @@ class Block(ModelElement):
 
     @name.setter
     def name(self, name):
-        "Sets block name"
         if type(name) is str:
             self._name = name
         else:
@@ -266,11 +244,8 @@ class Requirement(ModelElement):
     """This class defines a requirement"""
 
     def __init__(self, name=None, txt=None, id=None):
-
-        """Construct ModelElement"""
         super().__init__(name)
 
-        """Text"""
         if txt is None:
             self.txt = ''
         elif type(txt) is str:
@@ -278,7 +253,6 @@ class Requirement(ModelElement):
         else:
             raise TypeError("'{}' must be a string".format(str(txt)))
 
-        """ID"""
         if id is None:
             self.__class__._id_no += 1
             self._id = 'ID' + str(self.__class__._id_no).zfill(3)
@@ -290,7 +264,6 @@ class Requirement(ModelElement):
 
     @property
     def name(self):
-        "Returns requirement name"
         return self._name
 
 
@@ -298,8 +271,6 @@ class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
 
     def __init__(self):
-
-        """Construct ModelElement"""
         super().__init__(name)
 
 
@@ -307,16 +278,13 @@ class Dependency(ModelRelationship):
     """This class defines a dependency"""
 
     def __init__(self, supplier, client):
-
         self._supplier = supplier
         self._client = client
 
-        """Construct ModelRelationship"""
         super().__init__()
 
     @property
     def name(self):
-        "Returns dependency name"
         return self._name
 
     @property
@@ -350,11 +318,8 @@ class Package(ModelElement):
     """This class defines a package"""
 
     def __init__(self, name=None, elements=None):
-
-        """Construct ModelElement"""
         super().__init__(name)
 
-        """Elements"""
         self._elements = dict()
         if elements is None:
             pass
@@ -386,7 +351,6 @@ class Package(ModelElement):
 
     @property
     def name(self):
-        "Returns block name"
         return self._name
 
     @property
@@ -415,13 +379,10 @@ class StateMachine(ModelElement):
     """This class defines a state"""
 
     def __init__(self):
-
-        """Construct ModelElement"""
         super().__init__(name)
 
     @property
     def name(self):
-        "Returns state machine name"
         return self._name
 
 
@@ -429,13 +390,10 @@ class Activity(ModelElement):
     """This class defines a activity"""
 
     def __init__(self):
-
-        """Construct ModelElement"""
         super().__init__(name)
 
     @property
     def name(self):
-        "Returns activity name"
         return self._name
 
 
@@ -443,7 +401,6 @@ class Interaction(ModelElement):
     """This class defines an interaction"""
 
     def __init__(self, name=None, lifelines=None, messages=None):
-        """Construct ModelElement"""
         super().__init__(name)
 
         self._lifelines = dict()
@@ -454,7 +411,6 @@ class Interaction(ModelElement):
 
     @property
     def name(self):
-        "Returns interaction name"
         return self._name
 
     def add_lifeline(self, lifeline):
