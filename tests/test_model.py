@@ -1,6 +1,7 @@
 import sysml
 import pytest
 import uuid
+from pint import UnitRegistry
 
 
 @pytest.fixture(scope="module")
@@ -23,6 +24,24 @@ def test_model(model):
     with pytest.raises(TypeError) as info:
         model = sysml.ModelElement()
         assert "Can't instantiate abstract class base" in str(info.value)
+
+
+def test_valueType():
+    kesselrun = sysml.ValueType(12, 'parsec')
+    assert repr(kesselrun) == "\xabvalueType\xbb 12 parsec"
+    assert kesselrun.magnitude == 12
+    assert kesselrun.units == 'parsec'
+    assert kesselrun.name == '12 parsec'
+
+    isDroidsWeAreLookingFor = sysml.ValueType(False)
+    assert repr(isDroidsWeAreLookingFor) == "\xabvalueType\xbb False bool"
+    assert isDroidsWeAreLookingFor.magnitude is False
+    assert isDroidsWeAreLookingFor.units == 'bool'
+    assert isDroidsWeAreLookingFor.name == 'False bool'
+
+    with pytest.raises(Exception) as info:
+        fluxcapacitor = sysml.ValueType(1.21, 'JiggaWatts')
+        assert "is not defined in the unit registry" in str(info.value)
 
 
 def test_block(model):

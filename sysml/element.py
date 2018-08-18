@@ -9,6 +9,8 @@ Model elements are the building blocks that make up SysML
 
 import uuid
 from abc import ABC, abstractproperty
+from pint import UnitRegistry
+ureg = UnitRegistry()
 
 
 class ModelElement(ABC):
@@ -65,6 +67,46 @@ class ModelRelationship(ModelElement):
         super().__init__(name)
 
 
+class ValueType(ModelElement):
+    """This class defines a value type
+
+    Parameters
+    ----------
+    value : int, float, string, or bool
+
+    units : str, default None
+
+    Notes
+    -----
+    If a string parameter for units is provided, it must be defined in the
+    UnitRegistry
+    """
+
+    def __init__(self, value, units=None):
+        if units is None:
+            self._magnitude = value
+            self._units = value.__class__.__name__
+        else:
+            self._ureg = value * ureg(units)
+            self._magnitude = self._ureg.magnitude
+            self._units = self._ureg.units
+
+    def __repr__(self):
+        return "{} {}".format(self.stereotype, self.name)
+
+    @property
+    def name(self):
+        return "{} {}".format(str(self._magnitude), str(self._units))
+
+    @property
+    def magnitude(self):
+        return self._magnitude
+
+    @property
+    def units(self):
+        return self._units
+
+
 class Block(ModelElement):
     """This class defines a block
 
@@ -86,9 +128,8 @@ class Block(ModelElement):
 
     """
 
-    def __init__(self, name=None, parts=None, references=None,
-                 values=None, constraints=None, flowProperties=None,
-                 multiplicity=None):
+    def __init__(self, name=None, parts=None, references=None, values=None,
+                 constraints=None, flowProperties=None, multiplicity=None):
         super().__init__(name)
 
         self._parts = dict()
