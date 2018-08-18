@@ -25,6 +25,25 @@ def test_model(model):
         assert "Can't instantiate abstract class base" in str(info.value)
 
 
+def test_block(model):
+    """Add block elements to package objects using built-in add_part()
+    method"""
+
+    starship_block = sysml.Block('Constitution-class Starship')
+
+    assert repr(starship_block) == "\xabblock\xbb Constitution-class Starship"
+    assert repr(type(starship_block)) == "<class 'sysml.element.Block'>"
+    assert uuid.UUID(starship_block.uuid, version=1)
+    assert starship_block.multiplicity == 1
+
+    with pytest.raises(AttributeError) as info:
+        starship_block.uuid = 47
+        assert "can't set attribute" in str(info.value)
+    with pytest.raises(AttributeError) as info:
+        starship_block.uuid = "47"
+        assert "can't set attribute" in str(info.value)
+
+
 def test_package(model):
     """Create a package, labeled 'Structure', within model which will serve as
     namespace for the system structure
@@ -56,7 +75,19 @@ def test_package(model):
         model['Holodeck']
         assert "Holodeck" in str(info.value)
 
-    model.add(sysml.Package('Structure'))
+    starship_block = sysml.Block('Constitution-class Starship')
+
+    structure = sysml.Package('Structure', [starship_block])
+
+    model.add(structure)
+
+    with pytest.raises(TypeError) as info:
+        model['Structure'].add()
+        assert "missing 1 required positional argument" in str(info.value)
+
+    # model['Structure'].add(starship_block)
+
+    assert starship_block == model['Structure']['Constitution-class Starship']
 
     assert repr(model['Structure']) == "\xabpackage\xbb Structure"
     assert repr(type(model['Structure'])) == package_type
@@ -67,30 +98,6 @@ def test_package(model):
         assert "can't set attribute" in str(info.value)
     with pytest.raises(AttributeError) as info:
         model['Structure'].uuid = "47"
-        assert "can't set attribute" in str(info.value)
-
-
-def test_block(model):
-    """Add block elements to package objects using built-in add_part()
-    method"""
-
-    with pytest.raises(TypeError) as info:
-        model['Structure'].add()
-        assert "missing 1 required positional argument" in str(info.value)
-
-    model['Structure'].add(sysml.Block('Constitution-class Starship'))
-    starship_block = model['Structure']['Constitution-class Starship']
-
-    assert repr(starship_block) == "\xabblock\xbb Constitution-class Starship"
-    assert repr(type(starship_block)) == "<class 'sysml.element.Block'>"
-    assert uuid.UUID(starship_block.uuid, version=1)
-    assert starship_block.multiplicity == 1
-
-    with pytest.raises(AttributeError) as info:
-        starship_block.uuid = 47
-        assert "can't set attribute" in str(info.value)
-    with pytest.raises(AttributeError) as info:
-        starship_block.uuid = "47"
         assert "can't set attribute" in str(info.value)
 
 

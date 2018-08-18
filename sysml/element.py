@@ -362,7 +362,16 @@ class Satisfy(Dependency):
 
 
 class Package(ModelElement):
-    """This class defines a package"""
+    """A package is a container for a set of model elements, of which may be
+    other packages.
+
+    Parameters
+    ----------
+    name : string, default None
+
+    elements : list, default None
+
+    """
 
     def __init__(self, name=None, elements=None):
         super().__init__(name)
@@ -370,31 +379,20 @@ class Package(ModelElement):
         self._elements = dict()
         if elements is None:
             pass
-        elif isinstance(elements, ModelElement):
-            self._elements[element.name] = elements
-        # elif type(elements) is set:
-        #     for element in elements:
-        #         if isinstance(element, ModelElement):
-        #             self._elements[element.name] = element
-        #         else:
-        #             raise TypeError(
-        #             "{} must be a valid model element".format(str(element)))
-        # else:
-        #     raise TypeError(
-        #     "'{}' must be a valid model element or set of valid model
-        # elements".format(str(elements)))
+        elif type(elements) is list:
+            for element in elements:
+                if isinstance(element, ModelElement):
+                    self._elements[element.name] = element
+                else:
+                    raise TypeError(
+                        "'{}' must be a model element".format(str(element)))
+        else:
+            raise TypeError(
+                "'{}' must be a list of model elements".format(str(elements)))
 
     def __getitem__(self, key):
         "Returns model element for key-specified model element"
         return self._elements[key]
-
-    def __setitem__(self, key, element):
-        "Sets model element for key-specified model element"
-        if isinstance(element, ModelElement):
-            self._elements[key] = element
-        else:
-            raise TypeError(
-                "'{}' must be a valid model element".format(str(element)))
 
     @property
     def name(self):
@@ -410,7 +408,7 @@ class Package(ModelElement):
             self._elements[element.name] = element
         else:
             raise TypeError(
-                "'{}' must be a valid model element".format(str(element)))
+                "'{}' must be a model element".format(str(element)))
 
     def remove(self, element):
         """Removes a model element from package"""
