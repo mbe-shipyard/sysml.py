@@ -29,7 +29,7 @@ class ModelElement(ABC):
         self._uuid = str(uuid.uuid1())
 
     def __repr__(self):
-        return self.stereotype + "\n{}".format(self.name)
+        return self.stereotype + " {}".format(self.name)
 
     @abstractproperty
     def name(self):
@@ -275,11 +275,27 @@ class ConstraintBlock(ModelElement):
 
 
 class Dependency(ModelRelationship):
-    """This class defines a dependency"""
+    """A dependency relationship can be applied between models elements to
+    indicate that a change in one element, the client, may result in a change
+    in the other element, the supplier.
 
-    def __init__(self, supplier, client):
-        self._supplier = supplier
+    Parameters
+    ----------
+    client : ModelElement
+
+    supplier : ModelElement
+
+    """
+
+    def __init__(self, client, supplier):
         self._client = client
+        self._supplier = supplier
+
+        if not isinstance(client, ModelElement):
+            raise TypeError("'{}' is not a model element".format(str(client)))
+        if not isinstance(supplier, ModelElement):
+            raise TypeError(
+                "'{}' is not a model element".format(str(supplier)))
 
         super().__init__()
 
@@ -297,21 +313,52 @@ class Dependency(ModelRelationship):
 
 
 class DeriveReqt(Dependency):
-    def __init__(self, supplier, client):
-        super().__init__(supplier, client)
-        if type(supplier) is not Requirement:
-            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
+    """The derive requirement relationship conveys that a requirement at the
+    client end is derived from a requirement at the supplier end.
+
+    Parameters
+    ----------
+    client : Requirement
+
+    supplier : Requirement
+
+    """
+
+    def __init__(self, client, supplier):
+        super().__init__(client, supplier)
         if type(client) is not Requirement:
             raise TypeError("'{}' is not a Requirement".format(str(client)))
+        if type(supplier) is not Requirement:
+            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
 
 
 class Satisfy(Dependency):
-    def __init__(self, supplier, client):
-        super().__init__(supplier, client)
-        if not isinstance(supplier, Block):
-            raise TypeError("'{}' is not a Block".format(str(supplier)))
-        if type(client) is not Requirement:
-            raise TypeError("'{}' is not a Requirement".format(str(client)))
+    """This relationship must have a requirement at the supplier end. SysML
+    imposes no constraints on the kind of element that can appear at the client
+    end. By convention, however, the client element is always a block
+
+    Parameters
+    ----------
+    client : ModelElement
+
+    supplier : Requirement
+
+    Note
+    ----
+    A satisfy relationship assersion does not constitute proof. It is simply
+    a mechanism to allocate a requirement to a structural element. Proof of
+    satisfaction will come from test cases.
+
+    See also
+    --------
+    Verify
+
+    """
+
+    def __init__(self, client, supplier):
+        super().__init__(client, supplier)
+        if type(supplier) is not Requirement:
+            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
 
 
 class Package(ModelElement):
