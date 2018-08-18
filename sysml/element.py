@@ -72,11 +72,9 @@ class Block(ModelElement):
     ----------
     name : string, default None
 
-    typeName : string, default None
-
     parts : dict, default None
 
-    references : list, default None
+    references : dict, default None
 
     values : dict, default None
 
@@ -88,24 +86,25 @@ class Block(ModelElement):
 
     """
 
-    def __init__(self, name=None, typeName=None, parts=None, references=None,
+    def __init__(self, name=None, parts=None, references=None,
                  values=None, constraints=None, flowProperties=None,
-                 multiplicity=1):
+                 multiplicity=None):
         super().__init__(name)
 
         self._parts = dict()
         if parts is None:
             pass
-        elif isinstance(parts, Block):
-            self_parts[parts.name] = parts
-        elif type(parts) is set:
-            for part in parts:
-                if isinstance(part, Block):
-                    self_parts[part.name] = part
+        elif type(parts) is dict:
+            for key, part in parts.items():
+                if type(key) is str and isinstance(part, Block):
+                    self_parts[key] = part
                 else:
                     raise TypeError("'{}' must be a Block".format(str(part)))
         else:
             raise TypeError("'{}' must be a set".format(str(parts)))
+
+        if references is None:
+            self._references = dict()
 
         if values is None:
             self._values = dict()
@@ -113,7 +112,13 @@ class Block(ModelElement):
         if constraints is None:
             self._constraints = dict()
 
-        self._setMultiplicity(multiplicity)
+        if flowProperties is None:
+            self._flowProperties = dict()
+
+        if multiplicity is None:
+            self._multiplicity = 1
+        else:
+            self._setMultiplicity(multiplicity)
 
         """
         ## Reference Property
@@ -145,12 +150,16 @@ class Block(ModelElement):
         return self._parts
 
     @property
+    def references(self):
+        return self._references
+
+    @property
     def values(self):
         return self._values
 
     @property
-    def references(self):
-        return self._references
+    def constraints(self):
+        return self._constraints
 
     @property
     def flows(self):
@@ -171,26 +180,68 @@ class Block(ModelElement):
     def multiplicity(self, multiplicity):
         self._setMultiplicity(multiplicity)
 
-    def add_part(self, block):
-        """Adds block element to parts attribute"""
-        if isinstance(block, Block):
-            self._parts[block.name] = block
-        else:
-            raise TypeError("'{}' must be a Block".format(str(block)))
+    def add_part(self, partName, part):
+        """Adds block element to parts attribute
 
-    def remove_part(self, block):
-        """Removes block element from parts attribute"""
-        self._parts.pop(block.name)
+        Parameters
+        ----------
+        partName : string
+
+        block : Block
+
+        """
+        if type(partName) is str and isinstance(part, Block):
+            self._parts[partName] = part
+        elif type(partName) is not str:
+            raise TypeError("'{}' must be a string".format(str(partName)))
+        elif not isinstance(part, Block):
+            raise TypeError("'{}' must be a Block".format(str(part)))
+
+    def remove_part(self, partName):
+        """Removes block element from parts attribute
+
+        Parameters
+        ----------
+        partName : string
+
+        """
+        self._parts.pop(partName)
+
+    def __getitem__(self, elementName):
+        if type(elementName) is str:
+            if elementName in self._parts.keys():
+                return self._parts[elementName]
+            elif elementName in self._references.keys():
+                return self._references[elementName]
+            elif elementName in self._values.keys():
+                return self._values[elementName]
+            elif elementName in self._constraints.keys():
+                return self._constraints[elementName]
+            elif elementName in self._flowProperties.keys():
+                return self._flowProperties[elementName]
+            else:
+                raise KeyError("'{}' not contained in '{}'".format(
+                    str(elementName), str(self.name)))
+        else:
+            raise TypeError("'{}' must be a string".format(str(elementName)))
+
+    def __setitem__(self, elementName, element):
+        if type(elementName) is str and isinstance(element, Block):
+            self._parts[elementName] = element
+        elif type(elementName) is not str:
+            raise TypeError("'{}' must be a string".format(str(elementName)))
+        elif not isinstance(element, Block):
+            raise TypeError("'{}' must be a Block".format(str(element)))
 
     def _setMultiplicity(self, multiplicity):
         if type(multiplicity) is int and multiplicity > 0:
             self._multiplicity = multiplicity
         elif type(multiplicity) is int:
-            raise ValueError(
-                "'{}' must be a positive int".format(str(multiplicity)))
+            raise ValueError("'{}' must be a positive int".format(
+                str(multiplicity)))
         else:
-            raise TypeError(
-                "'{}' must be a positive int".format(str(multiplicity)))
+            raise TypeError("'{}' must be a positive int".format(
+                str(multiplicity)))
 
     # @parts.setter
     # def parts(self, *partv):
@@ -259,8 +310,8 @@ class Requirement(ModelElement):
         elif type(id) in [int, float, str]:
             self._id = 'ID' + str(id_no).zfill(3)
         else:
-            raise TypeError(
-                "'{}' must be an int, float, or string".format(str(id)))
+            raise TypeError("'{}' must be an int, float, or string".format(
+                str(id)))
 
     @property
     def name(self):
@@ -294,8 +345,8 @@ class Dependency(ModelRelationship):
         if not isinstance(client, ModelElement):
             raise TypeError("'{}' is not a model element".format(str(client)))
         if not isinstance(supplier, ModelElement):
-            raise TypeError(
-                "'{}' is not a model element".format(str(supplier)))
+            raise TypeError("'{}' is not a model element".format(
+                str(supplier)))
 
         super().__init__()
 
@@ -369,7 +420,7 @@ class Package(ModelElement):
     ----------
     name : string, default None
 
-    elements : list, default None
+    elements : dict, default None
 
     """
 
@@ -379,20 +430,26 @@ class Package(ModelElement):
         self._elements = dict()
         if elements is None:
             pass
-        elif type(elements) is list:
-            for element in elements:
-                if isinstance(element, ModelElement):
-                    self._elements[element.name] = element
-                else:
-                    raise TypeError(
-                        "'{}' must be a model element".format(str(element)))
+        elif type(elements) is dict:
+            for key, element in elements.items():
+                if type(key) is str and isinstance(element, ModelElement):
+                    self._elements[key] = element
+                elif type(key) is not str:
+                    raise TypeError("'{}' must be a str".format(str(key)))
+                elif not isinstance(element, ModelElement):
+                    raise TypeError("'{}' must be a model element".format(
+                        str(element)))
         else:
-            raise TypeError(
-                "'{}' must be a list of model elements".format(str(elements)))
+            raise TypeError("'{}' must be a list of model elements".format(
+                str(elements)))
 
-    def __getitem__(self, key):
-        "Returns model element for key-specified model element"
-        return self._elements[key]
+    def __getitem__(self, elementName):
+        "Returns elementName-specified model element"
+        return self._elements[elementName]
+
+    def __setitem__(self, elementName, element):
+        "Sets elementName-specified model element"
+        self._setElement(elementName, element)
 
     @property
     def name(self):
@@ -402,22 +459,27 @@ class Package(ModelElement):
     def elements(self):
         return self._elements
 
-    def add(self, element):
+    def add(self, elementName, element):
         """Adds a model element to package"""
-        if isinstance(element, ModelElement):
-            self._elements[element.name] = element
-        else:
-            raise TypeError(
-                "'{}' must be a model element".format(str(element)))
+        self._setElement(elementName, element)
 
-    def remove(self, element):
+    def remove(self, elementName):
         """Removes a model element from package"""
-        self._elements.pop(element.name)
+        self._elements.pop(elementName)
 
     def RTM(self):
         """Generates a requirements traceability matrix for model elements
         contained and referenced within package"""
         pass
+
+    def _setElement(self, elementName, element):
+        if type(elementName) is str and isinstance(element, ModelElement):
+            self._elements[elementName] = element
+        elif type(elementName) is not str:
+            raise TypeError("'{}' must be a string".format(str(elementName)))
+        elif not isinstance(element, ModelElement):
+            raise TypeError("'{}' must be a model element".format(
+                str(element)))
 
 
 class StateMachine(ModelElement):
