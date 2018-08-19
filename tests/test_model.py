@@ -197,7 +197,7 @@ def test_block_partProperty(model):
 
     with pytest.raises(KeyError) as info:
         starship_block['cloak']
-        assert 'cloack' in str(info.value)
+        assert 'cloak' in str(info.value)
 
     with pytest.raises(AttributeError) as info:
         primaryhull.uuid = 47
