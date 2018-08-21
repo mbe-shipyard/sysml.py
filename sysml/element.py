@@ -94,6 +94,42 @@ class ValueType(ModelElement):
     def __repr__(self):
         return "{} {}".format(self.stereotype, self.name)
 
+    def __add__(self, other):
+        return ValueType(self.magnitude+other.magnitude, str(self.units))
+
+    def __ladd__(self, other):
+        return ValueType(self.magnitude+other.magnitude, str(self.units))
+
+    def __radd__(self, other):
+        return ValueType(self.magnitude+other.magnitude, str(self.units))
+
+    def __sub__(self, other):
+        return ValueType(self.magnitude-other.magnitude, str(self.units))
+
+    def __lsub__(self, other):
+        return ValueType(self.magnitude-other.magnitude, str(self.units))
+
+    def __rsub__(self, other):
+        return ValueType(self.magnitude-other.magnitude, str(self.units))
+
+    def __mul__(self, other):
+        return ValueType(self.magnitude*other, str(self.units))
+
+    def __lmul__(self, other):
+        return ValueType(self.magnitude*other, str(self.units))
+
+    def __rmul__(self, other):
+        return ValueType(self.magnitude*other, str(self.units))
+
+    def __truediv__(self, other):
+        return ValueType(self.magnitude/other, str(self.units))
+
+    def __ltruediv__(self, other):
+        return ValueType(self.magnitude/other, str(self.units))
+
+    def __rtruediv__(self, other):
+        return ValueType(self.magnitude/other, str(self.units))
+
     @property
     def name(self):
         return "{} {}".format(str(self._magnitude), str(self._units))

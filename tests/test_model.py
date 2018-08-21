@@ -39,6 +39,18 @@ def test_valueType():
     assert isDroidsWeAreLookingFor.units == 'bool'
     assert isDroidsWeAreLookingFor.name == 'False bool'
 
+    c = 2.99792458*10**8
+    warpfactor1 = sysml.ValueType(c, 'meters/second')
+    warpfactor2 = warpfactor1 + sysml.ValueType(7*c, 'meters/second')
+    warpfactor5 = 125*warpfactor1
+    warpfactor3 = warpfactor5 - sysml.ValueType(98*c, 'meters/second')
+    warpfactor4 = warpfactor5/2
+    assert warpfactor1.magnitude == c
+    assert warpfactor2.magnitude == 8*c
+    assert warpfactor3.magnitude == 27*c
+    assert warpfactor5.magnitude == 125*c
+    assert warpfactor4.magnitude == warpfactor5.magnitude/2
+
     with pytest.raises(Exception) as info:
         fluxcapacitor = sysml.ValueType(1.21, 'JiggaWatts')
         assert "is not defined in the unit registry" in str(info.value)
