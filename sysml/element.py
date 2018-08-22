@@ -7,13 +7,14 @@ the `model` class
 Model elements are the building blocks that make up SysML
 """
 
-import uuid
-from abc import ABC, abstractproperty
-from pint import UnitRegistry
-ureg = UnitRegistry()
+import uuid as _uuid
+from abc import ABC as _ABC
+from abc import abstractproperty as _abstractproperty
+from pint import UnitRegistry as _UnitRegistry
+_ureg = _UnitRegistry()
 
 
-class ModelElement(ABC):
+class ModelElement(_ABC):
     """Abstract base class for all model elements"""
 
     _id_no = 0
@@ -28,12 +29,12 @@ class ModelElement(ABC):
         else:
             raise TypeError("'{}' must be a string".format(str(name)))
 
-        self._uuid = str(uuid.uuid1())
+        self._uuid = str(_uuid.uuid1())
 
     def __repr__(self):
         return self.stereotype + " {}".format(self.name)
 
-    @abstractproperty
+    @_abstractproperty
     def name(self):
         """Modeler-defined name of model element"""
         pass
@@ -85,7 +86,7 @@ class ValueType(ModelElement):
     def __init__(self, value, units=None):
         if units is None:
             units = ''
-        self._ureg = value * ureg(units)
+        self._ureg = value * _ureg(units)
 
     def __repr__(self):
         return "{} {}".format(self.stereotype, self.name)
