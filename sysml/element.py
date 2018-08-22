@@ -88,32 +88,40 @@ class ValueType(ModelElement):
             units = ''
         self._ureg = value * _ureg(units)
 
+        super().__init__(self.name)
+
     def __repr__(self):
         return "{} {}".format(self.stereotype, self.name)
 
     def __add__(self, other):
-        return ValueType(self.magnitude+other.magnitude, str(self.units))
+        _newureg = self._ureg + other._ureg
+        return ValueType(_newureg.magnitude, str(_newureg.units))
 
-    def __ladd__(self, other):
-        return ValueType(self.magnitude+other.magnitude, str(self.units))
-
-    def __radd__(self, other):
-        return ValueType(self.magnitude+other.magnitude, str(self.units))
+    # def __ladd__(self, other):
+    #     _newureg = self._ureg + other._ureg
+    #     return ValueType(_newureg, str(_newureg.units))
+    #
+    # def __radd__(self, other):
+    #     _newureg = self._ureg + other._ureg
+    #     return ValueType(_newureg, str(_newureg.units))
 
     def __sub__(self, other):
-        return ValueType(self.magnitude-other.magnitude, str(self.units))
+        _newureg = self._ureg - other._ureg
+        return ValueType(_newureg.magnitude, str(_newureg.units))
 
-    def __lsub__(self, other):
-        return ValueType(self.magnitude-other.magnitude, str(self.units))
+    # def __lsub__(self, other):
+    #     _newureg = self._ureg - other._ureg
+    #     return ValueType(_newureg, str(_newureg.units))
+    #
+    # def __rsub__(self, other):
+    #     _newureg = self._ureg - other._ureg
+    #     return ValueType(_newureg, str(_newureg.units))
 
-    def __rsub__(self, other):
-        return ValueType(self.magnitude-other.magnitude, str(self.units))
+    # def __mul__(self, other):
+    #     return ValueType(self.magnitude*other, str(self.units))
 
-    def __mul__(self, other):
-        return ValueType(self.magnitude*other, str(self.units))
-
-    def __lmul__(self, other):
-        return ValueType(self.magnitude*other, str(self.units))
+    # def __lmul__(self, other):
+    #     return ValueType(self.magnitude*other, str(self.units))
 
     def __rmul__(self, other):
         return ValueType(self.magnitude*other, str(self.units))
@@ -121,15 +129,18 @@ class ValueType(ModelElement):
     def __truediv__(self, other):
         return ValueType(self.magnitude/other, str(self.units))
 
-    def __ltruediv__(self, other):
-        return ValueType(self.magnitude/other, str(self.units))
-
-    def __rtruediv__(self, other):
-        return ValueType(self.magnitude/other, str(self.units))
+    # def __ltruediv__(self, other):
+    #     return ValueType(self.magnitude/other, str(self.units))
+    #
+    # def __rtruediv__(self, other):
+    #     return ValueType(self.magnitude/other, str(self.units))
 
     @property
     def name(self):
         return "{} {}".format(str(self.magnitude), str(self.units))
+
+    # def ito(self, units):
+    #     self._ureg.ito(units)
 
     # @property
     # def magnitude(self):

@@ -33,6 +33,29 @@ def test_valueType():
     assert kesselrun.units == 'parsec'
     assert kesselrun.name == '12 parsec'
 
+    oneparsec = sysml.ValueType(1, 'parsec')
+    assert oneparsec.magnitude == 1
+    assert str(oneparsec.units) == 'parsec'
+
+    lightyear = sysml.ValueType(1, 'lightyear')
+    assert lightyear.magnitude == 1
+    assert str(lightyear.units) == 'light_year'
+    # parsectolightyear = oneparsec.ito('lightyear')
+    distToProximaCentari = sysml.ValueType(0.98144, 'lightyear') + oneparsec
+    assert round(distToProximaCentari.magnitude, 3) == 4.243
+    assert str(distToProximaCentari.units) == 'light_year'
+
+    distToProximaCentari = oneparsec + sysml.ValueType(0.98144, 'lightyear')
+    assert round(distToProximaCentari.magnitude, 3) == 1.301
+    assert distToProximaCentari.units == 'parsec'
+
+    distToProximaCentari.ito('lightyear')
+    assert round(distToProximaCentari.magnitude, 3) == 4.243
+    assert str(distToProximaCentari.units) == 'light_year'
+
+    distToProximaCentari.ito('parsec')
+    assert round(distToProximaCentari.magnitude, 3) == 1.301
+    assert distToProximaCentari.units == 'parsec'
     # isDroidsWeAreLookingFor = sysml.ValueType(False)
     # assert repr(isDroidsWeAreLookingFor) == "\xabvalueType\xbb False bool"
     # assert isDroidsWeAreLookingFor.magnitude is False
@@ -44,12 +67,14 @@ def test_valueType():
     warpfactor2 = warpfactor1 + sysml.ValueType(7*c, 'meters/second')
     warpfactor5 = 125*warpfactor1
     warpfactor3 = warpfactor5 - sysml.ValueType(98*c, 'meters/second')
+    warpfactor6 = sysml.ValueType(217*c, 'meters/second') - warpfactor1
     warpfactor4 = warpfactor5/2
     assert warpfactor1.magnitude == c
     assert warpfactor2.magnitude == 8*c
     assert warpfactor3.magnitude == 27*c
     assert warpfactor5.magnitude == 125*c
     assert warpfactor4.magnitude == warpfactor5.magnitude/2
+    assert warpfactor6.magnitude == 216*c
 
     with pytest.raises(Exception) as info:
         fluxcapacitor = sysml.ValueType(1.21, 'JiggaWatts')
