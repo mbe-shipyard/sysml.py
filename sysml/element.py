@@ -84,12 +84,8 @@ class ValueType(ModelElement):
 
     def __init__(self, value, units=None):
         if units is None:
-            self._magnitude = value
-            self._units = value.__class__.__name__
-        else:
-            self._ureg = value * ureg(units)
-            self._magnitude = self._ureg.magnitude
-            self._units = self._ureg.units
+            units = ''
+        self._ureg = value * ureg(units)
 
     def __repr__(self):
         return "{} {}".format(self.stereotype, self.name)
@@ -132,15 +128,17 @@ class ValueType(ModelElement):
 
     @property
     def name(self):
-        return "{} {}".format(str(self._magnitude), str(self._units))
+        return "{} {}".format(str(self.magnitude), str(self.units))
 
-    @property
-    def magnitude(self):
-        return self._magnitude
-
-    @property
-    def units(self):
-        return self._units
+    # @property
+    # def magnitude(self):
+    #     return self._magnitude
+    #
+    # @property
+    # def units(self):
+    #     return self._units
+    def __getattr__(self, attr):
+        return getattr(self._ureg, attr)
 
 
 class Block(ModelElement):
