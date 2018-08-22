@@ -5,8 +5,9 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Build Status](https://travis-ci.com/spacedecentral/SysML.py.svg?branch=dev)](https://travis-ci.com/spacedecentral/SysML.py)
 [![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
+ This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
 
 ## Package Contents
 
