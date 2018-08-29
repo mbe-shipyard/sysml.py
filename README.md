@@ -7,7 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/spacedecentral/SysML.py/badge.svg)](https://coveralls.io/github/spacedecentral/SysML.py?branch=dev)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
- This project is intended to provide an object-oriented programming (OOP) paradigm for practicing Model-Based Systems Engineering (MBSE).
+ This project is intended to provide an object-oriented programming (OOP) paradigm for practicing [Model-Based Systems Engineering](https://www.incose.org/docs/default-source/delaware-valley/mbse-overview-incose-30-july-2015.pdf) (MBSE).
 
 ## Package Contents
 
@@ -29,8 +29,8 @@ Optional (but recommended for viewing GitHub issues): Install the [ZenHub for Gi
 The following semantic version names and corresponding features are being considered for the current development pipeline for `SysML.py`:
 
 - `0.x.y` - standalone python package for SysML (coming soon to PyPI)
-- `1.x.y` - to include features to support data interchange as per the current SysML (v1.5) specification
-- `2.x.y` - to include features to support data interchange as per the upcoming SysML (v2.0) specification
+- `1.x.y` - to include a full profile implementation of the current SysML ([v1.5](https://sysml.org/docs/specs/OMGSysML-v1.5-17-05-01.pdf)) specification
+- `2.x.y` - to include a full profile implementation of the upcoming SysML ([v2.0](https://www.phoenix-int.com/wp-content/uploads/2018/05/Phx2018UC_KEYNOTE_Friedenthal.pdf)) specification
 
 ## Contributing
 
