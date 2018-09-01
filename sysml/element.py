@@ -32,6 +32,13 @@ class ModelElement(_ABC):
         self._uuid = str(_uuid.uuid1())
 
     def __repr__(self):
+        # Needs to be rewritten, such that it returns a long formatted string
+        # by default, but a shorter formatted string when called from within a
+        # dictionary. See tests/test_model.py (line 162 & 245)
+        # A decorator seems to make the most sense for implementing this.
+        # Suggestion for returning long formatted string element, use
+        # hasattr(), as not all model elements will share the same attributes
+        # (e.g., parts, references, values, etc.)
         return "{} {}".format(self.stereotype, self.name)
 
     @_abstractproperty
