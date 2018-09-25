@@ -15,6 +15,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     setup_requires=['pytest-runner'],
+    install_requires=['pint', 'pyyaml', 'uuid'],
     tests_require=['pytest'],
     # ...,
 )

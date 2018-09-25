@@ -73,81 +73,34 @@ class ValueType(ModelElement):
 
     Parameters
     ----------
-    value : int, float, string, or bool
-
     units : str, default None
 
     Notes
     -----
-    If a string parameter for units is provided, it must be defined in the
-    UnitRegistry
+    String parameter for units must be defined in the UnitRegistry
+
+    Example
+    -------
+    >>> kesselrun = 12*sysml.ValueType('parsecs')
+    >>> kesselrun
+    \xabvalueType\xbb 'parsecs' [12]
+    >>> kesselrun.magnitude
+    12
+    >>> kesselrun.units
+    'parsec'
+    >>> kesselrun.to('lightyear')
+    \xabvalueType\xbb 'light_year' [39.138799173399406]
     """
 
-    def __init__(self, value, units=None):
-        if units is None:
-            units = ''
-        self._ureg = value * _ureg(units)
+    def __init__(self, units=None):
+        # TODO: Needs to be redesigned to inherit methods of a UnitRegistry
+        # object while also inheriting from ModelElement
 
         super().__init__(self.name)
 
-    def __add__(self, other):
-        _newureg = self._ureg + other._ureg
-        return ValueType(_newureg.magnitude, str(_newureg.units))
-
-    # def __ladd__(self, other):
-    #     _newureg = self._ureg + other._ureg
-    #     return ValueType(_newureg, str(_newureg.units))
-    #
-    # def __radd__(self, other):
-    #     _newureg = self._ureg + other._ureg
-    #     return ValueType(_newureg, str(_newureg.units))
-
-    def __sub__(self, other):
-        _newureg = self._ureg - other._ureg
-        return ValueType(_newureg.magnitude, str(_newureg.units))
-
-    # def __lsub__(self, other):
-    #     _newureg = self._ureg - other._ureg
-    #     return ValueType(_newureg, str(_newureg.units))
-    #
-    # def __rsub__(self, other):
-    #     _newureg = self._ureg - other._ureg
-    #     return ValueType(_newureg, str(_newureg.units))
-
-    # def __mul__(self, other):
-    #     return ValueType(self.magnitude*other, str(self.units))
-
-    # def __lmul__(self, other):
-    #     return ValueType(self.magnitude*other, str(self.units))
-
-    def __rmul__(self, other):
-        return ValueType(self.magnitude*other, str(self.units))
-
-    def __truediv__(self, other):
-        return ValueType(self.magnitude/other, str(self.units))
-
-    # def __ltruediv__(self, other):
-    #     return ValueType(self.magnitude/other, str(self.units))
-    #
-    # def __rtruediv__(self, other):
-    #     return ValueType(self.magnitude/other, str(self.units))
-
     @property
     def name(self):
-        return "{} {}".format(str(self.magnitude), str(self.units))
-
-    # def ito(self, units):
-    #     self._ureg.ito(units)
-
-    # @property
-    # def magnitude(self):
-    #     return self._magnitude
-    #
-    # @property
-    # def units(self):
-    #     return self._units
-    def __getattr__(self, attr):
-        return getattr(self._ureg, attr)
+        return self._name
 
 
 class Block(ModelElement):
