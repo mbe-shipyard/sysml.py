@@ -32,7 +32,7 @@ class ModelElement(_ABC):
         self._uuid = str(_uuid.uuid1())
 
     def __repr__(self):
-        return self.stereotype + " {}".format(self.name)
+        return "{} {}".format(self.stereotype, self.name)
 
     @_abstractproperty
     def name(self):
@@ -89,9 +89,6 @@ class ValueType(ModelElement):
         self._ureg = value * _ureg(units)
 
         super().__init__(self.name)
-
-    def __repr__(self):
-        return "{} {}".format(self.stereotype, self.name)
 
     def __add__(self, other):
         _newureg = self._ureg + other._ureg
