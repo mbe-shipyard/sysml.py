@@ -1,7 +1,9 @@
 import sysml
 import pytest
 import uuid
+import os
 from pint import UnitRegistry
+from yaml import dump
 
 
 @pytest.fixture(scope="module")
@@ -481,6 +483,25 @@ def test_verify_requirement(model):
     # assert dependency supplier is of type(Requirement)
     # assert dependency client stereotype is a «testCase»
     # assert dependency stereotype is "verify"
+
+
+def test_to_yaml(model):
+    assert model.name == 'Constitution-class Starship'
+    model.to_yaml('model.yaml')
+    model2 = sysml.read_yaml('model.yaml')
+    assert repr(model) == repr(model2)
+    with pytest.raises(TypeError) as info:
+        model.to_yaml(2)
+        assert "" in str(info.value)
+    os.remove('model.yaml')
+
+    not_a_model = dump("not a model")
+    with open('not_a_model.yaml', 'w') as f:
+        f.write(not_a_model)
+    with pytest.raises(TypeError) as info:
+        sysml.read_yaml('not_a_model.yaml')
+        assert "" in str(info.value)
+    os.remove('not_a_model.yaml')
 
 
 if __name__ == '__main__':
