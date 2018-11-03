@@ -6,8 +6,6 @@ from sysml.element import *
 from yaml import dump as _dump
 from yaml import load as _load
 
-# developer notes: to use hidden vs unhidden attributes
-
 
 class Model(Package):
     """This class defines a SysML system model. A system model serves as the

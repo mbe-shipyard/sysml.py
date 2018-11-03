@@ -10,12 +10,12 @@ from yaml import dump
 def model():
     """Create a model object that will also serve as the root directory for all
     other model elements"""
-    model = sysml.Model('Constitution-class Starship')
+    model = sysml.Model('NCC-1701')
     return model
 
 
 def test_model(model):
-    assert repr(model) == "\xabmodel\xbb Constitution-class Starship"
+    assert repr(model) == "\xabmodel\xbb NCC-1701"
     assert repr(type(model)) == "<class 'sysml.system.Model'>"
 
     assert model.stereotype == "\xabmodel\xbb"
@@ -477,7 +477,7 @@ def test_verify_requirement(model):
 
 
 def test_to_yaml(model):
-    assert model.name == 'Constitution-class Starship'
+    assert model.name == 'NCC-1701'
     model.to_yaml('model.yaml')
     model2 = sysml.read_yaml('model.yaml')
     assert repr(model) == repr(model2)
