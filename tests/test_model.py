@@ -20,9 +20,8 @@ def test_model(model):
 
     assert model.stereotype == "\xabmodel\xbb"
 
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(TypeError):
         model = sysml.Model(47)
-        assert "must be a string" in str(info.value)
     with pytest.raises(TypeError) as info:
         model = sysml.ModelElement()
         assert "Can't instantiate abstract class base" in str(info.value)
@@ -254,12 +253,8 @@ def test_block_partProperty(model):
     assert primaryhull.multiplicity == 1
     assert engineeringhull.multiplicity == 1
 
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(TypeError):
         primaryhull.multiplicity = 'mayonnaise'
-        assert "must be a positive int" in str(info.value)
-    with pytest.raises(ValueError) as info:
-        engineeringhull.multiplicity = -1
-        assert "must be a positive int" in str(info.value)
 
 
 def test_block_partProperty_withMultiplicity(model):
@@ -284,12 +279,8 @@ def test_block_partProperty_withMultiplicity(model):
     assert nacelle.multiplicity == 2
     assert pylon.multiplicity == 2
 
-    with pytest.raises(TypeError) as info:
+    with pytest.raises(TypeError):
         pylon.multiplicity = 'mayonnaise'
-        assert "must be a positive int" in str(info.value)
-    with pytest.raises(ValueError) as info:
-        pylon.multiplicity = -1
-        assert "must be a positive int" in str(info.value)
 
 
 @pytest.mark.skip('WIP')

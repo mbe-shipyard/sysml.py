@@ -17,17 +17,11 @@ _ureg = _UnitRegistry()
 class ModelElement(_ABC):
     """Abstract base class for all model elements"""
 
-    _id_no = 0
-
-    def __init__(self, name=None):
-        if name is None:
-            self.__class__._id_no += 1
-            elementName = self.__class__.__name__
-            self._name = elementName.lower() + str(self.__class__._id_no)
-        elif type(name) is str:
+    def __init__(self, name=''):
+        if type(name) is str:
             self._name = name
         else:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            raise TypeError
 
         self._uuid = str(_uuid.uuid1())
 
@@ -41,31 +35,15 @@ class ModelElement(_ABC):
 
     @property
     def stereotype(self):
-        elementName = self.__class__.__name__
-        return "\xab" + elementName[0].lower() + elementName[1:] + "\xbb"
+        return "".join(["\xab",
+                        self.__class__.__name__[0].lower(),
+                        self.__class__.__name__[1:],
+                        "\xbb"
+                        ])
 
     @property
     def uuid(self):
         return self._uuid
-
-    @staticmethod
-    def _generateKey(name):
-        """Takes a modeler-defined name and returns a formatted string for use
-        as a key within the namespace of a parent model element"""
-        if type(name) is str:
-            return name[0].lower() + name[1:].replace(' ', '')
-
-
-class ModelRelationship(ModelElement):
-    """Abstract base class for all model elements"""
-
-    def __init__(self, name=None):
-        _elementName = self.__class__.__name__
-        self.__class__._id_no += 1
-        _elementId = str(self.__class__._id_no)
-        self._name = self._generateKey(_elementName + _elementId)
-
-        super().__init__(name)
 
 
 class ValueType(ModelElement):
@@ -124,8 +102,8 @@ class Block(ModelElement):
 
     """
 
-    def __init__(self, name=None, parts=None, references=None, values=None,
-                 constraints=None, flowProperties=None, multiplicity=None):
+    def __init__(self, name='', parts=None, references=None, values=None,
+                 constraints=None, flowProperties=None, multiplicity=1):
         super().__init__(name)
 
         self._parts = dict()
@@ -136,9 +114,9 @@ class Block(ModelElement):
                 if type(key) is str and isinstance(part, Block):
                     self_parts[key] = part
                 else:
-                    raise TypeError("'{}' must be a Block".format(str(part)))
+                    raise TypeError
         else:
-            raise TypeError("'{}' must be a set".format(str(parts)))
+            raise TypeError
 
         if references is None:
             self._references = dict()
@@ -152,11 +130,10 @@ class Block(ModelElement):
         if flowProperties is None:
             self._flowProperties = dict()
 
-        if multiplicity is None:
-            self._multiplicity = 1
+        if isinstance(multiplicity, (int, float)):
+            self._multiplicity = multiplicity
         else:
-            self._setMultiplicity(multiplicity)
-
+            raise TypeError
         """
         ## Reference Property
         if references is None:
@@ -211,11 +188,14 @@ class Block(ModelElement):
         if type(name) is str:
             self._name = name
         else:
-            raise TypeError("'{}' must be a string".format(str(name)))
+            raise TypeError
 
     @multiplicity.setter
     def multiplicity(self, multiplicity):
-        self._setMultiplicity(multiplicity)
+        if isinstance(multiplicity, (int, float)):
+            self._multiplicity = multiplicity
+        else:
+            raise TypeError
 
     def add_part(self, partName, part):
         """Adds block element to parts attribute
@@ -230,9 +210,9 @@ class Block(ModelElement):
         if type(partName) is str and isinstance(part, Block):
             self._parts[partName] = part
         elif type(partName) is not str:
-            raise TypeError("'{}' must be a string".format(str(partName)))
+            raise TypeError
         elif not isinstance(part, Block):
-            raise TypeError("'{}' must be a Block".format(str(part)))
+            raise TypeError
 
     def remove_part(self, partName):
         """Removes block element from parts attribute
@@ -257,28 +237,17 @@ class Block(ModelElement):
             elif elementName in self._flowProperties.keys():
                 return self._flowProperties[elementName]
             else:
-                raise KeyError("'{}' not contained in '{}'".format(
-                    str(elementName), str(self.name)))
+                raise KeyError
         else:
-            raise TypeError("'{}' must be a string".format(str(elementName)))
+            raise TypeError
 
     def __setitem__(self, elementName, element):
         if type(elementName) is str and isinstance(element, Block):
             self._parts[elementName] = element
         elif type(elementName) is not str:
-            raise TypeError("'{}' must be a string".format(str(elementName)))
+            raise TypeError
         elif not isinstance(element, Block):
-            raise TypeError("'{}' must be a Block".format(str(element)))
-
-    def _setMultiplicity(self, multiplicity):
-        if type(multiplicity) is int and multiplicity > 0:
-            self._multiplicity = multiplicity
-        elif type(multiplicity) is int:
-            raise ValueError("'{}' must be a positive int".format(
-                str(multiplicity)))
-        else:
-            raise TypeError("'{}' must be a positive int".format(
-                str(multiplicity)))
+            raise TypeError
 
     # @parts.setter
     # def parts(self, *partv):
@@ -331,24 +300,18 @@ class Block(ModelElement):
 class Requirement(ModelElement):
     """This class defines a requirement"""
 
-    def __init__(self, name=None, txt=None, id=None):
+    def __init__(self, name='', txt='', id=''):
         super().__init__(name)
 
-        if txt is None:
-            self.txt = ''
-        elif type(txt) is str:
+        if type(txt) is str:
             self.txt = txt
         else:
-            raise TypeError("'{}' must be a string".format(str(txt)))
+            raise TypeError
 
-        if id is None:
-            self.__class__._id_no += 1
-            self._id = 'ID' + str(self.__class__._id_no).zfill(3)
-        elif type(id) in [int, float, str]:
-            self._id = 'ID' + str(id_no).zfill(3)
+        if type(id) is str:
+            self._id = id
         else:
-            raise TypeError("'{}' must be an int, float, or string".format(
-                str(id)))
+            raise TypeError
 
     @property
     def name(self):
@@ -362,7 +325,7 @@ class ConstraintBlock(ModelElement):
         super().__init__(name)
 
 
-class Dependency(ModelRelationship):
+class Dependency(ModelElement):
     """A dependency relationship can be applied between models elements to
     indicate that a change in one element, the client, may result in a change
     in the other element, the supplier.
@@ -380,10 +343,9 @@ class Dependency(ModelRelationship):
         self._supplier = supplier
 
         if not isinstance(client, ModelElement):
-            raise TypeError("'{}' is not a model element".format(str(client)))
+            raise TypeError
         if not isinstance(supplier, ModelElement):
-            raise TypeError("'{}' is not a model element".format(
-                str(supplier)))
+            raise TypeError
 
         super().__init__()
 
@@ -415,9 +377,9 @@ class DeriveReqt(Dependency):
     def __init__(self, client, supplier):
         super().__init__(client, supplier)
         if type(client) is not Requirement:
-            raise TypeError("'{}' is not a Requirement".format(str(client)))
+            raise TypeError
         if type(supplier) is not Requirement:
-            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
+            raise TypeError
 
 
 class Satisfy(Dependency):
@@ -446,7 +408,7 @@ class Satisfy(Dependency):
     def __init__(self, client, supplier):
         super().__init__(client, supplier)
         if type(supplier) is not Requirement:
-            raise TypeError("'{}' is not a Requirement".format(str(supplier)))
+            raise TypeError
 
 
 class Package(ModelElement):
@@ -461,7 +423,7 @@ class Package(ModelElement):
 
     """
 
-    def __init__(self, name=None, elements=None):
+    def __init__(self, name='', elements=None):
         super().__init__(name)
 
         self._elements = dict()
@@ -472,13 +434,11 @@ class Package(ModelElement):
                 if type(key) is str and isinstance(element, ModelElement):
                     self._elements[key] = element
                 elif type(key) is not str:
-                    raise TypeError("'{}' must be a str".format(str(key)))
+                    raise TypeError
                 elif not isinstance(element, ModelElement):
-                    raise TypeError("'{}' must be a model element".format(
-                        str(element)))
+                    raise TypeError
         else:
-            raise TypeError("'{}' must be a list of model elements".format(
-                str(elements)))
+            raise TypeError
 
     def __getitem__(self, elementName):
         "Returns elementName-specified model element"
@@ -513,10 +473,9 @@ class Package(ModelElement):
         if type(elementName) is str and isinstance(element, ModelElement):
             self._elements[elementName] = element
         elif type(elementName) is not str:
-            raise TypeError("'{}' must be a string".format(str(elementName)))
+            raise TypeError
         elif not isinstance(element, ModelElement):
-            raise TypeError("'{}' must be a model element".format(
-                str(element)))
+            raise TypeError
 
 
 class StateMachine(ModelElement):
@@ -544,7 +503,7 @@ class Activity(ModelElement):
 class Interaction(ModelElement):
     """This class defines an interaction"""
 
-    def __init__(self, name=None, lifelines=None, messages=None):
+    def __init__(self, name='', lifelines=None, messages=None):
         super().__init__(name)
 
         self._lifelines = dict()
