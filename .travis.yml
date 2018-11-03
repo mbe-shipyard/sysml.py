@@ -5,23 +5,27 @@ python:
   # - "2.6"
   # - "2.7"
   # - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.5-dev"  # 3.5 development branch
+  # - "3.4"
+  # - "3.5"
+  # - "3.5-dev"  # 3.5 development branch
   - "3.6"
   - "3.6-dev"  # 3.6 development branch
   # - "3.7-dev"  # 3.7 development branch
 # command to install dependencies
 install:
   - pip install --upgrade pip
+  - pip install black
   - pip install coverage
+  - pip install mypy
   - pip install python-coveralls
   - pip install pytest
+  - pip install pytest-black
   - pip install pytest-cov
-  - pip install pytest-pep8
   - pip install -r requirements.txt
-script:
+before_script:
   - python setup.py install
-  - pytest -v --cov-report term-missing --cov=sysml/ --pep8 # or py.test for Python versions 3.5 and below
+script:
+  - pytest -v --cov-report term-missing --cov=sysml/ --black # or py.test for Python versions 3.5 and below
+  - mypy sysml/ --ignore-missing-imports
 after_success:
   - coveralls

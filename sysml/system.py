@@ -13,10 +13,10 @@ class Model(Package):
     elements) of a system.
     """
 
-    def to_yaml(self, filename):
+    def to_yaml(self, filename: str) -> None:
         """ Write this Project to a yaml file """
         if type(filename) is str:
-            with open(filename, 'w') as f:
+            with open(filename, "w") as f:
                 f.write(_dump(self))
         else:
             raise TypeError
@@ -27,9 +27,9 @@ class Model(Package):
         pass
 
 
-def read_yaml(filename=""):
+def read_yaml(filename: str) -> "Model":
     """ Load a project from a yaml file """
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         rv = _load(f.read())
         if type(rv) is Model:
             return rv

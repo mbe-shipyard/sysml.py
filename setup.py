@@ -2,9 +2,9 @@ from setuptools import setup
 
 setup(
     # ...,
-    name='sysml',
-    version='0.1.0',
-    packages=['sysml'],
+    name="sysml",
+    version="0.1.0",
+    packages=["sysml"],
     author="Sean Marquez",
     author_email="capsulecorplab@gmail.com",
     description="A Python package for the Systems Modeling Language (SysML)",
@@ -14,8 +14,8 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    setup_requires=['pytest-runner'],
-    install_requires=['pint', 'pyyaml', 'uuid'],
-    tests_require=['pytest'],
+    setup_requires=["pytest-runner"],
+    install_requires=["pint", "pyyaml", "uuid"],
+    tests_require=["pytest"],
     # ...,
 )
