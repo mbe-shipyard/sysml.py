@@ -412,14 +412,14 @@ class Satisfy(Dependency):
 
 
 class Package(ModelElement):
-    """A package is a container for a set of model elements, of which may be
-    other packages.
+    """A Package is a container for a set of model elements, of which may
+    consist of other packages.
 
     Parameters
     ----------
     name : string, default None
 
-    elements : dict, default None
+    elements : list, default None
 
     """
 
@@ -429,24 +429,20 @@ class Package(ModelElement):
         self._elements = dict()
         if elements is None:
             pass
-        elif type(elements) is dict:
-            for key, element in elements.items():
-                if type(key) is str and isinstance(element, ModelElement):
-                    self._elements[key] = element
-                elif type(key) is not str:
-                    raise TypeError
-                elif not isinstance(element, ModelElement):
+        elif type(elements) is list:
+            for element in elements:
+                if element in self._elements:
+                    pass
+                elif isinstance(element, ModelElement):
+                    self.add(element)
+                else:
                     raise TypeError
         else:
             raise TypeError
 
     def __getitem__(self, elementName):
-        "Returns elementName-specified model element"
+        "Returns model element specified by its name"
         return self._elements[elementName]
-
-    def __setitem__(self, elementName, element):
-        "Sets elementName-specified model element"
-        self._setElement(elementName, element)
 
     @property
     def name(self):
@@ -456,26 +452,33 @@ class Package(ModelElement):
     def elements(self):
         return self._elements
 
-    def add(self, elementName, element):
+    def add(self, element):
         """Adds a model element to package"""
-        self._setElement(elementName, element)
+        if isinstance(element, ModelElement):
+            i = 0
+            while element not in self.elements.values():
+                if isinstance(element, Dependency):
+                    i += 1
+                    elementName = "".join([
+                        element.__class__.__name__[0].lower(),
+                        element.__class__.__name__[1:],
+                        str(i)
+                    ])
+                else:
+                    elementName = element.name
+                if elementName not in self._elements.keys():
+                    self._elements[elementName] = element
+        else:
+            raise TypeError
 
-    def remove(self, elementName):
+    def remove(self, element):
         """Removes a model element from package"""
-        self._elements.pop(elementName)
+        self._elements.pop(element.name)
 
     def RTM(self):
         """Generates a requirements traceability matrix for model elements
         contained and referenced within package"""
         pass
-
-    def _setElement(self, elementName, element):
-        if type(elementName) is str and isinstance(element, ModelElement):
-            self._elements[elementName] = element
-        elif type(elementName) is not str:
-            raise TypeError
-        elif not isinstance(element, ModelElement):
-            raise TypeError
 
 
 class StateMachine(ModelElement):
