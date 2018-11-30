@@ -26,7 +26,7 @@ class ModelElement(_ABC):
         self._uuid = str(_uuid.uuid1())
 
     def __repr__(self):
-        return "{} {}".format(self.stereotype, self.name)
+        return "<{}('{}')>".format(self.__class__.__name__, self.name)
 
     @_abstractproperty
     def name(self):
@@ -61,13 +61,13 @@ class ValueType(ModelElement):
     -------
     >>> kesselrun = 12*sysml.ValueType('parsecs')
     >>> kesselrun
-    \xabvalueType\xbb 'parsecs' [12]
+    valueType\xbb 'parsecs' [12]
     >>> kesselrun.magnitude
     12
     >>> kesselrun.units
-    'parsec'
+    <Unit('parsec')>
     >>> kesselrun.to('lightyear')
-    \xabvalueType\xbb 'light_year' [39.138799173399406]
+    <(valueType) 'light_year' [39.138799173399406]>
     """
 
     def __init__(self, units=None):
@@ -112,7 +112,7 @@ class Block(ModelElement):
         elif type(parts) is dict:
             for key, part in parts.items():
                 if type(key) is str and isinstance(part, Block):
-                    self_parts[key] = part
+                    self._parts[key] = part
                 else:
                     raise TypeError
         else:
@@ -419,7 +419,7 @@ class Package(ModelElement):
     ----------
     name : string, default None
 
-    elements : list, default None
+    elements : dict, default None
 
     """
 
