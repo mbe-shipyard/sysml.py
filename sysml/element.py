@@ -12,6 +12,7 @@ from abc import ABC as _ABC
 from abc import abstractproperty as _abstractproperty
 from collections import OrderedDict as _OrderedDict
 from collections import Iterable
+from hashlib import sha1 as _sha1
 from pint import UnitRegistry as _UnitRegistry
 from typing import Dict, List, Optional, Union
 
@@ -324,12 +325,18 @@ class Requirement(ModelElement):
 
         if type(id) is str:
             self._id = id
+            if id == "":
+                self._id = (_sha1(txt.encode('utf-8')).hexdigest())[:7]
         else:
             raise TypeError
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def id(self):
+        return self._id
 
 
 class ConstraintBlock(ModelElement):

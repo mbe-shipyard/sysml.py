@@ -348,9 +348,11 @@ def test_requirements(model):
     )
     functional_req = sysml.Requirement(
         "Functional",
-        """A constitution-class starship shall be able to travel at warp 8 or
-        higher""",
+        """A constitution-class starship shall be able to travel at warp 8 or higher""",
     )
+
+    assert functional_req.id == "ba76d47"
+
     model["requirements"].add(top_lvl_req)
     model["requirements"].add(functional_req)
 
