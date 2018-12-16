@@ -351,7 +351,12 @@ def test_requirements(model):
         """A constitution-class starship shall be able to travel at warp 8 or higher""",
     )
 
-    assert functional_req.id == "ba76d47"
+    assert functional_req.id == "Req-ba76d47"
+
+    functional_req.txt = (
+        "A constitution-class starship shall be able to travel at warp 9 or higher"
+    )
+    assert functional_req.id == "Req-41a3c5a"
 
     model["requirements"].add(top_lvl_req)
     model["requirements"].add(functional_req)

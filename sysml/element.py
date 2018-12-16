@@ -319,14 +319,14 @@ class Requirement(ModelElement):
         super().__init__(name)
 
         if type(txt) is str:
-            self.txt = txt
+            self._txt = txt
         else:
             raise TypeError
 
         if type(id) is str:
             self._id = id
             if id == "":
-                self._id = (_sha1(txt.encode('utf-8')).hexdigest())[:7]
+                self._id = "".join(["Req-", _sha1(txt.encode("utf-8")).hexdigest()[:7]])
         else:
             raise TypeError
 
@@ -337,6 +337,16 @@ class Requirement(ModelElement):
     @property
     def id(self):
         return self._id
+
+    @property
+    def txt(self):
+        return self._txt
+
+    @txt.setter
+    def txt(self, txt):
+        if type(txt) is str:
+            self._txt = txt
+            self._id = "".join(["Req-", _sha1(txt.encode("utf-8")).hexdigest()[:7]])
 
 
 class ConstraintBlock(ModelElement):
