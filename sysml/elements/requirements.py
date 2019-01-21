@@ -1,10 +1,6 @@
 """
-The `element.py` module contains all model elements that are valid for use by
-the `model` class
-
----------
-
-Model elements are the building blocks that make up SysML
+Requirements display text-based requirements (and the requirements
+specifications that contain them)
 """
 
 from sysml.elements.base import ModelElement
@@ -14,7 +10,9 @@ from typing import Dict, List, Optional, Union
 class Requirement(ModelElement):
     """This class defines a requirement"""
 
-    def __init__(self, name="", txt="", id=""):
+    def __init__(
+        self, name: Optional[str] = "", txt: Optional[str] = "", id: Optional[str] = ""
+    ):
         super().__init__(name)
 
         if type(txt) is str:

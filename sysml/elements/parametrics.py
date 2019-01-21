@@ -38,9 +38,7 @@ class ValueType(ModelElement):
     <ValueType(39.138799173399406, 'light_year')>
     """
 
-    def __init__(self, units: Optional["ModelElement"]):
-        # TODO: Needs to be redesigned to inherit methods of a UnitRegistry
-        # object while also inheriting from ModelElement
+    def __init__(self, units: Optional[str] = ""):
 
         super().__init__(self.name)
 
@@ -52,5 +50,5 @@ class ValueType(ModelElement):
 class ConstraintBlock(ModelElement):
     """This class defines a constraint"""
 
-    def __init__(self, name: str = ""):
+    def __init__(self, name: Optional[str] = ""):
         super().__init__(name)

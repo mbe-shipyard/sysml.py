@@ -1,15 +1,11 @@
 """
-The `element.py` module contains all model elements that are valid for use by
-the `model` class
-
----------
-
-Model elements are the building blocks that make up SysML
+Structural elements are commonly used to describe system hierarchies,
+classifications, internal composition, or interfaces.
 """
 
 from sysml.elements.base import *
-from sysml.elements.parametrics import *
 from sysml.elements.requirements import *
+from sysml.elements.parametrics import *
 from collections import OrderedDict as _OrderedDict
 from typing import Dict, List, Optional, Union
 

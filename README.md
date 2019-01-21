@@ -13,7 +13,7 @@
 
 - `sysml/system.py` - module for creating a `Model` object, which serves as a central namespace for model elements (and relationships between elements).
 
-- `sysml/element.py` - module for creating model elements (s.a., `Package`, `Block`, `ConstraintBlock`, `Activity`, `Interaction`, `StateMachine`, `Requirement`). These objects are intended to be subsumed by a `Model` object.
+- `sysml/elements/` - modules for creating model elements, divided into 4 pillars: structure, behavior, requirements, and parametrics. These objects are intended to be subsumed by a `Model` object.
 
 ## Developer Notes
 

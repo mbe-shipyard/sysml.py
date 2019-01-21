@@ -1,10 +1,6 @@
 """
-The `element.py` module contains all model elements that are valid for use by
-the `model` class
-
----------
-
-Model elements are the building blocks that make up SysML
+Behavior of a system, in collaboration with its actors, can be described
+by use cases, activities, interactions, and/or state machines.
 """
 
 from sysml.elements.base import ModelElement
@@ -17,7 +13,7 @@ from typing import Dict, List, Optional, Union
 class StateMachine(ModelElement):
     """This class defines a state"""
 
-    def __init__(self):
+    def __init__(self, name: Optional[str] = ""):
         super().__init__(name)
 
     @property
@@ -28,7 +24,7 @@ class StateMachine(ModelElement):
 class Activity(ModelElement):
     """This class defines a activity"""
 
-    def __init__(self):
+    def __init__(self, name: Optional[str] = ""):
         super().__init__(name)
 
     @property
@@ -41,9 +37,9 @@ class Interaction(ModelElement):
 
     def __init__(
         self,
-        name: Optional[str],
-        lifelines: Optional[List["Block"]],
-        messages: Optional["ModelElement"],
+        name: Optional[str] = "",
+        lifelines: Optional[List["Block"]] = None,
+        messages: Optional["ModelElement"] = None,
     ):
         super().__init__(name)
 
