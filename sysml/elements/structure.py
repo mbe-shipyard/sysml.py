@@ -7,85 +7,11 @@ the `model` class
 Model elements are the building blocks that make up SysML
 """
 
-import uuid as _uuid
-from abc import ABC as _ABC
-from abc import abstractproperty as _abstractproperty
+from sysml.elements.base import *
+from sysml.elements.parametrics import *
+from sysml.elements.requirements import *
 from collections import OrderedDict as _OrderedDict
-from collections import Iterable
-from pint import UnitRegistry as _UnitRegistry
 from typing import Dict, List, Optional, Union
-
-_ureg = _UnitRegistry()
-
-
-class ModelElement(_ABC):
-    """Abstract base class for all model elements"""
-
-    def __init__(self, name: Optional[str] = ""):
-        if type(name) is str:
-            self._name = name
-        else:
-            raise TypeError
-
-        self._uuid = _uuid.uuid1()
-
-    def __repr__(self):
-        return "<{}('{}')>".format(self.__class__.__name__, self.name)
-
-    @_abstractproperty
-    def name(self):
-        """Modeler-defined name of model element"""
-        pass
-
-    @property
-    def stereotype(self):
-        return "".join(
-            [
-                "\xab",
-                self.__class__.__name__[0].lower(),
-                self.__class__.__name__[1:],
-                "\xbb",
-            ]
-        )
-
-    @property
-    def uuid(self):
-        return self._uuid
-
-
-class ValueType(ModelElement):
-    """This class defines a value type
-
-    Parameters
-    ----------
-    units : str, default None
-
-    Notes
-    -----
-    String parameter for units must be defined in the UnitRegistry
-
-    Example
-    -------
-    >>> kesselrun = 12*sysml.ValueType('parsecs')
-    >>> kesselrun
-    <(ValueType) 'parsecs' [12]>
-    >>> kesselrun.magnitude
-    12
-    >>> kesselrun.units
-    <Unit('parsec')>
-    >>> kesselrun.to('lightyear')
-    <(ValueType) 'light_year' [39.138799173399406]>
-    """
-
-    def __init__(self, units: Optional["ModelElement"]):
-        # TODO: Needs to be redesigned to inherit methods of a UnitRegistry
-        # object while also inheriting from ModelElement
-
-        super().__init__(self.name)
-
-    @property
-    def name(self):
-        return self._name
 
 
 class Block(ModelElement):
@@ -311,71 +237,6 @@ class Block(ModelElement):
             raise TypeError
 
 
-class Requirement(ModelElement):
-    """This class defines a requirement"""
-
-    def __init__(self, name="", txt="", id=""):
-        super().__init__(name)
-
-        if type(txt) is str:
-            self.txt = txt
-        else:
-            raise TypeError
-
-        if type(id) is str:
-            self._id = id
-        else:
-            raise TypeError
-
-    @property
-    def name(self):
-        return self._name
-
-
-class ConstraintBlock(ModelElement):
-    """This class defines a constraint"""
-
-    def __init__(self):
-        super().__init__(name)
-
-
-class Dependency(ModelElement):
-    """A dependency relationship can be applied between models elements to
-    indicate that a change in one element, the client, may result in a change
-    in the other element, the supplier.
-
-    Parameters
-    ----------
-    client : ModelElement
-
-    supplier : ModelElement
-
-    """
-
-    def __init__(self, client, supplier):
-        self._client = client
-        self._supplier = supplier
-
-        if not isinstance(client, ModelElement):
-            raise TypeError
-        if not isinstance(supplier, ModelElement):
-            raise TypeError
-
-        super().__init__()
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def supplier(self):
-        return self._supplier
-
-    @property
-    def client(self):
-        return self._client
-
-
 class DeriveReqt(Dependency):
     """The derive requirement relationship conveys that a requirement at the
     client end is derived from a requirement at the supplier end.
@@ -423,61 +284,6 @@ class Satisfy(Dependency):
         super().__init__(client, supplier)
         if type(supplier) is not Requirement:
             raise TypeError
-
-
-class StateMachine(ModelElement):
-    """This class defines a state"""
-
-    def __init__(self):
-        super().__init__(name)
-
-    @property
-    def name(self):
-        return self._name
-
-
-class Activity(ModelElement):
-    """This class defines a activity"""
-
-    def __init__(self):
-        super().__init__(name)
-
-    @property
-    def name(self):
-        return self._name
-
-
-class Interaction(ModelElement):
-    """This class defines an interaction"""
-
-    def __init__(
-        self,
-        name: Optional[str],
-        lifelines: Optional[List["Block"]],
-        messages: Optional["ModelElement"],
-    ):
-        super().__init__(name)
-
-        self._lifelines: "_OrderedDict" = _OrderedDict()
-        if lifelines is None:
-            pass
-        if isinstance(lifelines, Iterable):
-            for lifeline in lifelines:
-                if isinstance(lifeline, Block):
-                    self._lifelines[lifeline.name] = lifeline
-        else:
-            raise TypeError
-
-    @property
-    def name(self):
-        return self._name
-
-    def add_lifeline(self, lifeline):
-        if isinstance(lifeline, Block):
-            self._lifelines[lifeline.name] = lifeline
-
-    def remove_lifeline(self, lifeline):
-        self._lifelines.pop(lifeline.name)
 
 
 class Package(ModelElement):

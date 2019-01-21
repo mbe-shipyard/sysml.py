@@ -2,7 +2,7 @@
 The `model.py` module is used to instantiate a central namespace for a SysML
 model by subsuming elements into mode elements or model relations.
 """
-from sysml.element import *
+from sysml.elements import Package
 from yaml import dump as _dump
 from yaml import load as _load
 
